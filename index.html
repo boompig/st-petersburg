@@ -38,7 +38,7 @@
                     </div>
                     <div class="player-hand">
                         <div class="player-subtitle">Cards In Hand</div>
-                        <div class="card" ng-repeat="card in player.hand"
+                        <div class="card buyable-card" ng-repeat="card in player.hand"
                             ng-click="game.playCardFromHand(card, player)">
                             <div spb-card></div>
                         </div>
@@ -51,14 +51,14 @@
                 <div id="upper-board" class="board">
                     <h4>Upper Board</h4>
                     <div ng-if="game.upperBoard.length === 0">Empty</div>
-                    <div class="card" ng-repeat="card in game.upperBoard"
+                    <div class="card buyable-card" ng-repeat="card in game.upperBoard"
                         ng-click="game.buyCard(card, game.upperBoard)"
                         context-menu class="panel panel-default"
-                        data-target="menu-{{ $index }}"
+                        data-target="upper-menu-{{ $index }}"
                         ng-class="{ 'highlight': highlight, 'expanded': expanded }">
                         <div spb-card></div>
 
-                        <div class="dropdown position-fixed" id="menu-{{ $index }}">
+                        <div class="dropdown position-fixed" id="upper-menu-{{ $index }}">
                             <ul class="dropdown-menu" role="menu">
                                 <li class="dropdown-menu-item"
                                     ng-click="game.buyCard(card, game.upperBoard)">Buy</li>
@@ -71,14 +71,14 @@
                 <div id="lower-board" class="board">
                     <h4>Lower Board</h4>
                     <div ng-if="game.lowerBoard.length === 0">Empty</div>
-                    <div class="card" ng-repeat="card in game.lowerBoard"
+                    <div class="card buyable-card" ng-repeat="card in game.lowerBoard"
                         ng-click="game.buyCard(card, game.lowerBoard)"
                         context-menu class="panel panel-default"
-                        data-target="menu-{{ $index }}"
+                        data-target="lower-menu-{{ $index }}"
                         ng-class="{ 'highlight': highlight, 'expanded': expanded }">
                         <div spb-card></div>
 
-                        <div class="dropdown position-fixed" id="menu-{{ $index }}">
+                        <div class="dropdown position-fixed" id="lower-menu-{{ $index }}">
                             <ul class="dropdown-menu" role="menu">
                                 <li class="dropdown-menu-item"
                                     ng-click="game.buyCard(card, game.lowerBoard)">Buy</li>
@@ -94,9 +94,28 @@
                 ng-click="game.passTurn()">Next Turn (Pass)</button>
         </div>
 
+        <script type="text/ng-template" id="upgradeModal.html">
+            <div class="modal-header">
+                <h3 class="modal-title">Pick a card to upgrade into {{ upgradeCard.name }}</h3>
+            </div>
+            <div class="modal-body">
+                <label for="upgradeCard">Pick the card to upgrade</label>
+                <select name="upgradeCard">
+                    <option ng-repeat="card in upgradableCards" ng-click="selected.card = card">{{ card.name }} ({{ getCost(card) }} Coins)</option>
+                </select>
+                <div>Selected: {{ selected.card.name }}</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="ok()">OK</button>
+                <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+            </div>
+        </script>
+
         <script src="bower_components/underscore/underscore-min.js"></script>
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/ng-context-menu/dist/ng-context-menu.js"></script>
+        <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.0.js"></script>
+        <script src="bower_components/angular-ui-bootstrap/src/modal/modal.js"></script>
         <script src="peter.js"></script>
         <script src="display.js"></script>
     </body>

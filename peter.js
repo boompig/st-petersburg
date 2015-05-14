@@ -2,14 +2,26 @@
  * Upgrade type means ARISTOCRAT, WORKER, BUILDING
  * upgrade class is only relevant for workers
  */
-function Card (name, cost, type, coin_yield, point_yield, upgrade_type, workerUpgradeClass) {
+function Card (name, cost, type, coin_yield, point_yield, upgrade_type, kwargs) {
     this.name = name;
     this.cost = cost;
     this.type = type;
     this.coinYield = coin_yield;
     this.pointYield = point_yield;
     this.upgradeType = upgrade_type;
-    this.workerUpgradeClass = workerUpgradeClass || null;
+
+    // have default settings, can be reset via kwargs
+    this.workerUpgradeClass = null;
+    this.upgradeCost = this.cost;
+
+    if (kwargs) {
+        for (var property in kwargs) {
+            if (this.hasOwnProperty(property)) {
+                console.log("Set " + property + " to value " + kwargs[property] + " for card " + name);
+                this[property] = kwargs[property];
+            }
+        }
+    }
 }
 
 /**
@@ -22,7 +34,7 @@ Card.prototype.canUpgradeTo = function (upgradeCard) {
             (this.workerUpgradeClass === upgradeCard.workerUpgradeClass ||
              this.workerUpgradeClass === "CZAR_AND_CARPENTER");
     } else {
-        return upgradeCard.type === "UPGRADE" && this.upgradeType === upgradeCard.upgradeType;
+        return upgradeCard.type === "UPGRADE" && this.type !== "UPGRADE" && this.upgradeType === upgradeCard.upgradeType;
     }
 };
 
@@ -30,21 +42,24 @@ Card.prototype.canUpgradeTo = function (upgradeCard) {
 
 // peasants
 var allCards = [
-    new Card("Lumberjack", 3, "WORKER", 3, 0, "WORKER", "LUMBERJACK"),
-    new Card("Gold Miner", 4, "WORKER", 3, 0, "WORKER", "GOLD_MINER"),
-    new Card("Shepherd", 5, "WORKER", 3, 0, "WORKER", "SHEPHERD"),
-    new Card("Fur Trapper", 6, "WORKER", 3, 0, "WORKER", "FUR_TRAPPER"),
-    new Card("Ship Builder", 7, "WORKER", 3, 0, "WORKER", "SHIP_BUILDER"),
-    new Card("Czar and Carpenter", 8, "WORKER", 3, 0, "WORKER", "CZAR_AND_CARPENTER"),
+    new Card("Lumberjack", 3, "WORKER", 3, 0, "WORKER", {"workerUpgradeClass": "LUMBERJACK"}),
+    new Card("Gold Miner", 4, "WORKER", 3, 0, "WORKER", {"workerUpgradeClass": "GOLD_MINER"}),
+    new Card("Shepherd", 5, "WORKER", 3, 0, "WORKER", {"workerUpgradeClass": "SHEPHERD"}),
+    new Card("Fur Trapper", 6, "WORKER", 3, 0, "WORKER", {"workerUpgradeClass": "FUR_TRAPPER"}),
+    new Card("Ship Builder", 7, "WORKER", 3, 0, "WORKER", {"workerUpgradeClass": "SHIP_BUILDER"}),
+    new Card("Czar and Carpenter", 8, "WORKER", 3, 0, "WORKER", {"workerUpgradeClass": "CZAR_AND_CARPENTER"}),
 
     new Card("Market", 5, "BUILDING", 0, 1, "BUILDING"),
-    new Card("Customs_house", 8, "BUILDING", 0, 2, "BUILDING"),
+    new Card("Customs House", 8, "BUILDING", 0, 2, "BUILDING"),
     new Card("Firehouse", 11, "BUILDING", 0, 3, "BUILDING"),
     new Card("Hospital", 14, "BUILDING", 0, 4, "BUILDING"),
     new Card("Library", 17, "BUILDING", 0, 5, "BUILDING"),
     new Card("Theatre", 20, "BUILDING", 0, 6, "BUILDING"),
     new Card("Academy", 23, "BUILDING", 0, 7, "BUILDING"),
-// missing potjomkin's village, pub, warehouse, observatory
+    // referenced by name in code, beware of changing it
+    new Card("Warehouse", 2, "BUILDING", 0, 0, "BUILDING"),
+    new Card("Potjomkin's Village", 2, "BUILDING", 0, 0, "BUILDING", {"upgradeCost": 6}),
+// missing pub, observatory
 
     new Card("Author", 4, "ARISTOCRAT", 1, 0, "ARISTOCRAT"),
     new Card("Administrator", 7, "ARISTOCRAT", 2, 0, "ARISTOCRAT"),
@@ -52,13 +67,15 @@ var allCards = [
     new Card("Secretary", 12, "ARISTOCRAT", 4, 0, "ARISTOCRAT"),
     new Card("Controller", 14, "ARISTOCRAT", 4, 1, "ARISTOCRAT"),
     new Card("Judge", 16, "ARISTOCRAT", 5, 2, "ARISTOCRAT"),
-    new Card("Mistress", 18, "ARISTOCRAT", 6, 3, "ARISTOCRAT"),
+    new Card("Mistress of Ceremonies", 18, "ARISTOCRAT", 6, 3, "ARISTOCRAT"),
 
-// missing carpenter
-// missing goldSmelter
-    new Card("Weaving Mill", 8, "UPGRADE", 6, 0, "WORKER", "SHEPHERD"),
-    new Card("Fur Trader", 10, "UPGRADE", 3, 2, "WORKER", "FUR_TRAPPER"),
-    new Card("Wharf", 12, "UPGRADE", 6, 1, "WORKER", "SHIP_BUILDER"),
+    // referenced by name in code, beware of changing it
+    new Card("Carpenter", 4, "UPGRADE", 3, 0, "WORKER", {"workerUpgradeClass": "LUMBERJACK"}),
+    // referenced by name in code, beware of changing it
+    new Card("Gold Smelter", 6, "UPGRADE", 3, 0, "WORKER", {"workerUpgradeClass": "GOLD_MINER"}),
+    new Card("Weaving Mill", 8, "UPGRADE", 6, 0, "WORKER", {"workerUpgradeClass": "SHEPHERD"}),
+    new Card("Fur Trader", 10, "UPGRADE", 3, 2, "WORKER", {"workerUpgradeClass": "FUR_TRAPPER"}),
+    new Card("Wharf", 12, "UPGRADE", 6, 1, "WORKER", {"workerUpgradeClass": "SHIP_BUILDER"}),
 
 // missing marjinski
     new Card("Bank", 13, "UPGRADE", 5, 1, "BUILDING"),
@@ -93,6 +110,35 @@ function Player (name, token) {
     this.hand = [];
     this.token = token || null;
 }
+
+Player.prototype.hasCard = function (cardName) {
+    var matchingCards = this.cards.filter(function (card) {
+        return card.name === cardName;
+    });
+    return matchingCards.length > 0;
+};
+
+/**
+ * Return true iff this player has a card which makes the given card cheaper to buy
+ * By this it means special worker cards
+ */
+Player.prototype.hasDiscountForCard = function (card) {
+    if (card.type === "ARISTOCRAT" || (card.type === "UPGRADE" && card.upgradeType === "ARISTOCRAT")) {
+        return this.hasCard("Gold Smelter");
+    } else if (card.type === "BUILDING" || (card.type === "UPGRADE" && card.upgradeType === "BUILDING")) {
+        return this.hasCard("Carpenter");
+    } else {
+        return false;
+    }
+};
+
+Player.prototype.getMaxHandSize = function () {
+    if (this.hasCard("Warehouse")) {
+        return 4;
+    } else {
+        return 3;
+    }
+};
 
 /**** unit tests ***/
 var UnitTests = {};

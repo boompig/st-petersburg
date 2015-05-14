@@ -5,7 +5,18 @@ html, body {
 
 #main-container {
     margin: 0 auto;
-    max-width: 1024px;
+    max-width: 1200px;
+}
+
+
+#deck-container {
+    width: 100%;
+    padding-bottom: 1em;
+}
+
+.deck {
+    display: inline-block;
+    width: 24%;
 }
 
 .player .name {
@@ -17,7 +28,7 @@ html, body {
 
 #board-container {
     position: fixed;
-    bottom: 60px;
+    bottom: 40px;
     display: block;
     border: 1px solid black;
     margin: 0 auto;
@@ -38,7 +49,7 @@ html, body {
     color: red;
 }
 
-.card:hover {
+.buyable-card:hover {
     color: white;
     font-weight: bold;
     cursor: pointer;
@@ -73,16 +84,6 @@ li.dropdown-menu-item:hover {
     width: 23%;
     font-size: 0.9em;
     vertical-align: top;
-}
-
-#deck-container {
-    width: 100%;
-    padding-bottom: 20px;
-}
-
-.deck {
-    display: inline-block;
-    width: 24%;
 }
 
 .worker-card {
