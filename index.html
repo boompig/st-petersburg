@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="StPeter">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="style.css" />
+        <title>St. Peter Game</title>
+    </head>
+    <body ng-controller="PeterCtrl as game">
+        <h1>St. Peter Board Game</h1>
+
+        <div id="deck-container">
+            <div>Decks:</div>
+            <div class="deck" ng-class="{ currentPhase: game.isCurrentPhase(phase) }"
+                ng-repeat="phase in game.phases">
+                <span>{{ phase.toLowerCase() }}</span>
+                <span>{{ game.decks[phase].length }}</span>
+            </div>
+        </div>
+
+        <div id="player-container">
+            <div class="player" ng-repeat="player in game.players">
+                <div class="name" ng-class="{ playerTurn: game.isPlayerTurn(player) }">{{ player.name }}</div>
+                <div>Points: {{ player.points }}</div>
+                <div>Money: {{ player.money }}</div>
+                <div>Cards: {{ player.cards.length }}</div>
+                <div>Token: {{ player.token.toLowerCase() }}</div>
+            </div>
+        </div>
+
+        <div id="board-container" contextmenu="cardMenu">
+            <menu type="context" id="cardMenu">
+                <menuitem label="Buy"></menuitem>
+                <menuitem label="Take Into Hand"></menuitem>
+            </menu>
+
+            <div id="upper-board" class="board">
+                <div>Upper Board</div>
+                <div class="card" ng-repeat="card in game.upperBoard"
+                    ng-click="game.buyCard(card, game.upperBoard)">
+                    <span>{{ card.name }}</span>
+                    <span>({{ card.cost }})</span>
+                </div>
+            </div>
+            <div id="lower-board" class="board">
+                <div>Lower Board</div>
+                <div class="card" ng-repeat="card in game.lowerBoard"
+                    ng-click="game.buyCard(card, game.lowerBoard)">
+                    {{ card.name }}
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary"
+            ng-click="game.passTurn()">Next Turn (Pass)</button>
+
+        <script src="bower_components/underscore/underscore-min.js"></script>
+        <script src="bower_components/angular/angular.js"></script>
+        <script src="peter.js"></script>
+        <script src="display.js"></script>
+    </body>
+</html>
