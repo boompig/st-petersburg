@@ -88,7 +88,6 @@ var allCards = [
     new Card("Hermitage", 18, "UPGRADE", 3, 4, "BUILDING"),
     new Card("Winter Palace", 19, "UPGRADE", 2, 5, "BUILDING"),
 
-// aristocrats
     new Card("Pope", 6, "UPGRADE", 1, 1, "ARISTOCRAT"),
     new Card("Weapon_Master", 8, "UPGRADE", 4, 0, "ARISTOCRAT"),
     new Card("Chamber Maid", 8, "UPGRADE", 0, 2, "ARISTOCRAT"),

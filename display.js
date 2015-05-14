@@ -168,7 +168,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         console.log("Trying to upgrade " + baseCard.name + " into " + upgradeCard.name + " for " + cost + " coins");
 
         if (player.money < cost) {
-            console.log("Player cannot afford");
+            console.log("Player " + player.name + " cannot afford!");
             return false;
         }
 
@@ -180,12 +180,32 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         // replace baseCard with upgradeCard
         idx = player.cards.indexOf(baseCard);
         player.cards.splice(idx, 1, upgradeCard);
+
+        this.sortPlayerCards(player);
         // reset consecutive passes
         this.consecutivePasses = 0;
 
         // successful buy means next turn
         this.nextTurn();
         return true;
+    };
+
+    /**
+     * Sort the player's cards according to type, after purchase or upgrade
+     * Actually use upgradeType, it's more correct
+     * 
+     * This is not a stable sort.
+     */
+    this.sortPlayerCards = function (player) {
+        player.cards.sort(function (a, b) {
+            if (b.upgradeType > a.upgradeType) {
+                return 1;
+            } else if (b.upgradeType === a.upgradeType) {
+                return 0;
+            } else {
+                return -1;
+            }
+        })
     };
 
     /**
@@ -320,10 +340,11 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
      * Assign scores to the players
      */
     this.evalGameEnd = function () {
+        console.log("**** Doing game-end calculations... ****");
         for (var p = 0; p < this.players.length; p++) {
             var player = this.players[p];
             var aristocrats = player.cards.filter(function (card) {
-                return card.type === "ARISTOCRAT";
+                return card.type === "ARISTOCRAT" || (card.type === "UPGRADE" && card.upgradeType === "ARISTOCRAT");
             });
             // sort by name
             aristocrats.sort(function(a, b) {
@@ -350,7 +371,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
 
             // hand penalties
             var handPenalty = player.hand.length * 5;
-            console.log("Player " + player.name + " was penalized " + handPenalty + " points from " + player.hand + " cards in hand");
+            console.log("Player " + player.name + " was penalized " + handPenalty + " points from " + player.hand.length + " cards in hand");
         }
     };
 
@@ -386,7 +407,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                 }
             }
 
-            console.log("game over");
+            console.log("Game Over! The winner is " + winningPlayer.name + " with " + winningPoints + " points");
             // TODO display this in a nicer way
             alert("Game Over! The winner is " + winningPlayer.name + " with " + winningPoints + " points");
         } else {
@@ -441,7 +462,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             return null;
         } else {
             if (cost > player.money) {
-                console.log("Cannot afford " + card.name + " with calculated cost " + cost);
+                console.log("Player " + player.name + " cannot afford " + card.name + " with calculated cost " + cost);
                 return false;
             }
         }
@@ -458,6 +479,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             collection.splice(i, 1);
         }
 
+        this.sortPlayerCards(player);
         // reset consecutive passes
         this.consecutivePasses = 0;
 
