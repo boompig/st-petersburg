@@ -3,6 +3,11 @@ html, body {
     font-size: 1em;
 }
 
+#main-container {
+    margin: 0 auto;
+    max-width: 1024px;
+}
+
 .player .name {
     font-size: 1.3em;
     font-weight: bold;
@@ -11,6 +16,8 @@ html, body {
 }
 
 #board-container {
+    position: fixed;
+    bottom: 60px;
     display: block;
     border: 1px solid black;
     margin: 0 auto;
@@ -20,6 +27,7 @@ html, body {
     display: block;
     border: 1px dashed black;
     margin: 0 auto;
+    min-width: 800px;
 }
 
 .playerTurn {
@@ -31,6 +39,69 @@ html, body {
 }
 
 .card:hover {
-    color: orange;
+    color: white;
+    font-weight: bold;
     cursor: pointer;
+}
+
+.position-fixed {
+    position: fixed;
+}
+
+.dropdown-menu-item {
+    cursor: pointer;
+    font-weight: normal;
+}
+
+li.dropdown-menu-item {
+    background-color: white;
+    color: black;
+}
+
+li.dropdown-menu-item:hover {
+    background-color: #ccc;
+    color: white;
+}
+
+#player-container {
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+.player {
+    display: inline-block;
+    width: 23%;
+    font-size: 0.9em;
+    vertical-align: top;
+}
+
+#deck-container {
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+.deck {
+    display: inline-block;
+    width: 24%;
+}
+
+.worker-card {
+    background-color: #8EC787;
+}
+
+.building-card {
+    background-color: #7FBEF5;
+}
+
+.aristocrat-card {
+    background-color: #FCC96A;
+}
+
+.upgrade-card {
+    background-color: #C786F0;
+}
+
+.player .player-subtitle {
+    font-weight: bold;
+    font-size: 1.05em;
 }

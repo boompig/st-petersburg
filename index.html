@@ -7,55 +7,96 @@
         <title>St. Peter Game</title>
     </head>
     <body ng-controller="PeterCtrl as game">
-        <h1>St. Peter Board Game</h1>
+        <div id="main-container">
+            <h1>St. Peter Board Game</h1>
 
-        <div id="deck-container">
-            <div>Decks:</div>
-            <div class="deck" ng-class="{ currentPhase: game.isCurrentPhase(phase) }"
-                ng-repeat="phase in game.phases">
-                <span>{{ phase.toLowerCase() }}</span>
-                <span>{{ game.decks[phase].length }}</span>
-            </div>
-        </div>
-
-        <div id="player-container">
-            <div class="player" ng-repeat="player in game.players">
-                <div class="name" ng-class="{ playerTurn: game.isPlayerTurn(player) }">{{ player.name }}</div>
-                <div>Points: {{ player.points }}</div>
-                <div>Money: {{ player.money }}</div>
-                <div>Cards: {{ player.cards.length }}</div>
-                <div>Token: {{ player.token.toLowerCase() }}</div>
-            </div>
-        </div>
-
-        <div id="board-container" contextmenu="cardMenu">
-            <menu type="context" id="cardMenu">
-                <menuitem label="Buy"></menuitem>
-                <menuitem label="Take Into Hand"></menuitem>
-            </menu>
-
-            <div id="upper-board" class="board">
-                <div>Upper Board</div>
-                <div class="card" ng-repeat="card in game.upperBoard"
-                    ng-click="game.buyCard(card, game.upperBoard)">
-                    <span>{{ card.name }}</span>
-                    <span>({{ card.cost }})</span>
+            <div id="deck-container">
+                <div>Decks:</div>
+                <div class="deck" ng-class="{ currentPhase: game.isCurrentPhase(phase) }"
+                    ng-repeat="phase in game.phases">
+                    <span>{{ phase.toLowerCase() }}</span>
+                    <span>{{ game.decks[phase].length }}</span>
                 </div>
             </div>
-            <div id="lower-board" class="board">
-                <div>Lower Board</div>
-                <div class="card" ng-repeat="card in game.lowerBoard"
-                    ng-click="game.buyCard(card, game.lowerBoard)">
-                    {{ card.name }}
+
+            <div id="player-container">
+                <div class="player" ng-repeat="player in game.players">
+                    <div class="name" ng-class="{ playerTurn: game.isPlayerTurn(player) }">{{ player.name }}</div>
+                    <div class="player-stats">
+                        <div>Points: {{ player.points }}</div>
+                        <div>Money: {{ player.money }}</div>
+                        <!--<div>Number of Cards: {{ player.cards.length }}</div>-->
+                        <!--<div>Hand Size: {{ player.hand.length }}</div>-->
+                        <div>Token: {{ player.token.toLowerCase() }}</div>
+                    </div>
+                    <div class="player-cards">
+                        <div class="player-subtitle">Played Cards</div>
+                        <div class="card" ng-repeat="card in player.cards">
+                            <div spb-card></div>
+                        </div>
+                        <div ng-if="player.cards.length === 0">No cards</div>
+                    </div>
+                    <div class="player-hand">
+                        <div class="player-subtitle">Cards In Hand</div>
+                        <div class="card" ng-repeat="card in player.hand"
+                            ng-click="game.playCardFromHand(card, player)">
+                            <div spb-card></div>
+                        </div>
+                        <div ng-if="player.hand.length === 0">Empty hand</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <button type="button" class="btn btn-primary"
-            ng-click="game.passTurn()">Next Turn (Pass)</button>
+            <div id="board-container">
+                <div id="upper-board" class="board">
+                    <h4>Upper Board</h4>
+                    <div ng-if="game.upperBoard.length === 0">Empty</div>
+                    <div class="card" ng-repeat="card in game.upperBoard"
+                        ng-click="game.buyCard(card, game.upperBoard)"
+                        context-menu class="panel panel-default"
+                        data-target="menu-{{ $index }}"
+                        ng-class="{ 'highlight': highlight, 'expanded': expanded }">
+                        <div spb-card></div>
+
+                        <div class="dropdown position-fixed" id="menu-{{ $index }}">
+                            <ul class="dropdown-menu" role="menu">
+                                <li class="dropdown-menu-item"
+                                    ng-click="game.buyCard(card, game.upperBoard)">Buy</li>
+                                <li class="dropdown-menu-item"
+                                    ng-click="game.putCardInHand(card, game.upperBoard)">Put In Hand</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="lower-board" class="board">
+                    <h4>Lower Board</h4>
+                    <div ng-if="game.lowerBoard.length === 0">Empty</div>
+                    <div class="card" ng-repeat="card in game.lowerBoard"
+                        ng-click="game.buyCard(card, game.lowerBoard)"
+                        context-menu class="panel panel-default"
+                        data-target="menu-{{ $index }}"
+                        ng-class="{ 'highlight': highlight, 'expanded': expanded }">
+                        <div spb-card></div>
+
+                        <div class="dropdown position-fixed" id="menu-{{ $index }}">
+                            <ul class="dropdown-menu" role="menu">
+                                <li class="dropdown-menu-item"
+                                    ng-click="game.buyCard(card, game.lowerBoard)">Buy</li>
+                                <li class="dropdown-menu-item"
+                                    ng-click="game.putCardInHand(card, game.lowerBoard)">Put In Hand</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary"
+                ng-click="game.passTurn()">Next Turn (Pass)</button>
+        </div>
 
         <script src="bower_components/underscore/underscore-min.js"></script>
         <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/ng-context-menu/dist/ng-context-menu.js"></script>
         <script src="peter.js"></script>
         <script src="display.js"></script>
     </body>

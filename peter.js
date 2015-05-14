@@ -30,58 +30,58 @@ Card.prototype.canUpgradeTo = function (upgradeCard) {
 
 // peasants
 var allCards = [
-    new Card("LUMBERJACK", 3, "WORKER", 3, 0, "WORKER", "LUMBERJACK"),
-    new Card("GOLD_MINER", 4, "WORKER", 3, 0, "WORKER", "GOLD_MINER"),
-    new Card("SHEPHERD", 5, "WORKER", 3, 0, "WORKER", "SHEPHERD"),
-    new Card("FUR_TRAPPER", 6, "WORKER", 3, 0, "WORKER", "FUR_TRAPPER"),
-    new Card("SHIP_BUILDER", 7, "WORKER", 3, 0, "WORKER", "SHIP_BUILDER"),
-    new Card("CZAR_AND_CARPENTER", 8, "WORKER", 3, 0, "WORKER", "CZAR_AND_CARPENTER"),
+    new Card("Lumberjack", 3, "WORKER", 3, 0, "WORKER", "LUMBERJACK"),
+    new Card("Gold Miner", 4, "WORKER", 3, 0, "WORKER", "GOLD_MINER"),
+    new Card("Shepherd", 5, "WORKER", 3, 0, "WORKER", "SHEPHERD"),
+    new Card("Fur Trapper", 6, "WORKER", 3, 0, "WORKER", "FUR_TRAPPER"),
+    new Card("Ship Builder", 7, "WORKER", 3, 0, "WORKER", "SHIP_BUILDER"),
+    new Card("Czar and Carpenter", 8, "WORKER", 3, 0, "WORKER", "CZAR_AND_CARPENTER"),
 
-    new Card("MARKET", 5, "BUILDING", 0, 1, "BUILDING"),
-    new Card("CUSTOMS_HOUSE", 8, "BUILDING", 0, 2, "BUILDING"),
-    new Card("FIREHOUSE", 11, "BUILDING", 0, 3, "BUILDING"),
-    new Card("HOSPITAL", 14, "BUILDING", 0, 4, "BUILDING"),
-    new Card("LIBRARY", 17, "BUILDING", 0, 5, "BUILDING"),
-    new Card("THEATRE", 20, "BUILDING", 0, 6, "BUILDING"),
-    new Card("ACADEMY", 23, "BUILDING", 0, 7, "BUILDING"),
+    new Card("Market", 5, "BUILDING", 0, 1, "BUILDING"),
+    new Card("Customs_house", 8, "BUILDING", 0, 2, "BUILDING"),
+    new Card("Firehouse", 11, "BUILDING", 0, 3, "BUILDING"),
+    new Card("Hospital", 14, "BUILDING", 0, 4, "BUILDING"),
+    new Card("Library", 17, "BUILDING", 0, 5, "BUILDING"),
+    new Card("Theatre", 20, "BUILDING", 0, 6, "BUILDING"),
+    new Card("Academy", 23, "BUILDING", 0, 7, "BUILDING"),
 // missing potjomkin's village, pub, warehouse, observatory
 
-    new Card("AUTHOR", 4, "ARISTOCRAT", 1, 0, "ARISTOCRAT"),
-    new Card("ADMINISTRATOR", 7, "ARISTOCRAT", 2, 0, "ARISTOCRAT"),
-    new Card("WAREHOUSE_MANAGER", 10, "ARISTOCRAT", 3, 0, "ARISTOCRAT"),
-    new Card("SECRETARY", 12, "ARISTOCRAT", 4, 0, "ARISTOCRAT"),
-    new Card("CONTROLLER", 14, "ARISTOCRAT", 4, 1, "ARISTOCRAT"),
-    new Card("JUDGE", 16, "ARISTOCRAT", 5, 2, "ARISTOCRAT"),
-    new Card("MISTRESS", 18, "ARISTOCRAT", 6, 3, "ARISTOCRAT"),
+    new Card("Author", 4, "ARISTOCRAT", 1, 0, "ARISTOCRAT"),
+    new Card("Administrator", 7, "ARISTOCRAT", 2, 0, "ARISTOCRAT"),
+    new Card("Warehouse Manager", 10, "ARISTOCRAT", 3, 0, "ARISTOCRAT"),
+    new Card("Secretary", 12, "ARISTOCRAT", 4, 0, "ARISTOCRAT"),
+    new Card("Controller", 14, "ARISTOCRAT", 4, 1, "ARISTOCRAT"),
+    new Card("Judge", 16, "ARISTOCRAT", 5, 2, "ARISTOCRAT"),
+    new Card("Mistress", 18, "ARISTOCRAT", 6, 3, "ARISTOCRAT"),
 
 // missing carpenter
 // missing goldSmelter
-    new Card("WEAVING_MILL", 8, "UPGRADE", 6, 0, "WORKER", "SHEPHERD"),
-    new Card("FUR_TRADER", 10, "UPGRADE", 3, 2, "WORKER", "FUR_TRAPPER"),
-    new Card("WHARF", 12, "UPGRADE", 6, 1, "WORKER", "SHIP_BUILDER"),
+    new Card("Weaving Mill", 8, "UPGRADE", 6, 0, "WORKER", "SHEPHERD"),
+    new Card("Fur Trader", 10, "UPGRADE", 3, 2, "WORKER", "FUR_TRAPPER"),
+    new Card("Wharf", 12, "UPGRADE", 6, 1, "WORKER", "SHIP_BUILDER"),
 
 // missing marjinski
-    new Card("BANK", 13, "UPGRADE", 5, 1, "BUILDING"),
-    new Card("PETERHOF", 14, "UPGRADE", 4, 2, "BUILDING"),
-    new Card("ST_ISAACS_CATHEDRAL", 15, "UPGRADE", 3, 3, "BUILDING"),
-    new Card("CHURCH_OF_THE_RESURRECTION", 16, "UPGRADE", 2, 4, "BUILDING"),
-    new Card("HARBOR", 16, "UPGRADE", 5, 2, "BUILDING"),
-    new Card("CATHERINES_PALACE", 17, "UPGRADE", 1, 5, "BUILDING"),
-    new Card("SMOLNY_CATHEDRAL", 17, "UPGRADE", 4, 3, "BUILDING"),
-    new Card("HERMITAGE", 18, "UPGRADE", 3, 4, "BUILDING"),
-    new Card("WINTER_PALACE", 19, "UPGRADE", 2, 5, "BUILDING"),
+    new Card("Bank", 13, "UPGRADE", 5, 1, "BUILDING"),
+    new Card("Peterhof", 14, "UPGRADE", 4, 2, "BUILDING"),
+    new Card("St. Isaac's Cathedral", 15, "UPGRADE", 3, 3, "BUILDING"),
+    new Card("Church of the Resurrection", 16, "UPGRADE", 2, 4, "BUILDING"),
+    new Card("Harbor", 16, "UPGRADE", 5, 2, "BUILDING"),
+    new Card("Catherine's Palace", 17, "UPGRADE", 1, 5, "BUILDING"),
+    new Card("Smolny Cathedral", 17, "UPGRADE", 4, 3, "BUILDING"),
+    new Card("Hermitage", 18, "UPGRADE", 3, 4, "BUILDING"),
+    new Card("Winter Palace", 19, "UPGRADE", 2, 5, "BUILDING"),
 
 // aristocrats
-    new Card("POPE", 6, "UPGRADE", 1, 1, "ARISTOCRAT"),
-    new Card("WEAPON_MASTER", 8, "UPGRADE", 4, 0, "ARISTOCRAT"),
-    new Card("CHAMBER_MAID", 8, "UPGRADE", 0, 2, "ARISTOCRAT"),
-    new Card("BUILDER", 10, "UPGRADE", 5, 0, "ARISTOCRAT"),
-    new Card("SENATOR", 12, "UPGRADE", 2, 2, "ARISTOCRAT"),
-    new Card("PATRIARCH", 16, "UPGRADE", 0, 4, "ARISTOCRAT"),
+    new Card("Pope", 6, "UPGRADE", 1, 1, "ARISTOCRAT"),
+    new Card("Weapon_Master", 8, "UPGRADE", 4, 0, "ARISTOCRAT"),
+    new Card("Chamber Maid", 8, "UPGRADE", 0, 2, "ARISTOCRAT"),
+    new Card("Builder", 10, "UPGRADE", 5, 0, "ARISTOCRAT"),
+    new Card("Senator", 12, "UPGRADE", 2, 2, "ARISTOCRAT"),
+    new Card("Patriarch", 16, "UPGRADE", 0, 4, "ARISTOCRAT"),
     // missing tax man
-    new Card("ADMIRAL", 18, "UPGRADE", 3, 3, "ARISTOCRAT"),
-    new Card("FOREIGN_MINISTER", 20, "UPGRADE", 2, 4, "ARISTOCRAT"),
-    new Card("CZAR", 24, "UPGRADE", 0, 6, "ARISTOCRAT"),
+    new Card("Admiral", 18, "UPGRADE", 3, 3, "ARISTOCRAT"),
+    new Card("Foreign Minister", 20, "UPGRADE", 2, 4, "ARISTOCRAT"),
+    new Card("Czar", 24, "UPGRADE", 0, 6, "ARISTOCRAT"),
 ];
 
 function Player (name, token) {
@@ -90,6 +90,7 @@ function Player (name, token) {
     // start with 25 money
     this.money = 25;
     this.cards = [];
+    this.hand = [];
     this.token = token || null;
 }
 

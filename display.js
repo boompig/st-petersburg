@@ -1,5 +1,6 @@
 // create Angular app
-var StPeter = angular.module("StPeter", []);
+var StPeter = angular.module("StPeter", ["ng-context-menu"]);
+
 // create Angular controller
 StPeter.controller("PeterCtrl", ["$scope", function ($scope) {
     "use strict";
@@ -59,7 +60,7 @@ StPeter.controller("PeterCtrl", ["$scope", function ($scope) {
      * Shuffle the deck.
      */
     this.createDeckOfType = function (type) {
-        var numCards, card;
+        var numCards, card, cardName;
         var cardMap  = this.cardMap[type];
         this.decks[type] = [];
 
@@ -67,7 +68,9 @@ StPeter.controller("PeterCtrl", ["$scope", function ($scope) {
             return card.type === type;
         });
         for (var c = 0; c < cards.length; c++) {
-            numCards = cardMap[cards[c].name] || cardMap["DEFAULT"] || 0;
+            cardName = cards[c].name.replace("'", "").replace(/ /g, "_").toUpperCase();
+            numCards = cardMap[cardName] || cardMap["DEFAULT"] || 0;
+            if (numCards === 0) console.log("missed " + cardName);
             for (var i = 0; i < numCards; i++) {
                 card = _.clone(cards[c]);
                 this.decks[type].push(card);
@@ -203,19 +206,41 @@ StPeter.controller("PeterCtrl", ["$scope", function ($scope) {
         this.preparePhase();
     };
 
+    this.putCardInHand = function (card, container) {
+        var player = this.players[this.turn];
+
+        // TODO check if warehouse
+        if (player.hand.length >= 3) {
+            return false;
+        }
+
+        // remove from container
+        var idx = container.indexOf(card);
+        container.splice(idx, 1);
+        // put in hand
+        player.hand.push(card);
+
+        // reset consecutive passes and push to next turn
+        this.consecutivePasses = 0;
+        this.nextTurn();
+    };
+
     /**
      * Current player wants to buy selected card
      */
     this.buyCard = function (card, container) {
         // for now only use upper or lower to determine card cost
+        // also number of cards
         var cost = card.cost;
         var player = this.players[this.turn];
         if (container === this.lowerBoard && cost > 1) {
             cost--;
         }
-        if (cost > player.money) {
-            return false;
-        }
+
+        var simCards = player.cards.filter(function (otherCard) {
+            return otherCard.name === card.name;
+        });
+        cost = Math.max(1, cost - simCards.length);
 
         if (card.type === "UPGRADE") {
             var cardsToUpgrade = player.cards.filter(function (baseCard) {
@@ -225,13 +250,10 @@ StPeter.controller("PeterCtrl", ["$scope", function ($scope) {
                 console.log("no cards to upgrade to this card");
                 return false;
             }
-            // pick the card to upgrade from
-            // for now, do this via popup
-            var idx = null;
-            while (idx === null) {
-                idx = prompt("Enter the number to upgrade, from these cards: " + 
-                        cardsToUpgrade.join(", "));
-                console.log(player.cards[idx]);
+            // TODO
+        } else {
+            if (cost > player.money) {
+                console.log("Cannot afford " + card.name + " with calculated cost " + cost);
                 return false;
             }
         }
@@ -243,12 +265,26 @@ StPeter.controller("PeterCtrl", ["$scope", function ($scope) {
         player.cards.push(card);
 
         // remove card from container
-        var i = container.indexOf(card);
-        container.splice(i, 1);
+        if (container) {
+            var i = container.indexOf(card);
+            container.splice(i, 1);
+        }
+
+        // reset consecutive passes
+        this.consecutivePasses = 0;
 
         // successful buy means next turn
         this.nextTurn();
         return true;
+    };
+
+    this.playCardFromHand = function (card, player) {
+        if (player !== this.players[this.turn]) {
+            console.log("Can only play cards on your turn");
+            return false;
+        }
+
+        this.buyCard(card, player.hand);
     };
 
     /**
@@ -260,6 +296,11 @@ StPeter.controller("PeterCtrl", ["$scope", function ($scope) {
             card = this.decks[this.phase].pop();
             this.upperBoard.push(card);
         }
+
+        // sort these cards based on cost, with the first being the cheapest
+        this.upperBoard.sort(function (a, b) {
+            return a.cost - b.cost;
+        });
     };
 
     this.isCurrentPhase = function (phase) {
@@ -267,4 +308,8 @@ StPeter.controller("PeterCtrl", ["$scope", function ($scope) {
     };
 
     this.init();
-}]);
+}]).directive("spbCard", function () {
+    return {
+        templateUrl: "spb-card.html"
+    };
+});
