@@ -23,11 +23,15 @@ h1.title, h2.title {
     padding-right: 0.5%;
 }
 
+#player-container {
+    width: 100%;
+    padding-bottom: 0.9em;
+}
+
 .player .name {
     font-size: 1.3em;
     font-weight: bold;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 0.25em;
 }
 
 #board-container {
@@ -36,6 +40,10 @@ h1.title, h2.title {
     display: block;
     border: 1px solid black;
     margin: 0 auto;
+}
+
+.card {
+    font-size: 0.9em;
 }
 
 #upper-board, #lower-board {
@@ -53,7 +61,7 @@ h1.title, h2.title {
     color: red;
 }
 
-.buyable-card:hover {
+.buyable-card:hover, .playable-card:hover {
     color: white;
     font-weight: bold;
     cursor: pointer;
@@ -76,11 +84,6 @@ li.dropdown-menu-item {
 li.dropdown-menu-item:hover {
     background-color: #ccc;
     color: white;
-}
-
-#player-container {
-    width: 100%;
-    padding-bottom: 20px;
 }
 
 .player {

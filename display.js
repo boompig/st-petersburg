@@ -30,8 +30,10 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         "LIBRARY": 3,
         "THEATRE": 2,
         "ACADEMY": 1,
+        "PUB": 2,
         "WAREHOUSE": 1,
-        "POTJOMKINS_VILLAGE": 1
+        "POTJOMKINS_VILLAGE": 1,
+        "OBSERVATORY": 2
     };
     this.cardMap.ARISTOCRAT = {
         "AUTHOR": 6,
@@ -43,6 +45,9 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         "MISTRESS_OF_CEREMONIES": 2,
     };
     this.cardMap.UPGRADE = {
+        "WEAVING_MILL": 2,
+        "FUR_TRADER": 2,
+        "WHARF": 2,
         "DEFAULT": 1
     };
     this.aristocratScoringChart = {
@@ -69,13 +74,16 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     this.lastRound = false;
     this.consecutivePasses = 0;
 
+    // TODO query this somehow
+    this.humanPlayerName = "Daniel";
+
     /****** UI FUNCTIONS ********/
 
     /**
      * Open the upgrade modal, and pick the card which to upgrade into the selected card
      */
     $scope.openUpgradeModal = function (card, collection, game) {
-        var player = game.players[game.turn];
+        var player = game.getCurrentPlayer();
         var upgradableCards = game.getUpgradableCards(card, player);
 
         // compute how much it would cost to upgrade each card
@@ -109,6 +117,85 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         });
     };
 
+    /**
+     * Open the observatory modal, and pick the deck that you want to peek at
+     */
+    $scope.openObservatoryModal = function (game, card) {
+        var validPhases = game.phases.filter(function (phase) {
+            return game.decks[phase].length > 0;
+        });
+
+        var modalInstance = $modal.open({
+            templateUrl: "observatoryModal.html",
+            controller: "ObservatoryModalInstanceCtrl",
+            resolve: {
+                phases: function () {
+                    return validPhases;
+                }
+            }
+        });
+        modalInstance.result.then(function (selectedDeck) {
+            console.log("Peeking at deck of type " + selectedDeck);
+            if (card) {
+                // set the card to used here
+                card.played = true;
+            }
+            $scope.openPeekingModal(game, selectedDeck);
+        }, function () {
+            console.log("Did not select a deck, so quitting");
+        });
+    };
+
+    /**
+     * The second part of the observatory flow.
+     * Assume that the chosen deck is non-empty.
+     */
+    $scope.openPeekingModal = function (game, deckType) {
+        var player = game.getCurrentPlayer();
+        var peekDeck = game.decks[deckType];
+        // card removed here, no need to remove later
+        var peekCard = peekDeck.pop();
+        var cardCost = game.getCardCost(peekCard, null);
+
+        var options = ["Buy", "Put in hand", "Discard"];
+
+        // make sure player can afford card, if the card is not an upgrade
+        if (peekCard.type !== "UPGRADE" && cardCost > player.money) {
+            options.splice(options.indexOf("Buy"), 1);
+        }
+        // make sure player has space for the card in the hand
+        if (player.getMaxHandSize() === player.hand.length) {
+            options.splice(options.indexOf("Put in hand"), 1);
+        }
+
+        var modalInstance = $modal.open({
+            templateUrl: "peekingModal.html",
+            controller: "PeekingModalInstanceCtrl",
+            resolve: {
+                peekCard: function () {
+                    return peekCard;
+                },
+                cardCost: function () {
+                    return cardCost;
+                },
+                options: function () {
+                    return options;
+                }
+            }
+        });
+        modalInstance.result.then(function (selectedOption) {
+            if (selectedOption === "Buy") {
+                game.buyCard(peekCard, null);
+            } else if (selectedOption === "Put in hand") {
+                game.putCardInHand(peekCard, null);
+            } else {
+                // discard, do nothing
+            }
+        }, function () {
+            console.log("Did not select an option, so discarding the card");
+        });
+    };
+
     /******* GAME FUNCTIONS ********/
 
     this.getUpgradeCost = function (baseCard, upgradeCard, collection) {
@@ -132,21 +219,25 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
      * @return {Number} Final cost of the card
      */
     this.getCardCost = function (card, collection) {
-        var player = this.players[this.turn];
+        var player = this.getCurrentPlayer();
         var cost = card.cost;
+        // console.log("Calculating cost for card " + card.name);
+        // console.log("Base cost is " + cost);
         if (collection === this.lowerBoard) {
+            // console.log("Reduce cost by 1 as card is from lower board");
             cost--;
         }
         var similarCards = player.cards.filter(function (otherCard) {
             return otherCard.name === card.name;
         });
+        // console.log("Reduce cost by " + similarCards.length + " as player has that many instances of the card already");
         cost -= similarCards.length;
 
         if (player.hasDiscountForCard(card)) {
             cost--;
+            // console.log("Reduce cost by 1, as player has discount card relevant to this card");
         }
 
-        // TODO compute special cards here
         return Math.max(cost, 1);
     };
 
@@ -162,8 +253,9 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         if (! baseCard.canUpgradeTo(upgradeCard)) {
             return false;
         }
-        var player = this.players[this.turn];
+        var player = this.getCurrentPlayer();
         var cost = this.getUpgradeCost(baseCard, upgradeCard, collection);
+        var idx;
 
         console.log("Trying to upgrade " + baseCard.name + " into " + upgradeCard.name + " for " + cost + " coins");
 
@@ -174,9 +266,16 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
 
         // pay for the card
         player.money -= cost;
+        if (player.money < 0) {
+            console.error("ERROR: Player money for " + player.name + " has gone negative after upgrading " + baseCard.name + " to " + upgradeCard.name + " for " + cost + "coins");
+            alert("ERROR");
+        }
+
         // remove card from collection
-        var idx = collection.indexOf(upgradeCard);
-        collection.splice(idx, 1);
+        if (collection) {
+            idx = collection.indexOf(upgradeCard);
+            collection.splice(idx, 1);
+        }
         // replace baseCard with upgradeCard
         idx = player.cards.indexOf(baseCard);
         player.cards.splice(idx, 1, upgradeCard);
@@ -205,7 +304,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             } else {
                 return -1;
             }
-        })
+        });
     };
 
     /**
@@ -243,7 +342,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             var token = tokens[idx];
             tokens.splice(idx, 1);
             var name = this.playerNames.pop();
-            this.players.push(new Player(name, token));
+            this.players.push(new Player(name, token, name === this.humanPlayerName));
         }
 
         // create each deck
@@ -316,6 +415,20 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                     card = relevantCards[c];
                     player.money += card.coinYield;
                     player.points += card.pointYield;
+
+                    if (card.bonusYieldClass !== null) {
+                        var bonusCards = player.cards.filter(function (bonusCard) {
+                            return bonusCard.type === card.bonusYieldClass ||
+                                (bonusCard.type === "UPGRADE" && bonusCard.upgradeType === card.bonusYieldClass);
+                        });
+                        console.log("Got " + bonusCards.length + " bonus money from card " + card.name);
+                        player.money += bonusCards.length;
+                    }
+
+                    if (card.isPlayable) {
+                        // reset whether card has been played this phase
+                        card.played = false;
+                    }
                 }
             }
         }
@@ -343,6 +456,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         console.log("**** Doing game-end calculations... ****");
         for (var p = 0; p < this.players.length; p++) {
             var player = this.players[p];
+            console.log("Player " + player.name + " ended the game with " + player.points + "points");
             var aristocrats = player.cards.filter(function (card) {
                 return card.type === "ARISTOCRAT" || (card.type === "UPGRADE" && card.upgradeType === "ARISTOCRAT");
             });
@@ -372,6 +486,9 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             // hand penalties
             var handPenalty = player.hand.length * 5;
             console.log("Player " + player.name + " was penalized " + handPenalty + " points from " + player.hand.length + " cards in hand");
+            player.points -= handPenalty;
+
+            console.log("Final score for player " + player.name + " is " + player.points);
         }
     };
 
@@ -424,16 +541,17 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     };
 
     this.putCardInHand = function (card, collection) {
-        var player = this.players[this.turn];
+        var player = this.getCurrentPlayer();
 
-        // TODO check if warehouse
         if (player.hand.length === player.getMaxHandSize()) {
             return false;
         }
 
         // remove from collection
-        var idx = collection.indexOf(card);
-        collection.splice(idx, 1);
+        if (collection) {
+            var idx = collection.indexOf(card);
+            collection.splice(idx, 1);
+        }
         // put in hand
         player.hand.push(card);
 
@@ -443,10 +561,77 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     };
 
     /**
+     * Play the given card (i.e. use its special ability)
+     * 
+     * @param  {[type]} card       [description]
+     * @param  {[type]} player     [description]
+     * @param  {[type]} collection [description]
+     * @return {[type]}            [description]
+     */
+    this.playCard = function (card, player, collection) {
+        var currentPlayer = this.players[this.turn];
+        if (currentPlayer !== player || ! card.isPlayable) {
+            return false;
+        }
+
+        if (card.name === "Observatory") {
+            // prereq # 1 - collection must be player.cards
+            // prereq # 2 - card must not have been played this phase
+            // prereq # 3 - it must be the BUILDING phase
+            if (collection !== player.cards || card.played || this.phase !== "BUILDING") {
+                return false;
+            }
+
+            // all conditions are fulfilled
+            if (player.isHuman) {
+                $scope.openObservatoryModal(this, card);
+            } else {
+                var pile = AI.pickObservationDeck(player, this);
+                if (pile && this.decks[pile] && this.decks[pile].length > 0) {
+                    var peekCard = this.decks[pile].pop();
+                    var result = AI.pickObservationAction(player, this, peekCard);
+
+                    card.played = true;
+
+                    if (result === "Buy") {
+                        this.buyCard(peekCard, null);
+                    } else if (result === "Put in hand") {
+                        this.putCardInHand(peekCard, null);
+                    } else {
+                        // do nothing, card garbage collected
+                    }
+                }
+            }
+        } else {
+            console.error("Unknown card being played: " + card.name);
+        }
+    };
+
+    /**
+     * Return true iff the player can afford the given card
+     * For upgrade cards, return true iff player has at least 1 card which can be upgraded
+     */
+    this.playerCanAffordCard = function (card, player, collection) {
+        var cost = this.getCardCost(card, collection);
+        if (card.type === "UPGRADE") {
+            var cardsToUpgrade = player.cards.filter(function (baseCard) {
+                return baseCard.canUpgradeTo(card);
+            });
+            return cardsToUpgrade.length > 0;
+        } else {
+            return cost <= player.money;
+        }
+    }
+
+    this.getCurrentPlayer = function () {
+        return this.players[this.turn];
+    };
+
+    /**
      * Current player wants to buy selected card
      */
     this.buyCard = function (card, collection) {
-        var player = this.players[this.turn];
+        var player = this.getCurrentPlayer();
         var cost = this.getCardCost(card, collection);
 
         if (card.type === "UPGRADE") {
@@ -458,8 +643,18 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                 return false;
             }
 
-            $scope.openUpgradeModal(card, collection, this);
-            return null;
+            if (player.isHuman) {
+                $scope.openUpgradeModal(card, collection, this);
+                return;
+            } else {
+                var baseCard = AI.pickUpgradeCard(player, this, card, collection);
+                if (baseCard === null) {
+                    console.log("Aborting upgrade");
+                    return false;
+                } else {
+                    return this.upgradeCard(baseCard, card, collection);
+                }
+            }
         } else {
             if (cost > player.money) {
                 console.log("Player " + player.name + " cannot afford " + card.name + " with calculated cost " + cost);
@@ -469,6 +664,10 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
 
         // pay for the card
         player.money -= cost;
+        if (player.money < 0) {
+            console.error("ERROR: money for player " + player.name + " has gone negative after buying card " + card.name + " for " + cost + " coins");
+            alert("ERROR");
+        }
 
         // add card to player collection
         player.cards.push(card);
@@ -478,6 +677,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             var i = collection.indexOf(card);
             collection.splice(i, 1);
         }
+        console.log("Player " + player.name + " bought " + card.name + " for " + cost);
 
         this.sortPlayerCards(player);
         // reset consecutive passes
@@ -512,9 +712,17 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             return a.cost - b.cost;
         });
 
-        if (this.decks[this.phase].length === 0) {
+        if (this.decks[this.phase].length === 0 && !this.lastRound) {
             console.log("No more cards in deck " + this.phase + " which means this is the last round");
+            alert("Warning: " + this.phase.toLowerCase() + " deck is exhausted. This is the last round.");
             this.lastRound = true;
+        }
+    };
+
+    this.doRobotAction = function () {
+        var player = this.getCurrentPlayer();
+        if (! player.isHuman) {
+            AI.makeRandomMove(player, this);
         }
     };
 
@@ -550,5 +758,39 @@ StPeter.controller("ModalInstanceCtrl", function ($scope, $modalInstance, baseCa
 
     $scope.getCost = function (card) {
         return $scope.costMap[card.name];
+    };
+});
+
+/**
+ * Controls the modal which opens on observatory play
+ */
+StPeter.controller("ObservatoryModalInstanceCtrl", function ($scope, $modalInstance, phases) {
+    $scope.phases = phases;
+    $scope.selected = {
+        deck: $scope.phases[0]
+    };
+
+    $scope.ok = function () {
+        $modalInstance.close($scope.selected.deck);
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss("cancel");
+    };
+});
+
+/**
+ * Controls the modal which opens as the second stage of observatory play
+ */
+StPeter.controller("PeekingModalInstanceCtrl", function ($scope, $modalInstance, peekCard, cardCost, options) {
+    $scope.options = options;
+    $scope.peekCard = peekCard;
+    $scope.cardCost = cardCost;
+    $scope.selected = {
+        option: $scope.options[0]
+    };
+
+    $scope.ok = function () {
+        $modalInstance.close($scope.selected.option);
     };
 });

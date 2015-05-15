@@ -13,6 +13,11 @@ function Card (name, cost, type, coin_yield, point_yield, upgrade_type, kwargs) 
     // have default settings, can be reset via kwargs
     this.workerUpgradeClass = null;
     this.upgradeCost = this.cost;
+    this.bonusYieldClass = null;
+    this.discountClass = null;
+    this.isPlayable = false;
+    // true iff this card has been played this round, does not apply to non-playable cards
+    this.played = false;
 
     if (kwargs) {
         for (var property in kwargs) {
@@ -59,7 +64,10 @@ var allCards = [
     // referenced by name in code, beware of changing it
     new Card("Warehouse", 2, "BUILDING", 0, 0, "BUILDING"),
     new Card("Potjomkin's Village", 2, "BUILDING", 0, 0, "BUILDING", {"upgradeCost": 6}),
-// missing pub, observatory
+    // TODO for now pub does nothing (not implemented)
+    new Card("Pub", 1, "BUILDING", 0, 0, "BUILDING"),
+    // referenced by name in code, beware of changing it
+    new Card("Observatory", 6, "BUILDING", 0, 1, "BUILDING", { "isPlayable": true }),
 
     new Card("Author", 4, "ARISTOCRAT", 1, 0, "ARISTOCRAT"),
     new Card("Administrator", 7, "ARISTOCRAT", 2, 0, "ARISTOCRAT"),
@@ -70,14 +78,14 @@ var allCards = [
     new Card("Mistress of Ceremonies", 18, "ARISTOCRAT", 6, 3, "ARISTOCRAT"),
 
     // referenced by name in code, beware of changing it
-    new Card("Carpenter", 4, "UPGRADE", 3, 0, "WORKER", {"workerUpgradeClass": "LUMBERJACK"}),
+    new Card("Carpenter", 4, "UPGRADE", 3, 0, "WORKER", {"workerUpgradeClass": "LUMBERJACK", "discountClass": "BUILDING"}),
     // referenced by name in code, beware of changing it
-    new Card("Gold Smelter", 6, "UPGRADE", 3, 0, "WORKER", {"workerUpgradeClass": "GOLD_MINER"}),
+    new Card("Gold Smelter", 6, "UPGRADE", 3, 0, "WORKER", {"workerUpgradeClass": "GOLD_MINER", "discountClass": "ARISTOCRAT"}),
     new Card("Weaving Mill", 8, "UPGRADE", 6, 0, "WORKER", {"workerUpgradeClass": "SHEPHERD"}),
     new Card("Fur Trader", 10, "UPGRADE", 3, 2, "WORKER", {"workerUpgradeClass": "FUR_TRAPPER"}),
     new Card("Wharf", 12, "UPGRADE", 6, 1, "WORKER", {"workerUpgradeClass": "SHIP_BUILDER"}),
 
-// missing marjinski
+    new Card("Mariinskij Theatre", 10, "UPGRADE", 0, 0, "BUILDING", {"bonusYieldClass": "ARISTOCRAT"}),
     new Card("Bank", 13, "UPGRADE", 5, 1, "BUILDING"),
     new Card("Peterhof", 14, "UPGRADE", 4, 2, "BUILDING"),
     new Card("St. Isaac's Cathedral", 15, "UPGRADE", 3, 3, "BUILDING"),
@@ -89,18 +97,18 @@ var allCards = [
     new Card("Winter Palace", 19, "UPGRADE", 2, 5, "BUILDING"),
 
     new Card("Pope", 6, "UPGRADE", 1, 1, "ARISTOCRAT"),
-    new Card("Weapon_Master", 8, "UPGRADE", 4, 0, "ARISTOCRAT"),
+    new Card("Weapon Master", 8, "UPGRADE", 4, 0, "ARISTOCRAT"),
     new Card("Chamber Maid", 8, "UPGRADE", 0, 2, "ARISTOCRAT"),
     new Card("Builder", 10, "UPGRADE", 5, 0, "ARISTOCRAT"),
     new Card("Senator", 12, "UPGRADE", 2, 2, "ARISTOCRAT"),
     new Card("Patriarch", 16, "UPGRADE", 0, 4, "ARISTOCRAT"),
-    // missing tax man
+    new Card("Tax Man", 17, "UPGRADE", 0, 0, "ARISTOCRAT", {"bonusYieldClass": "WORKER"}),
     new Card("Admiral", 18, "UPGRADE", 3, 3, "ARISTOCRAT"),
     new Card("Foreign Minister", 20, "UPGRADE", 2, 4, "ARISTOCRAT"),
     new Card("Czar", 24, "UPGRADE", 0, 6, "ARISTOCRAT"),
 ];
 
-function Player (name, token) {
+function Player (name, token, isHuman) {
     this.name = name;
     this.points = 0;
     // start with 25 money
@@ -108,6 +116,7 @@ function Player (name, token) {
     this.cards = [];
     this.hand = [];
     this.token = token || null;
+    this.isHuman = isHuman;
 }
 
 Player.prototype.hasCard = function (cardName) {

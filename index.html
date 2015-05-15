@@ -11,17 +11,20 @@
             <h2 class="title">St. Petersburg Board Game</h2>
 
             <div id="deck-container">
-                <div>Decks:</div>
                 <div class="deck" ng-class="{ currentPhase: game.isCurrentPhase(phase) }"
                     ng-repeat="phase in game.phases">
-                    <span>{{ phase.toLowerCase() }}</span>
-                    <span>{{ game.decks[phase].length }}</span>
+                    <span>{{ phase.toLowerCase() }} deck</span>&nbsp;-&nbsp;
+                    <span>{{ game.decks[phase].length }} cards</span>
                 </div>
             </div>
 
             <div id="player-container">
                 <div class="player" ng-repeat="player in game.players">
-                    <div class="name" ng-class="{ playerTurn: game.isPlayerTurn(player) }">{{ player.name }}</div>
+                    <div class="name" ng-class="{ playerTurn: game.isPlayerTurn(player) }">
+                        <span ng-if="player.isHuman">[H]</span>
+                        <span ng-if="!player.isHuman">[Bot]</span>
+                        <span>{{ player.name }}</span>
+                    </div>
                     <div class="player-stats">
                         <div>Points: {{ player.points }}</div>
                         <div>Money: {{ player.money }}</div>
@@ -31,7 +34,8 @@
                     </div>
                     <div class="player-cards">
                         <div class="player-subtitle">Played Cards</div>
-                        <div class="card" ng-repeat="card in player.cards">
+                        <div class="card" ng-repeat="card in player.cards" ng-class="{ 'playable-card': card.isPlayable }"
+                            ng-click="game.playCard(card, player, player.cards)">
                             <div spb-card></div>
                         </div>
                         <div ng-if="player.cards.length === 0">No cards</div>
@@ -91,7 +95,9 @@
             </div>
 
             <button type="button" class="btn btn-primary"
-                ng-click="game.passTurn()">Next Turn (Pass)</button>
+                ng-click="game.passTurn()" ng-disabled="!game.getCurrentPlayer().isHuman">Next Turn (Pass)</button>
+            <button type="button" class="btn btn-success"
+                ng-click="game.doRobotAction()" ng-disabled="game.getCurrentPlayer().isHuman">Do Robot Action</button>
         </div>
 
         <script type="text/ng-template" id="upgradeModal.html">
@@ -111,12 +117,46 @@
             </div>
         </script>
 
+        <script type="text/ng-template" id="observatoryModal.html">
+            <div class="modal-header">
+                <h3 class="modal-title">Pick a deck to peek into</h3>
+            </div>
+            <div class="modal-body">
+                <label for="deck">Pick the deck to peek into</label>
+                <select name="deck">
+                    <option ng-repeat="phase in phases" ng-click="selected.deck = phase">{{ phase }}</option>
+                </select>
+                <div>Selected: {{ selected.deck }}</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="ok()">OK</button>
+                <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+            </div>
+        </script>
+
+        <script type="text/ng-template" id="peekingModal.html">
+            <div class="modal-header">
+                <h3 class="modal-title">Pick an action to perform</h3>
+            </div>
+            <div class="modal-body">
+                <div><label for="option">What do you want to do with your new card: {{ peekCard.name }}</label></div>
+                <select name="option">
+                    <option ng-repeat="option in options" ng-click="selected.option = option">{{ option }}</option>
+                </select>
+                <div>Selected: {{ selected.option }}</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="ok()">OK</button>
+            </div>
+        </script>
+
         <script src="bower_components/underscore/underscore-min.js"></script>
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/ng-context-menu/dist/ng-context-menu.js"></script>
         <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.0.js"></script>
         <script src="bower_components/angular-ui-bootstrap/src/modal/modal.js"></script>
         <script src="peter.js"></script>
+        <script src="ai.js"></script>
         <script src="display.js"></script>
     </body>
 </html>
