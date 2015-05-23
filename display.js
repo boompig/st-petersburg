@@ -296,11 +296,12 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
      * This is not a stable sort.
      */
     this.sortPlayerCards = function (player) {
+        // worker -> building -> aristocrat
         player.cards.sort(function (a, b) {
             if (b.upgradeType > a.upgradeType) {
                 return 1;
             } else if (b.upgradeType === a.upgradeType) {
-                return 0;
+                return b.cost - a.cost;
             } else {
                 return -1;
             }
@@ -456,7 +457,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         console.log("**** Doing game-end calculations... ****");
         for (var p = 0; p < this.players.length; p++) {
             var player = this.players[p];
-            console.log("Player " + player.name + " ended the game with " + player.points + "points");
+            console.log("Player " + player.name + " ended the game with " + player.points + " points");
             var aristocrats = player.cards.filter(function (card) {
                 return card.type === "ARISTOCRAT" || (card.type === "UPGRADE" && card.upgradeType === "ARISTOCRAT");
             });
@@ -488,7 +489,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             console.log("Player " + player.name + " was penalized " + handPenalty + " points from " + player.hand.length + " cards in hand");
             player.points -= handPenalty;
 
-            console.log("Final score for player " + player.name + " is " + player.points);
+            console.log("Final score for player " + player.name + " is " + player.points + " points");
         }
     };
 
@@ -741,6 +742,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
  * Controls the modal which opens on card upgrade
  */
 StPeter.controller("ModalInstanceCtrl", function ($scope, $modalInstance, baseCards, upgradeCard, costMap) {
+    "use strict";
     $scope.upgradableCards = baseCards;
     $scope.upgradeCard = upgradeCard;
     $scope.costMap = costMap;
@@ -758,6 +760,10 @@ StPeter.controller("ModalInstanceCtrl", function ($scope, $modalInstance, baseCa
 
     $scope.getCost = function (card) {
         return $scope.costMap[card.name];
+    };
+
+    $scope.getCardString = function (card) {
+        return card.name + " (" + $scope.getCost(card) + ")";
     };
 });
 

@@ -75,11 +75,11 @@
                 <div id="lower-board" class="board">
                     <h4>Lower Board</h4>
                     <div ng-if="game.lowerBoard.length === 0">Empty</div>
-                    <div class="card buyable-card" ng-repeat="card in game.lowerBoard"
+                    <div class="card" ng-repeat="card in game.lowerBoard"
                         ng-click="game.buyCard(card, game.lowerBoard)"
                         context-menu class="panel panel-default"
                         data-target="lower-menu-{{ $index }}"
-                        ng-class="{ 'highlight': highlight, 'expanded': expanded }">
+                        ng-class="{ 'highlight': highlight, 'expanded': expanded, 'buyable-card': game.getCurrentPlayer().isHuman }">
                         <div spb-card></div>
 
                         <div class="dropdown position-fixed" id="lower-menu-{{ $index }}">
@@ -106,8 +106,7 @@
             </div>
             <div class="modal-body">
                 <label for="upgradeCard">Pick the card to upgrade</label>
-                <select name="upgradeCard">
-                    <option ng-repeat="card in upgradableCards" ng-click="selected.card = card">{{ card.name }} ({{ getCost(card) }} Coins)</option>
+                <select name="upgradeCard" ng-options="card as getCardString(card) for card in upgradableCards" ng-model="selected.card">
                 </select>
                 <div>Selected: {{ selected.card.name }}</div>
             </div>
