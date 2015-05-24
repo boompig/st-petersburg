@@ -122,8 +122,7 @@
             </div>
             <div class="modal-body">
                 <label for="deck">Pick the deck to peek into</label>
-                <select name="deck">
-                    <option ng-repeat="phase in phases" ng-click="selected.deck = phase">{{ phase }}</option>
+                <select name="deck" ng-options="phase for phase in phases" ng-model="selected.deck">
                 </select>
                 <div>Selected: {{ selected.deck }}</div>
             </div>
@@ -139,8 +138,7 @@
             </div>
             <div class="modal-body">
                 <div><label for="option">What do you want to do with your new card: {{ peekCard.name }}</label></div>
-                <select name="option">
-                    <option ng-repeat="option in options" ng-click="selected.option = option">{{ option }}</option>
+                <select name="option" ng-options="option for option in options" ng-model="selected.option">
                 </select>
                 <div>Selected: {{ selected.option }}</div>
             </div>

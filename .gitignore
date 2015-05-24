@@ -1,1 +1,4 @@
+# ignore bower stuff; can install with bower.json
 bower_components
+# ignore node stuff; can install with package.json
+node_modules
