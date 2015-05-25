@@ -43,6 +43,10 @@ Card.locations = {
     LOWER_BOARD: 3,
 };
 
+Card.prototype.hash = function () {
+    return this.type * 100 + this.index;
+};
+
 /**
  * TODO do not use this
  * Return the cost of the card, before factoring in other cards of same type,

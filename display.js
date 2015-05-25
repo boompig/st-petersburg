@@ -758,16 +758,25 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             locationMap[Card.locations.UPPER_BOARD] = this.upperBoard;
             locationMap[Card.locations.LOWER_BOARD] = this.lowerBoard;
             locationMap[Card.locations.HAND] = player.hand;
-            switch (obj.move.action) {
-                case Move.actions.PASS:
-                    this.passTurn();
-                    break;
-                case Move.actions.BUY:
-                    this.buyCard(obj.move.card, locationMap[obj.move.location]);
-                    break;
-                case Move.actions.PUT_IN_HAND:
-                    this.putCardInHand(obj.move.card, locationMap[obj.move.location]);
-                    break;
+            if (obj.move) {
+                switch (obj.move.action) {
+                    case Move.actions.PASS:
+                        this.passTurn();
+                        break;
+                    case Move.actions.BUY:
+                        this.buyCard(obj.move.card, locationMap[obj.move.location]);
+                        break;
+                    case Move.actions.PUT_IN_HAND:
+                        this.putCardInHand(obj.move.card, locationMap[obj.move.location]);
+                        break;
+                    case Move.actions.UPGRADE:
+                        this.upgradeCard(obj.move.baseCard, obj.move.card,
+                                locationMap[obj.move.location]);
+                        break;
+                }
+            } else {
+                console.log("nothing to be done");
+                this.passTurn();
             }
         }
     };
