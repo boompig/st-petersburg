@@ -420,6 +420,11 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
 
                 for (var c = 0; c < relevantCards.length; c++) {
                     card = relevantCards[c];
+                    if (card.isPlayable && card.played) {
+                        // reset whether card has been played this phase
+                        card.played = false;
+                        continue;
+                    }
                     player.money += card.coinYield;
                     player.points += card.pointYield;
 
@@ -430,11 +435,6 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                         });
                         console.log("Got " + bonusCards.length + " bonus money from card " + card.name);
                         player.money += bonusCards.length;
-                    }
-
-                    if (card.isPlayable) {
-                        // reset whether card has been played this phase
-                        card.played = false;
                     }
                 }
             }
