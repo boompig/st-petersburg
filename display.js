@@ -6,7 +6,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     "use strict";
 
     /****** STATIC DATA *******/
-    this.phases = ["WORKER", "BUILDING", "ARISTOCRAT", "UPGRADE"];
+    this.phases = [Card.types.WORKER, Card.types.BUILDING, Card.types.ARISTOCRAT, Card.types.UPGRADE];
     this.playerNames = [
         "Sergei",
         "Ross",
@@ -14,7 +14,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         "Will"
     ];
     this.cardMap = {};
-    this.cardMap.WORKER = {
+    this.cardMap[Card.types.WORKER] = {
         "LUMBERJACK": 6,
         "GOLD_MINER": 6,
         "SHEPHERD": 6,
@@ -22,7 +22,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         "SHIP_BUILDER": 6,
         "CZAR_AND_CARPENTER": 1,
     };
-    this.cardMap.BUILDING = {
+    this.cardMap[Card.types.BUILDING] = {
         "MARKET": 5,
         "CUSTOMS_HOUSE": 5,
         "FIREHOUSE": 3,
@@ -35,7 +35,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         "POTJOMKINS_VILLAGE": 1,
         "OBSERVATORY": 2
     };
-    this.cardMap.ARISTOCRAT = {
+    this.cardMap[Card.types.ARISTOCRAT] = {
         "AUTHOR": 6,
         "ADMINISTRATOR": 5,
         "WAREHOUSE_MANAGER": 5,
@@ -44,7 +44,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         "JUDGE": 2,
         "MISTRESS_OF_CEREMONIES": 2,
     };
-    this.cardMap.UPGRADE = {
+    this.cardMap[Card.types.UPGRADE] = {
         "WEAVING_MILL": 2,
         "FUR_TRADER": 2,
         "WHARF": 2,
@@ -69,7 +69,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     this.decks = {};
     this.upperBoard = [];
     this.lowerBoard = [];
-    this.phase = "WORKER";
+    this.phase = Card.types.WORKER;
     this.turn = 0;
     this.lastRound = false;
     this.consecutivePasses = 0;
@@ -160,7 +160,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         var options = ["Buy", "Put in hand", "Discard"];
 
         // make sure player can afford card, if the card is not an upgrade
-        if (peekCard.type !== "UPGRADE" && cardCost > player.money) {
+        if (peekCard.type !== Card.types.UPGRADE && cardCost > player.money) {
             options.splice(options.indexOf("Buy"), 1);
         }
         // make sure player has space for the card in the hand
@@ -336,7 +336,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
 
     this.init = function () {
         // assign tokens to players
-        var tokens = ["ARISTOCRAT", "BUILDING", "WORKER", "UPGRADE"];
+        var tokens = [Card.types.ARISTOCRAT, Card.types.BUILDING, Card.types.WORKER, Card.types.UPGRADE];
         this.players = [];
         while (tokens.length > 0) {
             var idx = Math.floor(Math.random() * tokens.length);
@@ -348,13 +348,13 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
 
         // create each deck
         this.decks = {};
-        this.createDeckOfType("WORKER");
-        this.createDeckOfType("BUILDING");
-        this.createDeckOfType("ARISTOCRAT");
-        this.createDeckOfType("UPGRADE");
+        this.createDeckOfType(Card.types.WORKER);
+        this.createDeckOfType(Card.types.BUILDING);
+        this.createDeckOfType(Card.types.ARISTOCRAT);
+        this.createDeckOfType(Card.types.UPGRADE);
 
         // reset turn and phase
-        this.phase = "WORKER";
+        this.phase = Card.types.WORKER;
         this.preparePhase();
     };
 
@@ -400,7 +400,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
      * 3. If this is the end of the round, call nextRound(), if not, call nextPhase()
      */
     this.evaluatePhase = function () {
-        if (this.phase !== "UPGRADE") {
+        if (this.phase !== Card.types.UPGRADE) {
             var player, card;
 
             for (var p = 0; p < this.players.length; p++) {
@@ -409,7 +409,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                 var game = this;
                 var relevantCards = player.cards.filter(function (card) {
                     return card.type === game.phase ||
-                        (card.type === "UPGRADE" && card.upgradeType === game.phase);
+                        (card.type === Card.types.UPGRADE && card.upgradeType === game.phase);
                 });
 
                 for (var c = 0; c < relevantCards.length; c++) {
@@ -420,7 +420,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                     if (card.bonusYieldClass !== null) {
                         var bonusCards = player.cards.filter(function (bonusCard) {
                             return bonusCard.type === card.bonusYieldClass ||
-                                (bonusCard.type === "UPGRADE" && bonusCard.upgradeType === card.bonusYieldClass);
+                                (bonusCard.type === Card.types.UPGRADE && bonusCard.upgradeType === card.bonusYieldClass);
                         });
                         console.log("Got " + bonusCards.length + " bonus money from card " + card.name);
                         player.money += bonusCards.length;
@@ -438,7 +438,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         while (this.upperBoard.length > 0) {
             this.lowerBoard.push(this.upperBoard.pop());
         }
-        if (this.phase === "UPGRADE") {
+        if (this.phase === Card.types.UPGRADE) {
             this.nextRound();
         } else {
             this.nextPhase();
@@ -459,7 +459,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             var player = this.players[p];
             console.log("Player " + player.name + " ended the game with " + player.points + " points");
             var aristocrats = player.cards.filter(function (card) {
-                return card.type === "ARISTOCRAT" || (card.type === "UPGRADE" && card.upgradeType === "ARISTOCRAT");
+                return card.type === Card.types.ARISTOCRAT || (card.type === Card.types.UPGRADE && card.upgradeType === Card.types.ARISTOCRAT);
             });
             // sort by name
             aristocrats.sort(function(a, b) {
@@ -579,7 +579,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             // prereq # 1 - collection must be player.cards
             // prereq # 2 - card must not have been played this phase
             // prereq # 3 - it must be the BUILDING phase
-            if (collection !== player.cards || card.played || this.phase !== "BUILDING") {
+            if (collection !== player.cards || card.played || this.phase !== Card.types.BUILDING) {
                 return false;
             }
 
@@ -614,7 +614,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
      */
     this.playerCanAffordCard = function (card, player, collection) {
         var cost = this.getCardCost(card, collection);
-        if (card.type === "UPGRADE") {
+        if (card.type === Card.types.UPGRADE) {
             var cardsToUpgrade = player.cards.filter(function (baseCard) {
                 return baseCard.canUpgradeTo(card);
             });
@@ -635,7 +635,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         var player = this.getCurrentPlayer();
         var cost = this.getCardCost(card, collection);
 
-        if (card.type === "UPGRADE") {
+        if (card.type === Card.types.UPGRADE) {
             var cardsToUpgrade = player.cards.filter(function (baseCard) {
                 return baseCard.canUpgradeTo(card);
             });
@@ -714,16 +714,51 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         });
 
         if (this.decks[this.phase].length === 0 && !this.lastRound) {
-            console.log("No more cards in deck " + this.phase + " which means this is the last round");
-            alert("Warning: " + this.phase.toLowerCase() + " deck is exhausted. This is the last round.");
+            console.log("No more cards in deck " + this.getPhaseName() + " which means this is the last round");
+            alert("Warning: " + this.getPhaseName() + " deck is exhausted. This is the last round.");
             this.lastRound = true;
+        }
+    };
+
+    this.getPhaseName = function () {
+        switch (this.phase) {
+            case Card.types.WORKER:
+                return "Worker";
+            case Card.types.BUILDING:
+                return "Building";
+            case Card.types.ARISTOCRAT:
+                return "Aristocrat";
+            case Card.types.UPGRADE:
+                return "Upgrade";
         }
     };
 
     this.doRobotAction = function () {
         var player = this.getCurrentPlayer();
         if (! player.isHuman) {
-            AI.makeRandomMove(player, this);
+            var deckSizes = [];
+            for (var i = 0; i < this.phases.length; i++) {
+                deckSizes.push( this.decks[this.phases[i]].length );
+            }
+            // create the state out of current game state
+            var state = new State(deckSizes, this.upperBoard, this.lowerBoard,
+                    this.phase, player);
+            var obj = AI.analyze(state);
+            var locationMap = {};
+            locationMap[Card.locations.UPPER_BOARD] = this.upperBoard;
+            locationMap[Card.locations.LOWER_BOARD] = this.lowerBoard;
+            locationMap[Card.locations.HAND] = player.hand;
+            switch (obj.move.action) {
+                case Move.actions.PASS:
+                    this.passTurn();
+                    break;
+                case Move.actions.BUY:
+                    this.buyCard(obj.move.card, locationMap[obj.move.location]);
+                    break;
+                case Move.actions.PUT_IN_HAND:
+                    this.putCardInHand(obj.move.card, locationMap[obj.move.location]);
+                    break;
+            }
         }
     };
 

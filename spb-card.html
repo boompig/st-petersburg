@@ -1,4 +1,4 @@
-<div ng-class="{ 'aristocrat-card': card.upgradeType === 'ARISTOCRAT', 'worker-card': card.upgradeType === 'WORKER', 'building-card': card.upgradeType === 'BUILDING'}">
+<div ng-class="{ 'aristocrat-card': card.upgradeType === 3, 'worker-card': card.upgradeType === 1, 'building-card': card.upgradeType === 2 }">
 	<span ng-if="card.type === 'UPGRADE'">[U, {{ card.cost }}]</span>
 	<span ng-if="card.type !== 'UPGRADE'">[{{ card.cost }}]</span>
     <span class="card-name">{{ card.name }}</span>:
