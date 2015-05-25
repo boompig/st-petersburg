@@ -121,9 +121,14 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
      * Open the observatory modal, and pick the deck that you want to peek at
      */
     $scope.openObservatoryModal = function (game, card) {
-        var validPhases = game.phases.filter(function (phase) {
-            return game.decks[phase].length > 0;
-        });
+        var validPhases = [];
+        var name;
+        for (var i = 0; i < game.phases.length; i++) {
+            if (game.decks[game.phases[i]].length > 0) {
+                name = game.getPhaseName( game.phases[i] );
+                validPhases.push( name );
+            }
+        }
 
         var modalInstance = $modal.open({
             templateUrl: "observatoryModal.html",
@@ -140,7 +145,8 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                 // set the card to used here
                 card.played = true;
             }
-            $scope.openPeekingModal(game, selectedDeck);
+            var selection = Card.types[selectedDeck.toUpperCase()];
+            $scope.openPeekingModal(game, selection);
         }, function () {
             console.log("Did not select a deck, so quitting");
         });
@@ -537,7 +543,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     this.nextPhase = function () {
         var i = this.phases.indexOf(this.phase);
         this.phase = this.phases[(i + 1) % this.phases.length];
-        console.log("Phase is now " + this.phase);
+        console.log("Phase is now " + this.getPhaseName());
         this.preparePhase();
     };
 
@@ -720,8 +726,9 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         }
     };
 
-    this.getPhaseName = function () {
-        switch (this.phase) {
+    this.getPhaseName = function (phase) {
+        phase = phase || this.phase;
+        switch (phase) {
             case Card.types.WORKER:
                 return "Worker";
             case Card.types.BUILDING:
@@ -744,6 +751,9 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             var state = new State(deckSizes, this.upperBoard, this.lowerBoard,
                     this.phase, player);
             var obj = AI.analyze(state);
+            console.log("Plan for " + player.name + ":");
+            for (var i = 0; i < obj.moveList.length; i++)
+                console.log(obj.moveList[i].toString());
             var locationMap = {};
             locationMap[Card.locations.UPPER_BOARD] = this.upperBoard;
             locationMap[Card.locations.LOWER_BOARD] = this.lowerBoard;
