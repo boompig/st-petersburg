@@ -1,4 +1,11 @@
+# About
+
+Simulation of the St Petersburg board game
+
+## Setup
+
 To run:
 
-* bower install
-* put on web server of choice, go to index.html
+* `bower install`
+* `http-server`
+* navigate to root
