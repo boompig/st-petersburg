@@ -15,6 +15,7 @@ function Card (name, cost, type, coin_yield, point_yield, index, kwargs) {
     this.workerUpgradeClass = null;
     this.upgradeCost = this.cost;
     this.bonusYieldClass = null;
+	this.bonusYieldType = null;
     this.discountClass = null;
     this.isPlayable = false;
     // true iff this card has been played this round, does not apply to non-playable cards
@@ -126,7 +127,7 @@ var allCards = [
         {"upgradeType": Card.types.WORKER, "workerUpgradeClass": "SHIP_BUILDER"}),
 
     new Card("Mariinskij Theatre", 10, Card.types.UPGRADE, 0, 0, 6,
-        {"upgradeType": Card.types.BUILDING, "bonusYieldClass": Card.types.ARISTOCRAT}),
+        {"upgradeType": Card.types.BUILDING, "bonusYieldClass": Card.types.ARISTOCRAT, "bonusYieldType": "points"}),
     new Card("Bank", 13, Card.types.UPGRADE, 5, 1, 7,
         {"upgradeType": Card.types.BUILDING}),
     new Card("Peterhof", 14, Card.types.UPGRADE, 4, 2, 8,
@@ -159,7 +160,7 @@ var allCards = [
     new Card("Patriarch", 16, Card.types.UPGRADE, 0, 4, 21,
         {"upgradeType": Card.types.ARISTOCRAT}),
     new Card("Tax Man", 17, Card.types.UPGRADE, 0, 0, 22,
-        {"upgradeType": Card.types.ARISTOCRAT, "bonusYieldClass": Card.types.WORKER}),
+        {"upgradeType": Card.types.ARISTOCRAT, "bonusYieldClass": Card.types.WORKER, "bonusYieldType": "money"}),
     new Card("Admiral", 18, Card.types.UPGRADE, 3, 3, 23,
         {"upgradeType": Card.types.ARISTOCRAT}),
     new Card("Foreign Minister", 20, Card.types.UPGRADE, 2, 4, 24,

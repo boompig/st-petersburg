@@ -433,8 +433,13 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                             return bonusCard.type === card.bonusYieldClass ||
                                 (bonusCard.type === Card.types.UPGRADE && bonusCard.upgradeType === card.bonusYieldClass);
                         });
-                        console.log("Got " + bonusCards.length + " bonus money from card " + card.name);
-                        player.money += bonusCards.length;
+                        if(card.bonusYieldType === "money") {
+                            console.log("Got " + bonusCards.length + " bonus money from card " + card.name);
+                            player.money += bonusCards.length;
+                        } else {
+                            console.log("Got " + bonusCards.length + " bonus points from card " + card.name);
+                            player.points += bonusCards.length;
+                        }
                     }
                 }
             }
@@ -646,7 +651,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                 return baseCard.canUpgradeTo(card);
             });
             if (cardsToUpgrade.length === 0) {
-                console.log("no cards to upgrade to this card");
+                alert("no cards to upgrade to this card");
                 return false;
             }
 
