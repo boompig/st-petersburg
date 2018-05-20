@@ -341,6 +341,10 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     };
 
     this.init = function () {
+        // NOTE randomSeed is used only in token allocation and not for
+        // shuffling the deck
+        const randomSeed = Math.seedrandom();
+
         // assign tokens to players
         var tokens = [Card.types.ARISTOCRAT, Card.types.BUILDING, Card.types.WORKER, Card.types.UPGRADE];
         this.players = [];
@@ -350,6 +354,14 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             tokens.splice(idx, 1);
             var name = this.playerNames.pop();
             this.players.push(new Player(name, token, name === this.humanPlayerName));
+        }
+
+        let humanPlayerIndex = -1;
+        for(let i = 0; i < this.players.length; i++) {
+            if(this.players[i].isHuman) {
+                humanPlayerIndex = i;
+                break;
+            }
         }
 
         // create each deck
@@ -362,6 +374,24 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         // reset turn and phase
         this.phase = Card.types.WORKER;
         this.preparePhase();
+
+        const conciseDecks = {};
+        for(let deckName in this.decks) {
+            let cardNames = this.decks[deckName].map((card) => {
+                return card.name;
+            });
+            conciseDecks[deckName] = cardNames;
+        }
+
+        const initialState = {
+            "humanPlayerIndex": humanPlayerIndex,
+            "playerTokenAllocation": this.players.map((player) => {
+                return this.getPhaseName(player.token);
+            }),
+            "decks": conciseDecks,
+            "randomSeed": randomSeed,
+        };
+        console.log(initialState);
     };
 
     /**
@@ -574,7 +604,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
 
     /**
      * Play the given card (i.e. use its special ability)
-     * 
+     *
      * @param  {[type]} card       [description]
      * @param  {[type]} player     [description]
      * @param  {[type]} collection [description]
@@ -670,6 +700,9 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         } else {
             if (cost > player.money) {
                 console.log("Player " + player.name + " cannot afford " + card.name + " with calculated cost " + cost);
+                if(player.isHuman) {
+                    alert("Player " + player.name + " cannot afford " + card.name + " with calculated cost " + cost);
+                }
                 return false;
             }
         }
