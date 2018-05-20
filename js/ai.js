@@ -1,10 +1,10 @@
-var require = require || null;
-var exports = exports || {};
-if (require) {
-    // node.js imports
-    var Card = require("./cards.js").Card;
-    var Player = require("./player.js").Player;
-}
+// @flow
+
+import { allCards, Card } from "./cards";
+import { Player } from "./players";
+import { aristocratScoringChart, gamePhases } from "./static-game-data";
+import { State } from "./game-state";
+import { Move } from "./game-action";
 
 /**
  * Helpful polyfills
@@ -15,151 +15,7 @@ Array.prototype.min = function () {
 };
 
 
-/**
- * The game state which I plan to pass to the AI
- */
-function State (decks, upperBoard, lowerBoard, phase, player) {
-    // game state
-    this.decks = decks;
 
-    this.upperBoard = upperBoard;
-    this.lowerBoard = lowerBoard;
-
-    this.phase = phase;
-
-    // player state
-    this.player = player;
-};
-
-State.prototype.getPhaseName = function () {
-    switch (this.phase) {
-        case Card.types.WORKER:
-            return "WORKER";
-        case Card.types.BUILDING:
-            return "BUILDING";
-        case Card.types.ARISTOCRAT:
-            return "ARISTOCRAT";
-        case Card.types.UPGRADE:
-            return "UPGRADE";
-    }
-};
-
-State.prototype.toString = function () {
-    var cardNames = [];
-    for (var i = 0; i < this.player.cards.length; i++) {
-        cardNames.push(this.player.cards[i].name);
-    }
-    var handNames = [];
-    for (var i = 0; i < this.player.hand.length; i++) {
-        handNames.push(this.player.hand[i].name);
-    }
-    var upperCards = [];
-    for (var i = 0; i < this.upperBoard.length; i++) {
-        upperCards.push(this.upperBoard[i].name);
-    }
-    var lowerCards = [];
-    for (var i = 0; i < this.lowerBoard.length; i++) {
-        lowerCards.push(this.lowerBoard[i].name);
-    }
-
-    return "State(phase=" + this.getPhaseName() + "," +
-        "decks=[" + this.decks.join(", ") + "]," +
-        "upperBoard=[" + upperCards.join(", ") + "]," +
-        "lowerBoard=[" + lowerCards.join(", ") + "]," +
-        "cards=[" + cardNames.join(", ") + "]," +
-        "hand=[" + handNames.join(", ") + "]," +
-        "points=" + this.player.points + ")";
-};
-
-State.phases = [
-    Card.types.WORKER,
-    Card.types.BUILDING,
-    Card.types.ARISTOCRAT,
-    Card.types.UPGRADE
-];
-
-State.prototype.clone = function () {
-    var deck = this.decks.slice();
-    var lowerBoard = this.lowerBoard.slice();
-    var upperBoard = this.upperBoard.slice();
-    var player = this.player.clone();
-    var phase = this.phase;
-    return new State(deck, upperBoard, lowerBoard, phase, player);
-};
-
-State.prototype.hasNextPhase = function () {
-    return this.phase !== Card.types.UPGRADE || this.hasNextRound();
-};
-
-/**
- * Return true iff state can deal a next round
- */
-State.prototype.hasNextRound = function () {
-    return this.decks.min() > 0;
-};
-
-function Move (action, location, card, baseCard) {
-    this.action = action;
-    this.location = location;
-    this.card = card;
-    // this is only set for the UPGRADE action
-    this.baseCard = baseCard || null;
-};
-
-Move.actions = {
-    PASS: 1,
-    BUY: 2,
-    PUT_IN_HAND: 3,
-    UPGRADE: 4
-};
-
-Move.prototype.getActionName = function () {
-    switch (this.action) {
-        case Move.actions.PASS:
-            return "PASS";
-        case Move.actions.BUY:
-            return "BUY";
-        case Move.actions.PUT_IN_HAND:
-            return "PUT_IN_HAND";
-        case Move.actions.UPGRADE:
-            return "UPGRADE";
-    }
-};
-
-Move.prototype.getLocationName = function () {
-    switch (this.location) {
-        case Card.locations.HAND:
-            return "HAND";
-        case Card.locations.UPPER_BOARD:
-            return "UPPER_BOARD";
-        case Card.locations.LOWER_BOARD:
-            return "LOWER_BOARD";
-    }
-};
-
-Move.prototype.toString = function () {
-    if (this.baseCard) {
-        return "Move (action=" + this.getActionName() + 
-            ", location=" + this.getLocationName() +
-            ", card=" + this.card.name +
-            ", baseCard=" + this.baseCard.name + ")";
-    } else if (this.card && this.location) {
-        return "Move (action=" + this.getActionName() + 
-            ", location=" + this.getLocationName() +
-            ", card=" + this.card.name + ")";
-    } else {
-        return "Move (action=" + this.getActionName() + ")";
-    }
-};
-
-Move.prototype.equals = function (otherMove) {
-    return this.action === otherMove.action &&
-            this.location === otherMove.location &&
-            ((this.card === null && otherMove.card === null) ||
-             (this.card.name === otherMove.card.name)) &&
-            ((this.baseCard === null && otherMove.baseCard === null) ||
-             (this.baseCard === otherMove.baseCard));
-};
 
 var AI = {};
 
@@ -173,7 +29,7 @@ var AI = {};
  *      - move cards from upper board to lower board
  *      - discard lower board
  */
-AI.generateNextPhaseState = function (state) {
+AI.generateNextPhaseState = function (state: State) {
     var newState = state.clone();
     var player = newState.player;
     var i, card;
@@ -208,7 +64,7 @@ AI.generateNextPhaseState = function (state) {
  * Generate successors is a generator over objects of the following form:
  *      { state: <State>, move: <Move> }
  */
-AI.generateSuccessors = function genSuccessors (state) {
+AI.generateSuccessors = function genSuccessors (state: State) {
     var player = state.player;
     var successors = [];
     var i, card, newState;
@@ -336,12 +192,12 @@ AI.generateSuccessors = function genSuccessors (state) {
     return successors;
 };
 
-AI.numTurnsLeftInGame = function (state) {
+AI.numTurnsLeftInGame = function (state: State) {
     var minDeck = state.decks.min();
     return Math.ceil(minDeck / 8);
 };
 
-AI.nextPhase = function (phase) {
+AI.nextPhase = function (phase: number /* one of Card.types */) {
     var idx = State.phases.indexOf(phase);
     return State.phases[(idx + 1) % State.phases.length];
 };
@@ -382,7 +238,7 @@ AI.estimateEvalState = function (state) {
         numArr = Math.min(numArr, 10);
         potentialPoints *= (AI.numTurnsLeftInGame(state) + 1);
         return currentPoints + potentialPoints + player.money / 10 +
-            AI.aristocratMap[numArr];
+            aristocratScoringChart[numArr];
     } else {
         return 5000;
     }
@@ -390,20 +246,6 @@ AI.estimateEvalState = function (state) {
 
 AI.isTerminalState = function (state) {
     return (! state.hasNextPhase());
-};
-
-AI.aristocratMap = {
-    0: 0,
-    1: 1,
-    2: 3,
-    3: 6,
-    4: 10,
-    5: 15,
-    6: 21,
-    7: 28,
-    8: 36,
-    9: 45,
-    10: 55
 };
 
 /**
@@ -414,7 +256,7 @@ AI.aristocratMap = {
  *      - 1 full point for each 10 money (but just dividing by 10 to give bias to more money)
  * TODO does not count aristocrats
  */
-AI.evalState = function (initialState) {
+AI.evalState = function (initialState: State) {
     var state = initialState;
     // evaluate all phases until upgrade
     while (state.phase !== Card.types.UPGRADE) {
@@ -424,10 +266,10 @@ AI.evalState = function (initialState) {
     var player = state.player;
     var p = player.points;
     var numArr = AI.countAristocrats(player);
-    return p - (player.hand.length * 5) + (player.money / 10) + AI.aristocratMap[numArr];
+    return p - (player.hand.length * 5) + (player.money / 10) + aristocratScoringChart[numArr];
 };
 
-AI.hashState = function (state) {
+AI.hashState = function (state: State) {
     var hash = [];
     // game state
     hash.push( state.decks.join(",") );
@@ -455,7 +297,14 @@ AI.hashState = function (state) {
     return hash.join("");
 };
 
-AI.BFS = function (startState) {
+interface IAnalyzeReturn {
+    score: number;
+    move: Move;
+    moveList: Array<Move>;
+    numNodes: number;
+}
+
+AI.BFS = function (startState: State): IAnalyzeReturn {
     "use strict";
     var open = [{ "state": startState, "moveList": [] }];
     var obj, moveList, state, newMoveList, score, hashState;
@@ -496,24 +345,36 @@ AI.BFS = function (startState) {
     }
 
     if (bestMoveList === null) {
-        bestMoveList = [ new Move(Move.actions.PASS, null, null) ];
+        bestMoveList = [ new Move(Move.actions.PASS,
+            Card.locations.HAND, // assign something, easier than dealing with null checks everywhere
+            allCards[0] // assign something, easier than dealing with null checks everywhere
+            ) ];
     }
     return {
         "score": bestScore,
         "move": bestMoveList[0],
         "moveList": bestMoveList,
-        "numNodes": visited.length
+        "numNodes": visited.size,
     };
 };
 
 /**
  * Return the best move
  */
-AI.analyze = function (state) {
+AI.analyze = function (state: State): IAnalyzeReturn {
     return AI.BFS(state);
 };
 
-AI.pickUpgradeCard = function (player, game, card, collection) {
+AI.pickObservationDeck = function(player: Player) {
+    return null;
+};
+
+AI.pickObservationAction = function(player: Player, card: Card) {
+    return null;
+};
+
+AI.pickUpgradeCard = function (player: Player,
+    card: Card) {
     // TODO this should take as a parameter the AI's computed plan,
     // since this is always called after the AI has initiated the plan
     var validCards = [];
@@ -531,7 +392,5 @@ AI.pickUpgradeCard = function (player, game, card, collection) {
     }
 };
 
-exports.State = State;
-exports.Player = Player;
-exports.AI = AI;
-exports.Move = Move;
+export { State, Player, AI, Move };
+

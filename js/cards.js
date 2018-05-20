@@ -1,8 +1,17 @@
+// @flow
+
 /**
  * Upgrade type means ARISTOCRAT, WORKER, BUILDING
  * upgrade class is only relevant for workers
  */
-function Card (name, cost, type, coin_yield, point_yield, index, kwargs) {
+function Card (name: string,
+    cost: number,
+    type: number, /* really Card.types */
+    coin_yield: number,
+    point_yield: number,
+    index: number, /* wrt its category */
+    kwargs: any
+    ) {
     this.name = name;
     this.cost = cost;
     this.type = type;
@@ -82,7 +91,7 @@ Card.prototype.canUpgradeTo = function (upgradeCard) {
 /***** cards ****/
 
 // peasants
-var allCards = [
+const allCards = [
     new Card("Lumberjack", 3, Card.types.WORKER, 3, 0, 1, {"workerUpgradeClass": "LUMBERJACK"}),
     new Card("Gold Miner", 4, Card.types.WORKER, 3, 0, 2, {"workerUpgradeClass": "GOLD_MINER"}),
     new Card("Shepherd", 5, Card.types.WORKER, 3, 0, 3, {"workerUpgradeClass": "SHEPHERD"}),
@@ -168,3 +177,5 @@ var allCards = [
     new Card("Czar", 24, Card.types.UPGRADE, 0, 6, 25,
         {"upgradeType": Card.types.ARISTOCRAT}),
 ];
+
+export { Card, allCards };

@@ -1,3 +1,12 @@
+// @flow
+
+const angular = require("angular");
+import _ from "lodash";
+import { Card, allCards } from "./cards";
+import { AI, Move, State } from "./ai";
+import { Player } from "./player";
+import { gamePhases, aristocratScoringChart } from "./static-game-data";
+
 // create Angular app
 var StPeter = angular.module("StPeter", ["ng-context-menu", "ui.bootstrap"]);
 
@@ -6,7 +15,6 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     "use strict";
 
     /****** STATIC DATA *******/
-    this.phases = [Card.types.WORKER, Card.types.BUILDING, Card.types.ARISTOCRAT, Card.types.UPGRADE];
     this.playerNames = [
         "Sergei",
         "Ross",
@@ -49,19 +57,6 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         "FUR_TRADER": 2,
         "WHARF": 2,
         "DEFAULT": 1
-    };
-    this.aristocratScoringChart = {
-        0: 0,
-        1: 1,
-        2: 3,
-        3: 6,
-        4: 10,
-        5: 15,
-        6: 21,
-        7: 28,
-        8: 36,
-        9: 45,
-        10: 55
     };
 
     /******* GAME STATE DATA *****/
@@ -486,7 +481,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                     numAristocrats++;
                 }
             }
-            var aristocratPoints = this.aristocratScoringChart[Math.min(numAristocrats, 10)];
+            var aristocratPoints = aristocratScoringChart[Math.min(numAristocrats, 10)];
             console.log("Player " + player.name + " earned " + aristocratPoints + " points from " + numAristocrats + " aristocrats");
             player.points += aristocratPoints;
 
@@ -518,6 +513,21 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         this.players[0].token = passedToken;
     };
 
+    this.getWinningPlayer = function() {
+        let winningPlayer = null;
+        let winningPoints = -1;
+        for (var i = 0; i < this.players.length; i++) {
+            if (this.players[i].points > winningPoints) {
+                winningPlayer = this.players[i];
+                winningPoints = this.players[i].points;
+            }
+        }
+        if(winningPlayer === null) {
+            throw new Error("No winning player for some reason??");
+        }
+        return winningPlayer
+    };
+
     /**
      * 1. If this is the last round, print game over and exit
      * 2. Shift tokens between players
@@ -527,18 +537,11 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         if (this.lastRound) {
             this.evalGameEnd();
 
-            var winningPlayer = null;
-            var winningPoints = -1;
-            for (var i = 0; i < this.players.length; i++) {
-                if (this.players[i].points > winningPoints) {
-                    winningPlayer = this.players[i];
-                    winningPoints = this.players[i].points;
-                }
-            }
+            var winningPlayer = this.getWinningPlayer();
 
-            console.log("Game Over! The winner is " + winningPlayer.name + " with " + winningPoints + " points");
+            console.log("Game Over! The winner is " + winningPlayer.name + " with " + winningPlayer.points + " points");
             // TODO display this in a nicer way
-            alert("Game Over! The winner is " + winningPlayer.name + " with " + winningPoints + " points");
+            alert("Game Over! The winner is " + winningPlayer.name + " with " + winningPlayer.points + " points");
         } else {
             this.rotateTokens();
             this.nextPhase();
@@ -546,8 +549,8 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     };
 
     this.nextPhase = function () {
-        var i = this.phases.indexOf(this.phase);
-        this.phase = this.phases[(i + 1) % this.phases.length];
+        var i = gamePhases.indexOf(this.phase);
+        this.phase = gamePhases[(i + 1) % gamePhases.length];
         console.log("Phase is now " + this.getPhaseName());
         this.preparePhase();
     };
@@ -598,10 +601,10 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             if (player.isHuman) {
                 $scope.openObservatoryModal(this, card);
             } else {
-                var pile = AI.pickObservationDeck(player, this);
+                var pile = AI.pickObservationDeck(player);
                 if (pile && this.decks[pile] && this.decks[pile].length > 0) {
                     var peekCard = this.decks[pile].pop();
-                    var result = AI.pickObservationAction(player, this, peekCard);
+                    var result = AI.pickObservationAction(player, peekCard);
 
                     card.played = true;
 
@@ -659,7 +662,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                 $scope.openUpgradeModal(card, collection, this);
                 return;
             } else {
-                var baseCard = AI.pickUpgradeCard(player, this, card, collection);
+                var baseCard = AI.pickUpgradeCard(player, card);
                 if (baseCard === null) {
                     console.log("Aborting upgrade");
                     return false;
@@ -746,20 +749,22 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     };
 
     this.doRobotAction = function () {
-        var player = this.getCurrentPlayer();
+        const player = this.getCurrentPlayer();
         if (! player.isHuman) {
-            var deckSizes = [];
-            for (var i = 0; i < this.phases.length; i++) {
-                deckSizes.push( this.decks[this.phases[i]].length );
+            // misnomer. Actually the array of current decks in order:
+            // worker, building, aristocrat, upgrade
+            const deckArr = [];
+            for (let i = 0; i < gamePhases.length; i++) {
+                deckArr.push( this.decks[gamePhases[i]].length );
             }
             // create the state out of current game state
-            var state = new State(deckSizes, this.upperBoard, this.lowerBoard,
+            const state = new State(deckArr, this.upperBoard, this.lowerBoard,
                     this.phase, player);
-            var obj = AI.analyze(state);
+            const obj = AI.analyze(state);
             console.log("Plan for " + player.name + ":");
             for (var i = 0; i < obj.moveList.length; i++)
                 console.log(obj.moveList[i].toString());
-            var locationMap = {};
+            const locationMap = {};
             locationMap[Card.locations.UPPER_BOARD] = this.upperBoard;
             locationMap[Card.locations.LOWER_BOARD] = this.lowerBoard;
             locationMap[Card.locations.HAND] = player.hand;

@@ -17,7 +17,7 @@
 
             <div id="deck-container">
                 <div class="deck" data-ng-class="{ currentPhase: game.isCurrentPhase(phase) }"
-                    data-ng-repeat="phase in game.phases">
+                    data-ng-repeat="phase in gamePhases">
                     <span>{{ game.getPhaseName(phase) }} deck</span>&nbsp;-&nbsp;
                     <span>{{ game.decks[phase].length }} cards</span>
                 </div>
