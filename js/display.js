@@ -1,5 +1,7 @@
 // create Angular app
-var StPeter = angular.module("StPeter", ["ng-context-menu", "ui.bootstrap"]);
+var StPeter = angular.module("StPeter", [
+    "ng-context-menu",
+    "ui.bootstrap"]);
 
 // create Angular controller
 StPeter.controller("PeterCtrl", function ($scope, $modal) {
@@ -73,9 +75,16 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     this.turn = 0;
     this.lastRound = false;
     this.consecutivePasses = 0;
+    this.gameId = null;
+    /* number of rounds *completed* so far */
+    this.numRounds = 0;
 
     // TODO query this somehow
     this.humanPlayerName = "Daniel";
+
+    /****** UI DATA **************/
+    this.aiIsWorking = false;
+    /****** UI DATA **************/
 
     /****** UI FUNCTIONS ********/
 
@@ -267,6 +276,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
 
         if (player.money < cost) {
             console.log("Player " + player.name + " cannot afford!");
+            alert("Player " + player.name + " cannot afford to perform this upgrade");
             return false;
         }
 
@@ -298,7 +308,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     /**
      * Sort the player's cards according to type, after purchase or upgrade
      * Actually use upgradeType, it's more correct
-     * 
+     *
      * This is not a stable sort.
      */
     this.sortPlayerCards = function (player) {
@@ -340,10 +350,17 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         this.decks[type] = _.shuffle(this.decks[type]);
     };
 
+    this.getRandomGameId = function () {
+        const dateString = (new Date()).toISOString().split('T')[0];
+        const randomNonce = Math.floor(Math.random() * 1e8);
+        return dateString + "-" + randomNonce;
+    };
+
     this.init = function () {
         // NOTE randomSeed is used only in token allocation and not for
         // shuffling the deck
-        const randomSeed = Math.seedrandom();
+        this.gameId = this.getRandomGameId();
+        Math.seedrandom(this.gameId);
 
         // assign tokens to players
         var tokens = [Card.types.ARISTOCRAT, Card.types.BUILDING, Card.types.WORKER, Card.types.UPGRADE];
@@ -376,10 +393,11 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         this.preparePhase();
 
         const conciseDecks = {};
-        for(let deckName in this.decks) {
-            let cardNames = this.decks[deckName].map((card) => {
+        for(let phaseIndex in this.decks) {
+            let cardNames = this.decks[phaseIndex].map((card) => {
                 return card.name;
             });
+            let deckName = this.getPhaseName(phaseIndex);
             conciseDecks[deckName] = cardNames;
         }
 
@@ -389,11 +407,58 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                 return this.getPhaseName(player.token);
             }),
             "decks": conciseDecks,
-            "randomSeed": randomSeed,
+            // also acts as the randomSeed
+            "randomSeed": this.gameId,
         };
-        console.log(initialState);
+        this.sendInitialGameState(this.gameId, initialState);
     };
 
+    this.corsPostJSON = function(url, data) {
+        return window.fetch(url, {
+            body: JSON.stringify(data),
+            method: "POST",
+            credentials: "omit",
+            mode: "cors",
+            headers: { "Content-Type": "application/json" },
+            referrer: "no-referrer",
+            redirect: "follow",
+        });
+    };
+
+    this.sendInitialGameState = function(gameId, initialState) {
+        const baseUrl = "https://boompig.herokuapp.com"
+        // const baseUrl = "http://localhost:9897"
+        const url = baseUrl + "/api/st-petersburg/initial-game-state";
+        // console.log(initialState);
+        this.corsPostJSON(url, {
+            gameId: gameId,
+            initialState: initialState,
+        }).then((response) => {
+            if (response.ok) {
+                response.json().then((obj) => console.log(obj));
+            } else {
+                response.text().then((obj) => console.log(obj));
+            }
+        });
+    };
+
+    this.sendFinalGameState = function(gameId, finalState) {
+        const baseUrl = "https://boompig.herokuapp.com"
+        // const baseUrl = "http://localhost:9897"
+        const url = baseUrl + "/api/st-petersburg/final-game-state";
+        // console.log(finalState);
+        this.corsPostJSON(url, {
+            gameId: gameId,
+            finalState: finalState,
+        }).then((response) => {
+            if (response.ok) {
+                response.json().then((obj) => console.log(obj));
+            } else {
+                response.text().then((obj) => console.log(obj));
+            }
+        });
+    };
+;
     /**
      * 1. Set turn to the player with the starter token for this phase
      * 2. Reset consecutive passes
@@ -496,40 +561,23 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
      */
     this.evalGameEnd = function () {
         console.log("**** Doing game-end calculations... ****");
-        for (var p = 0; p < this.players.length; p++) {
-            var player = this.players[p];
+        for (let p = 0; p < this.players.length; p++) {
+            let player = this.players[p];
             console.log("Player " + player.name + " ended the game with " + player.points + " points");
-            var aristocrats = player.cards.filter(function (card) {
-                return card.type === Card.types.ARISTOCRAT || (card.type === Card.types.UPGRADE && card.upgradeType === Card.types.ARISTOCRAT);
-            });
-            // sort by name
-            aristocrats.sort(function(a, b) {
-                if (a > b) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            });
-            var numAristocrats = 0;
-            for (var a = 0; a < aristocrats.length; a++) {
-                if (a === 0 || aristocrats[a].name !== aristocrats[a - 1].name) {
-                    numAristocrats++;
-                }
-            }
-            var aristocratPoints = this.aristocratScoringChart[Math.min(numAristocrats, 10)];
+            let numAristocrats = player.numUniqueAristocrats();
+            let aristocratPoints = this.aristocratScoringChart[Math.min(numAristocrats, 10)];
             console.log("Player " + player.name + " earned " + aristocratPoints + " points from " + numAristocrats + " aristocrats");
             player.points += aristocratPoints;
 
             // money scoring
-            var moneyPoints = Math.floor(player.money / 10);
+            let moneyPoints = Math.floor(player.money / 10);
             console.log("Player " + player.name + " earned " + moneyPoints + " points from " + player.money + " coins");
             player.points += moneyPoints;
 
             // hand penalties
-            var handPenalty = player.hand.length * 5;
+            let handPenalty = player.hand.length * 5;
             console.log("Player " + player.name + " was penalized " + handPenalty + " points from " + player.hand.length + " cards in hand");
             player.points -= handPenalty;
-
             console.log("Final score for player " + player.name + " is " + player.points + " points");
         }
     };
@@ -554,21 +602,33 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
      * 3. Call nextPhase
      */
     this.nextRound = function () {
+        this.numRounds++;
         if (this.lastRound) {
             this.evalGameEnd();
 
-            var winningPlayer = null;
-            var winningPoints = -1;
-            for (var i = 0; i < this.players.length; i++) {
+            let winningPlayer = null;
+            let winningPoints = -1;
+            let winningPlayerIndex = -1;
+            for (let i = 0; i < this.players.length; i++) {
                 if (this.players[i].points > winningPoints) {
                     winningPlayer = this.players[i];
                     winningPoints = this.players[i].points;
+                    winningPlayerIndex = i;
                 }
             }
 
             console.log("Game Over! The winner is " + winningPlayer.name + " with " + winningPoints + " points");
             // TODO display this in a nicer way
             alert("Game Over! The winner is " + winningPlayer.name + " with " + winningPoints + " points");
+
+            // send final game state
+            const finalGameState = {
+                "finalPoints": this.players.map((player) => player.points),
+                "winningPlayerIndex": winningPlayerIndex,
+                "winningPlayerPoints": winningPoints,
+                "numRounds": this.numRounds,
+            };
+            this.sendFinalGameState(this.gameId, finalGameState);
         } else {
             this.rotateTokens();
             this.nextPhase();
@@ -673,8 +733,8 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
      * Current player wants to buy selected card
      */
     this.buyCard = function (card, collection) {
-        var player = this.getCurrentPlayer();
-        var cost = this.getCardCost(card, collection);
+        const player = this.getCurrentPlayer();
+        const cost = this.getCardCost(card, collection);
 
         if (card.type === Card.types.UPGRADE) {
             var cardsToUpgrade = player.cards.filter(function (baseCard) {
@@ -765,7 +825,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     };
 
     this.getPhaseName = function (phase) {
-        phase = phase || this.phase;
+        phase = Number(phase) || this.phase;
         switch (phase) {
             case Card.types.WORKER:
                 return "Worker";
@@ -775,10 +835,15 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                 return "Aristocrat";
             case Card.types.UPGRADE:
                 return "Upgrade";
+            default:
+                throw new Error("Unknown phase: " + phase);
         }
     };
 
     this.doRobotAction = function () {
+        // update UI action
+        this.aiIsWorking = true;
+
         var player = this.getCurrentPlayer();
         if (! player.isHuman) {
             var deckSizes = [];
@@ -817,6 +882,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
                 this.passTurn();
             }
         }
+        this.aiIsWorking = false;
     };
 
     this.isCurrentPhase = function (phase) {

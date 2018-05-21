@@ -127,7 +127,7 @@ var allCards = [
         {"upgradeType": Card.types.WORKER, "workerUpgradeClass": "SHIP_BUILDER"}),
 
     new Card("Mariinskij Theatre", 10, Card.types.UPGRADE, 0, 0, 6,
-        {"upgradeType": Card.types.BUILDING, "bonusYieldClass": Card.types.ARISTOCRAT, "bonusYieldType": "points"}),
+        {"upgradeType": Card.types.BUILDING, "bonusYieldClass": Card.types.ARISTOCRAT, "bonusYieldType": "money"}),
     new Card("Bank", 13, Card.types.UPGRADE, 5, 1, 7,
         {"upgradeType": Card.types.BUILDING}),
     new Card("Peterhof", 14, Card.types.UPGRADE, 4, 2, 8,
