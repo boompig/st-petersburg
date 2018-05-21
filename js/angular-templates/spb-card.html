@@ -1,6 +1,6 @@
 <div ng-class="{ 'aristocrat-card': card.upgradeType === 3, 'worker-card': card.upgradeType === 1, 'building-card': card.upgradeType === 2 }">
-	<span ng-if="card.type === 'UPGRADE'">[U, {{ card.cost }}]</span>
-	<span ng-if="card.type !== 'UPGRADE'">[{{ card.cost }}]</span>
+	<span ng-if="card.type === 4">[U, {{ card.cost }}]</span>
+	<span ng-if="card.type !== 4">[{{ card.cost }}]</span>
     <span class="card-name">{{ card.name }}</span>:
     <span class="card-coin-yield">{{ card.coinYield }} Coins</span>,
     <span class="card-point-yield">{{ card.pointYield }} Points</span>

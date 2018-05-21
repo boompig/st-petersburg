@@ -29,7 +29,7 @@
                 <spb-player ng-repeat="player in game.players"
                     player="player"
                     is-turn="game.isPlayerTurn(player)"
-                    play-card="game.playCard(card, player, collection)"
+                    on-play-card="game.playCard(card, player, collection)"
                     on-play-card-from-hand="game.playCardFromHand(card, player)">
                 </spb-player>
             </div>
@@ -118,7 +118,7 @@
         <!-- Angular 1 for debugging -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/ng-context-menu/1.0.2/ng-context-menu.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
 
 		<!-- local libraries (helpful for offline development) -->
         <!-- <script src="node_modules/lodash/lodash.min.js"></script>
@@ -137,6 +137,7 @@
         <script src="js/angular-directives/spb-card.js"></script>
         <script src="js/angular-components/spb-player.js"></script>
         <script src="js/angular-components/spb-board.js"></script>
+        <script src="js/angular-components/spb-player-card.js"></script>
         
     </body>
 </html>

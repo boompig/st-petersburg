@@ -1,6 +1,6 @@
 <div id="lower-board" class="board">
     <h4>Lower Board</h4>
-    <div ng-if="$ctrl.cards === 0">Empty</div>
+    <div ng-if="$ctrl.cards.length === 0">Empty</div>
     <div class="card" ng-repeat="card in $ctrl.cards"
         ng-click="$ctrl.currentPlayerIsHuman && $ctrl.buyCard(card)"
         context-menu class="panel panel-default"

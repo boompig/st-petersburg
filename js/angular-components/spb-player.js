@@ -20,6 +20,12 @@ const spbPlayerCtrl = function() {
             player: this.player,
         });
     };
+
+    this.getCardQuantity = function(cardName) {
+        return this.player.cards.filter((card) => {
+            return card.name === cardName;
+        }).length;
+    };
 };
 
 StPeter.component("spbPlayer", {
