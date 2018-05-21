@@ -1,0 +1,7 @@
+<div class="deck" data-ng-class="{ 'current-phase' : $ctrl.isCurrentPhase }">
+    <div class="deck-image">
+        <img data-ng-src="img/cards/{{ $ctrl.phaseName.toLowerCase() }}-back.png"
+            alt="{{ $ctrl.phaseName }}" />
+    </div>
+    <div class="deck-num-cards">{{ $ctrl.numCards }}</div>
+</div>

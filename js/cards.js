@@ -24,7 +24,7 @@ function Card (name, cost, type, coin_yield, point_yield, index, kwargs) {
     if (kwargs) {
         for (var property in kwargs) {
             if (this.hasOwnProperty(property)) {
-                console.log("Set " + property + " to value " + kwargs[property] + " for card " + name);
+                // console.log("Set " + property + " to value " + kwargs[property] + " for card " + name);
                 this[property] = kwargs[property];
             }
         }

@@ -1,5 +1,5 @@
 // create Angular app
-var StPeter = angular.module("StPeter", [
+var StPeter = angular.module("stPeter", [
     "ng-context-menu",
     "ui.bootstrap"]);
 
@@ -8,7 +8,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     "use strict";
 
     /****** STATIC DATA *******/
-    this.phases = [Card.types.WORKER, Card.types.BUILDING, Card.types.ARISTOCRAT, Card.types.UPGRADE];
+    this.phases = StaticGameData.Phases;
     this.playerNames = [
         "Sergei",
         "Ross",
@@ -426,7 +426,12 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     };
 
     this.sendInitialGameState = function(gameId, initialState) {
-        const baseUrl = "https://boompig.herokuapp.com"
+        let baseUrl;
+        if(window.location.href.startsWith("http://localhost")) {
+            baseUrl = "http://localhost:9897"
+        } else {
+            baseUrl = "https://boompig.herokuapp.com"
+        }
         // const baseUrl = "http://localhost:9897"
         const url = baseUrl + "/api/st-petersburg/initial-game-state";
         // console.log(initialState);
@@ -439,12 +444,16 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             } else {
                 response.text().then((obj) => console.log(obj));
             }
-        });
+        }).catch((err) => console.error(err));
     };
 
     this.sendFinalGameState = function(gameId, finalState) {
-        const baseUrl = "https://boompig.herokuapp.com"
-        // const baseUrl = "http://localhost:9897"
+        let baseUrl;
+        if(window.location.href.startsWith("http://localhost")) {
+            baseUrl = "http://localhost:9897"
+        } else {
+            baseUrl = "https://boompig.herokuapp.com"
+        }        
         const url = baseUrl + "/api/st-petersburg/final-game-state";
         // console.log(finalState);
         this.corsPostJSON(url, {
@@ -456,7 +465,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
             } else {
                 response.text().then((obj) => console.log(obj));
             }
-        });
+        }).catch((err) => console.error(err));
     };
 ;
     /**
@@ -826,18 +835,7 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
 
     this.getPhaseName = function (phase) {
         phase = Number(phase) || this.phase;
-        switch (phase) {
-            case Card.types.WORKER:
-                return "Worker";
-            case Card.types.BUILDING:
-                return "Building";
-            case Card.types.ARISTOCRAT:
-                return "Aristocrat";
-            case Card.types.UPGRADE:
-                return "Upgrade";
-            default:
-                throw new Error("Unknown phase: " + phase);
-        }
+        return StaticGameData.getPhaseName(phase);
     };
 
     this.doRobotAction = function () {
@@ -890,10 +888,6 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
     };
 
     this.init();
-}).directive("spbCard", function () {
-    return {
-        templateUrl: "spb-card.html"
-    };
 });
 
 /**
