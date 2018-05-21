@@ -12,20 +12,56 @@ h1.title, h2.title {
     text-align: center;
 }
 
+/************* decks ************/
+
 #deck-container {
     width: 100%;
-    padding-bottom: 0.9em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid black;
+    margin-bottom: .5em;
 }
 
 .deck {
     display: inline-block;
     width: 23.5%;
     padding-right: 0.5%;
+    padding-left: 1%;
 }
 
+.deck img {
+    width: 100px;
+}
+
+.deck-num-cards {
+    margin-top: .25em;
+    font-size: 1.2em;
+    margin-left: 40px;
+}
+
+/************* decks ************/
+
+/************* player ***********/
 #player-container {
     width: 100%;
-    padding-bottom: 0.9em;
+
+    padding-bottom: 0.45em;
+    border-bottom: 1px solid black;
+    margin-bottom: .45em;
+    
+}
+
+.player .progress-bar {
+    background-color: #FCC96A;
+    color: black;
+    font-weight: bold;
+}
+
+.player {
+    display: inline-block;
+    width: 23%;
+    padding-left: 1%;
+    font-size: 0.9em;
+    vertical-align: top;
 }
 
 .player .name {
@@ -33,6 +69,46 @@ h1.title, h2.title {
     font-weight: bold;
     margin-bottom: 0.25em;
 }
+
+.player-money-container, .player-points-container {
+    text-align: center;
+    position: relative;
+    width: 40px;
+    display: inline-block;
+}
+
+.player-token-container {
+    display: inline-block;
+}
+
+.money-icon, .points-icon, .token-icon {
+    width: 40px;
+}
+
+.player-money, .player-points {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    font-weight: bold;
+}
+
+.player-turn {
+    color: red;
+}
+
+.card {
+    font-size: 0.9em;
+}
+
+.current-phase {
+    color: red;
+}
+
+/************* player ***********/
+
+/************ board *************/
 
 #board-container {
     position: fixed;
@@ -42,23 +118,11 @@ h1.title, h2.title {
     margin: 0 auto;
 }
 
-.card {
-    font-size: 0.9em;
-}
-
 #upper-board, #lower-board {
     display: block;
     border: 1px dashed black;
     margin: 0 auto;
     min-width: 800px;
-}
-
-.playerTurn {
-    color: red;
-}
-
-.currentPhase {
-    color: red;
 }
 
 .buyable-card:hover, .playable-card:hover {
@@ -86,13 +150,6 @@ li.dropdown-menu-item:hover {
     color: white;
 }
 
-.player {
-    display: inline-block;
-    width: 23%;
-    font-size: 0.9em;
-    vertical-align: top;
-}
-
 .worker-card {
     background-color: #8EC787;
 }
@@ -113,3 +170,5 @@ li.dropdown-menu-item:hover {
     font-weight: bold;
     font-size: 1.05em;
 }
+
+/************ board *************/
