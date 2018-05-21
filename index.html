@@ -87,7 +87,9 @@
                 <!-- <span ng-if="!game.getCurrentPlayer().isHuman"> -->
                     <button type="button" class="btn btn-primary"
                         ng-click="game.doRobotAction()"
-                        ng-disabled="game.getCurrentPlayer().isHuman || game.aiIsWorking">AI Turn</button>
+                        ng-disabled="game.getCurrentPlayer().isHuman || game.aiIsWorking">
+                        {{ game.aiIsWorking ? "Thinking..." : "AI Turn" }}
+                    </button>
                 <!-- </span> -->
             </div>
         </div>

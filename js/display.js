@@ -4,7 +4,7 @@ var StPeter = angular.module("stPeter", [
     "ui.bootstrap"]);
 
 // create Angular controller
-StPeter.controller("PeterCtrl", function ($scope, $modal) {
+StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     "use strict";
 
     /****** STATIC DATA *******/
@@ -842,45 +842,48 @@ StPeter.controller("PeterCtrl", function ($scope, $modal) {
         // update UI action
         this.aiIsWorking = true;
 
-        var player = this.getCurrentPlayer();
-        if (! player.isHuman) {
-            var deckSizes = [];
-            for (var i = 0; i < this.phases.length; i++) {
-                deckSizes.push( this.decks[this.phases[i]].length );
-            }
-            // create the state out of current game state
-            var state = new State(deckSizes, this.upperBoard, this.lowerBoard,
-                    this.phase, player);
-            var obj = AI.analyze(state);
-            console.log("Plan for " + player.name + ":");
-            for (var i = 0; i < obj.moveList.length; i++)
-                console.log(obj.moveList[i].toString());
-            var locationMap = {};
-            locationMap[Card.locations.UPPER_BOARD] = this.upperBoard;
-            locationMap[Card.locations.LOWER_BOARD] = this.lowerBoard;
-            locationMap[Card.locations.HAND] = player.hand;
-            if (obj.move) {
-                switch (obj.move.action) {
-                    case Move.actions.PASS:
-                        this.passTurn();
-                        break;
-                    case Move.actions.BUY:
-                        this.buyCard(obj.move.card, locationMap[obj.move.location]);
-                        break;
-                    case Move.actions.PUT_IN_HAND:
-                        this.putCardInHand(obj.move.card, locationMap[obj.move.location]);
-                        break;
-                    case Move.actions.UPGRADE:
-                        this.upgradeCard(obj.move.baseCard, obj.move.card,
-                                locationMap[obj.move.location]);
-                        break;
+        const inner = () => {
+            var player = this.getCurrentPlayer();
+            if (! player.isHuman) {
+                var deckSizes = [];
+                for (var i = 0; i < this.phases.length; i++) {
+                    deckSizes.push( this.decks[this.phases[i]].length );
                 }
-            } else {
-                console.log("nothing to be done");
-                this.passTurn();
+                // create the state out of current game state
+                var state = new State(deckSizes, this.upperBoard, this.lowerBoard,
+                        this.phase, player);
+                var obj = AI.analyze(state);
+                console.log("Plan for " + player.name + ":");
+                for (var i = 0; i < obj.moveList.length; i++)
+                    console.log(obj.moveList[i].toString());
+                var locationMap = {};
+                locationMap[Card.locations.UPPER_BOARD] = this.upperBoard;
+                locationMap[Card.locations.LOWER_BOARD] = this.lowerBoard;
+                locationMap[Card.locations.HAND] = player.hand;
+                if (obj.move) {
+                    switch (obj.move.action) {
+                        case Move.actions.PASS:
+                            this.passTurn();
+                            break;
+                        case Move.actions.BUY:
+                            this.buyCard(obj.move.card, locationMap[obj.move.location]);
+                            break;
+                        case Move.actions.PUT_IN_HAND:
+                            this.putCardInHand(obj.move.card, locationMap[obj.move.location]);
+                            break;
+                        case Move.actions.UPGRADE:
+                            this.upgradeCard(obj.move.baseCard, obj.move.card,
+                                    locationMap[obj.move.location]);
+                            break;
+                    }
+                } else {
+                    console.log("nothing to be done");
+                    this.passTurn();
+                }
             }
-        }
-        this.aiIsWorking = false;
+            this.aiIsWorking = false;
+        };
+        $timeout(inner, 0);
     };
 
     this.isCurrentPhase = function (phase) {
