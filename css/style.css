@@ -18,24 +18,22 @@ h1.title, h2.title {
     width: 100%;
     padding-bottom: 0.5em;
     border-bottom: 1px solid black;
-    margin-bottom: .5em;
-}
+    margin-bottom: .4em;
 
-.deck {
-    display: inline-block;
-    width: 23.5%;
-    padding-right: 0.5%;
-    padding-left: 1%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
 }
 
 .deck img {
-    width: 90px;
+    width: 80px;
 }
 
 .deck-num-cards {
     margin-top: .25em;
     font-size: 1.2em;
-    margin-left: 40px;
+    margin-left: 30px;
 }
 
 /************* decks ************/
@@ -48,6 +46,9 @@ h1.title, h2.title {
     border-bottom: 1px solid black;
     margin-bottom: .45em;
     
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
 .player .progress-bar {
@@ -57,10 +58,9 @@ h1.title, h2.title {
 }
 
 .player {
-    display: inline-block;
-    width: 23%;
-    padding-left: 1%;
-    font-size: 0.9em;
+    /* some text is very wide: mistress of ceremonies, czar and carpenter */
+    min-width: 210px;
+    font-size: .9em;
     vertical-align: top;
 }
 
@@ -70,22 +70,41 @@ h1.title, h2.title {
     margin-bottom: 0.25em;
 }
 
-.player-money-container, .player-points-container {
+.num-aristocrats-progress-name {
+    color: #666;
+    font-size: .8em;
+}
+
+.progress.num-aristocrats-progress {
+    /* default is 20px. */
+    margin-bottom: .9em;
+}
+
+/************ player stats **********/
+.player-stats {
+    margin-bottom: .3em;
+}
+
+.player-stats .player-money-container,
+.player-stats .player-points-container {
     text-align: center;
     position: relative;
     width: 40px;
     display: inline-block;
 }
 
-.player-token-container {
+.player-stats .player-token-container {
     display: inline-block;
 }
 
-.money-icon, .points-icon, .token-icon {
+.player-stats .money-icon,
+.player-stats .points-icon,
+.player-stats .token-icon {
     width: 40px;
 }
 
-.player-money, .player-points {
+.player-stats .player-money,
+.player-stats .player-points {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -93,6 +112,64 @@ h1.title, h2.title {
 
     font-weight: bold;
 }
+/************ player stats **********/
+
+/************ bought cards **********/
+.bought-cards-container  {
+    width: 100%;
+}
+
+.card.bought-card {
+    width: 100%;
+    margin-bottom: .25em;
+    font-size: 1em;
+    vertical-align: bottom;
+}
+
+.bought-card .card-name {
+    /* manually set to the largest value for this field that I've seen */
+    min-width: 151px;
+    display: inline-block;
+}
+
+.bought-card .card-coin-yield-container,
+.bought-card .card-point-yield-container {
+    text-align: center;
+    position: relative;
+    width: 20px;
+    display: inline-block;
+}
+
+.bought-card .money-icon,
+.bought-card .points-icon {
+    width: 20px;
+}
+
+.bought-card .card-type-rect {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: bottom;
+    border: 1px solid black;
+}
+
+.bought-card .card-coin-yield,
+.bought-card .card-point-yield {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    font-weight: bold;
+}
+
+.bought-card.playable-card .card-name {
+    color: blue;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/************ bought cards **********/
 
 .player-turn {
     color: red;
@@ -125,7 +202,7 @@ h1.title, h2.title {
     min-width: 800px;
 }
 
-.buyable-card:hover, .playable-card:hover {
+.buyable-card:hover {
     color: white;
     font-weight: bold;
     cursor: pointer;
@@ -172,3 +249,7 @@ li.dropdown-menu-item:hover {
 }
 
 /************ board *************/
+
+#btn-container .btn {
+    font-size: 1em;
+}

@@ -3,6 +3,7 @@ StPeter.component("spbDeck", {
     bindings: {
         // string
         phaseName: '<',
+        // number
         numCards: '<',
         // boolean
         isCurrentPhase: '<',

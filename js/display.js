@@ -681,7 +681,14 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
      */
     this.playCard = function (card, player, collection) {
         var currentPlayer = this.players[this.turn];
-        if (currentPlayer !== player || ! card.isPlayable) {
+        if(currentPlayer !== player) {
+            console.log("Cannot play another player's card");
+            alert("Cannot play another player's card");
+            return false;
+        }
+        if (!card.isPlayable) {
+            console.log("Card is not playable");
+            alert("This card is not playable");
             return false;
         }
 
