@@ -1,0 +1,20 @@
+<div id="upper-board" class="board">
+    <h4>Upper Board</h4>
+    <div ng-if="$ctrl.cards === 0">Empty</div>
+    <div class="card" ng-repeat="card in $ctrl.cards"
+        ng-click="$ctrl.currentPlayerIsHuman && $ctrl.buyCard(card)"
+        context-menu class="panel panel-default"
+        data-target="upper-menu-{{ $index }}"
+        ng-class="{ 'highlight': highlight, 'expanded': expanded, 'buyable-card': $ctrl.currentPlayerIsHuman }">
+        <div spb-card></div>
+
+        <div class="dropdown position-fixed" id="upper-menu-{{ $index }}">
+            <ul class="dropdown-menu" role="menu">
+                <li class="dropdown-menu-item"
+                    ng-click="$ctrl.buyCard(card)">Buy</li>
+                <li class="dropdown-menu-item"
+                    ng-click="$ctrl.putCardInHand(card)">Put In Hand</li>
+            </ul>
+        </div>
+    </div>
+</div>

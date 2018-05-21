@@ -36,61 +36,30 @@
             
 
             <div id="board-container">
-                <div id="upper-board" class="board">
-                    <h4>Upper Board</h4>
-                    <div ng-if="game.upperBoard.length === 0">Empty</div>
-                    <div class="card" ng-repeat="card in game.upperBoard"
-                        ng-click="game.getCurrentPlayer().isHuman && game.buyCard(card, game.upperBoard)"
-                        context-menu class="panel panel-default"
-                        data-target="upper-menu-{{ $index }}"
-                        ng-class="{ 'highlight': highlight, 'expanded': expanded, 'buyable-card': game.getCurrentPlayer().isHuman }">
-                        <div spb-card></div>
+                <spb-upper-board
+                    cards="game.upperBoard"
+                    current-player-is-human="game.getCurrentPlayer().isHuman"
+                    on-buy-card="game.buyCard(card, collection)"
+                    on-put-card-in-hand="game.putCardInHand(card, collection)">
+                </spb-upper-board>
 
-                        <div class="dropdown position-fixed" id="upper-menu-{{ $index }}">
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="dropdown-menu-item"
-                                    ng-click="game.buyCard(card, game.upperBoard)">Buy</li>
-                                <li class="dropdown-menu-item"
-                                    ng-click="game.putCardInHand(card, game.upperBoard)">Put In Hand</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div id="lower-board" class="board">
-                    <h4>Lower Board</h4>
-                    <div ng-if="game.lowerBoard.length === 0">Empty</div>
-                    <div class="card" ng-repeat="card in game.lowerBoard"
-                        ng-click="game.buyCard(card, game.lowerBoard)"
-                        context-menu class="panel panel-default"
-                        data-target="lower-menu-{{ $index }}"
-                        ng-class="{ 'highlight': highlight, 'expanded': expanded, 'buyable-card': game.getCurrentPlayer().isHuman }">
-                        <div spb-card></div>
-
-                        <div class="dropdown position-fixed" id="lower-menu-{{ $index }}">
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="dropdown-menu-item"
-                                    ng-click="game.buyCard(card, game.lowerBoard)">Buy</li>
-                                <li class="dropdown-menu-item"
-                                    ng-click="game.putCardInHand(card, game.lowerBoard)">Put In Hand</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <spb-lower-board
+                    cards="game.lowerBoard"
+                    current-player-is-human="game.getCurrentPlayer().isHuman"
+                    on-buy-card="game.buyCard(card, collection)"
+                    on-put-card-in-hand="game.putCardInHand(card, collection)">
+                </spb-lower-board>
             </div>
 
             <div id="btn-container">
-                <!-- <span ng-if="game.getCurrentPlayer().isHuman"> -->
-                    <button type="button" class="btn btn-success"
-                        ng-click="game.passTurn()"
-                        ng-disabled="!game.getCurrentPlayer().isHuman">Next Turn (Pass)</button>
-                <!-- </span> -->
-                <!-- <span ng-if="!game.getCurrentPlayer().isHuman"> -->
-                    <button type="button" class="btn btn-primary"
-                        ng-click="game.doRobotAction()"
-                        ng-disabled="game.getCurrentPlayer().isHuman || game.aiIsWorking">
-                        {{ game.aiIsWorking ? "Thinking..." : "AI Turn" }}
-                    </button>
-                <!-- </span> -->
+                <button type="button" class="btn btn-success"
+                    ng-click="game.passTurn()"
+                    ng-disabled="!game.getCurrentPlayer().isHuman">Next Turn (Pass)</button>
+                <button type="button" class="btn btn-primary"
+                    ng-click="game.doRobotAction()"
+                    ng-disabled="game.getCurrentPlayer().isHuman || game.aiIsWorking">
+                    {{ game.aiIsWorking ? "Thinking..." : "AI Turn" }}
+                </button>
             </div>
         </div>
 
@@ -165,7 +134,9 @@
         <script src="my_node_modules/ai.js"></script>
         <script src="js/display.js"></script>
         <script src="js/angular-components/spb-deck.js"></script>
-        <script src="js/angular-components/spb-player.js"></script>
         <script src="js/angular-directives/spb-card.js"></script>
+        <script src="js/angular-components/spb-player.js"></script>
+        <script src="js/angular-components/spb-board.js"></script>
+        
     </body>
 </html>
