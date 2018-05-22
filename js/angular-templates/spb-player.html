@@ -32,7 +32,7 @@
         <div class="player-subtitle">Bought Cards</div>
         <div class="bought-cards-container">
             <div ng-repeat="card in $ctrl.player.getUniqueCards()"
-                ng-click="$ctrl.playBoughtCard(card)">
+                ng-click="$ctrl.card.isPlayable && $ctrl.playBoughtCard(card)">
                 <spb-player-card
                     card="card"
                     quantity="$ctrl.getCardQuantity(card.name)">

@@ -11,12 +11,13 @@
         margin: 0 auto;
         min-width: 800px;
     }
-    
-    .buyable-card:hover {
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-    }
+}
+
+/* both for board and for cards in hand */
+.buyable-card:hover {
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 
