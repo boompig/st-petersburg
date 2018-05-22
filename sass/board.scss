@@ -8,6 +8,7 @@ $bottom-offset: 2.1rem;
 #board-container {
     position: fixed;
     bottom: $bottom-offset;
+    left: 0;
     display: block;
     margin: 0;
     padding: 0;

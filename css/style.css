@@ -63,7 +63,7 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 .bought-cards-container .card.bought-card.playable-card .card-name { color: blue; font-weight: bold; cursor: pointer; }
 
 /** The upper and lower board are situated at the bottom Right now they are statically positioned with respect to the bottom of the screen */
-#board-container { position: fixed; bottom: 2.1rem; display: block; margin: 0; padding: 0; width: 100%; }
+#board-container { position: fixed; bottom: 2.1rem; left: 0; display: block; margin: 0; padding: 0; width: 100%; }
 #board-container .inner-board-container { min-width: 800px; border: 1px solid black; display: block; padding-left: 1rem; padding-right: 1rem; padding-bottom: 0; margin-top: .4rem; margin-bottom: 0; margin-left: auto; margin-right: auto; }
 @media screen and (min-width: 1000px) { #board-container .inner-board-container { width: 900px; } }
 @media screen and (min-width: 1100px) { #board-container .inner-board-container { width: 1000px; } }
