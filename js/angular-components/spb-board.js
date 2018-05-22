@@ -11,27 +11,22 @@ const BoardCtrl = function() {
             card: card,
             collection: this.cards,
         });
-    }
+    };
+
+    this.prettyName = function() {
+        return this.name[0].toUpperCase() + this.name.substr(1);
+    };
 };
 
-
-StPeter.component("spbLowerBoard", {
-    templateUrl: "js/angular-templates/spb-lower-board.html",
+StPeter.component("spbBoard", {
+    templateUrl: "js/angular-templates/spb-board.html",
     bindings: {
+        // array of card objects
         cards: '<',
+        // boolean
         currentPlayerIsHuman: '<',
-        // callbacks
-        onPutCardInHand: '&',
-        onBuyCard: '&',
-    },
-    controller: BoardCtrl,
-});
-
-StPeter.component("spbUpperBoard", {
-    templateUrl: "js/angular-templates/spb-upper-board.html",
-    bindings: {
-        cards: '<',
-        currentPlayerIsHuman: '<',
+        // the string "upper" or "lower"
+        name: '<',
         // callbacks
         onPutCardInHand: '&',
         onBuyCard: '&',

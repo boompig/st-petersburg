@@ -2,11 +2,14 @@
 
 html, body {
     font-family: Helvetica;
-    font-size: 1em;
+    font-size: 1rem;
 }
 
 #main-container {
-    margin: 0 auto;
+    margin-top: 1.2%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0;
     max-width: 1200px;
 }
 
@@ -19,7 +22,7 @@ h1.title, h2.title {
 }
 
 .card {
-    font-size: 0.9em;
+    font-size: 0.9rem;
 }
 
 .current-phase {
@@ -27,7 +30,7 @@ h1.title, h2.title {
 }
 
 #btn-container .btn {
-    font-size: 1em;
+    font-size: 1rem;
 }
 
 .position-fixed {
@@ -67,7 +70,12 @@ li.dropdown-menu-item:hover {
 
 .player .player-subtitle {
     font-weight: bold;
-    font-size: 1.05em;
+    font-size: 1.05rem;
+}
+
+.empty-card-container-msg {
+    font-size: .85rem;
+    color: #666666;
 }
 
 // specific stuff
@@ -75,3 +83,4 @@ li.dropdown-menu-item:hover {
 @import "player";
 @import "bought-cards";
 @import "board";
+@import "footer";

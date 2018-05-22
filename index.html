@@ -15,8 +15,6 @@
     </head>
     <body ng-app="stPeter">
         <div id="main-container" ng-controller="PeterCtrl as game">
-            <h2 class="title">St. Petersburg Board Game</h2>
-
             <div id="deck-container">
                 <spb-deck ng-repeat="phase in game.phases"
                     phase-name="game.getPhaseName(phase)"
@@ -35,19 +33,23 @@
             </div>
 
             <div id="board-container">
-                <spb-upper-board
-                    cards="game.upperBoard"
-                    current-player-is-human="game.getCurrentPlayer().isHuman"
-                    on-buy-card="game.buyCard(card, collection)"
-                    on-put-card-in-hand="game.putCardInHand(card, collection)">
-                </spb-upper-board>
+                <div class="inner-board-container">
+                    <spb-board
+                        cards="game.upperBoard"
+                        current-player-is-human="game.getCurrentPlayer().isHuman"
+                        on-buy-card="game.buyCard(card, collection)"
+                        on-put-card-in-hand="game.putCardInHand(card, collection)"
+                        name="'upper'">
+                    </spb-board>
 
-                <spb-lower-board
-                    cards="game.lowerBoard"
-                    current-player-is-human="game.getCurrentPlayer().isHuman"
-                    on-buy-card="game.buyCard(card, collection)"
-                    on-put-card-in-hand="game.putCardInHand(card, collection)">
-                </spb-lower-board>
+                    <spb-board
+                        cards="game.lowerBoard"
+                        current-player-is-human="game.getCurrentPlayer().isHuman"
+                        on-buy-card="game.buyCard(card, collection)"
+                        on-put-card-in-hand="game.putCardInHand(card, collection)"
+                        name="'lower'">
+                    </spb-board>
+                </div>
             </div>
 
             <div id="btn-container">
@@ -60,6 +62,11 @@
                     {{ game.aiIsWorking ? "Thinking..." : "AI Turn" }}
                 </button>
             </div>
+
+            <footer>
+                <p>Simulation of the St Petersburg board game developed by <a href="https://boompig.herokuapp.com/">Daniel Kats</a> in 2018. The rules can be found <a href="http://riograndegames.com/uploads/Game/Game_178_gameRules.pdf">here [PDF].</a>
+                </p>
+            </footer>
         </div>
 
         <script type="text/ng-template" id="upgradeModal.html">

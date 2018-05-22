@@ -1,0 +1,21 @@
+footer {
+    position: fixed;
+    bottom: 1rem;
+    color: #aaa;
+    font-size: 0.9rem;
+    text-align: center;
+    width: 100%;
+
+    // make sure that there is enough space for everything to fit on small laptop screens
+    // this is for iPads, most 13" laptops
+    @media screen and (max-height: 768px) {
+        font-size: .85rem;
+        bottom: .9rem;
+    }
+}
+
+footer p {
+    margin: 0 auto;
+    text-align: center;
+
+}

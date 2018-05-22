@@ -31,6 +31,7 @@
     <div class="player-cards">
         <div class="player-subtitle">Bought Cards</div>
         <div class="bought-cards-container">
+            <div ng-if="$ctrl.player.cards.length === 0" class="empty-card-container-msg">No cards</div>
             <div ng-repeat="card in $ctrl.player.getUniqueCards()"
                 ng-click="$ctrl.card.isPlayable && $ctrl.playBoughtCard(card)">
                 <spb-player-card
@@ -39,7 +40,6 @@
                 </spb-player-card>
             </div>
         </div>
-        <div ng-if="$ctrl.player.cards.length === 0">No cards</div>
     </div>
     <div class="player-hand">
         <div class="player-subtitle">Cards In Hand</div>
@@ -48,6 +48,6 @@
             ng-click="$ctrl.player.isHuman && $ctrl.buyCardFromHand(card)">
             <div spb-card></div>
         </div>
-        <div ng-if="$ctrl.player.hand.length === 0">Empty hand</div>
+        <div ng-if="$ctrl.player.hand.length === 0" class="empty-card-container-msg">Empty hand</div>
     </div>
 </div>
