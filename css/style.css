@@ -1,258 +1,62 @@
-html, body {
-    font-family: Helvetica;
-    font-size: 1em;
-}
+html, body { font-family: Helvetica; font-size: 1em; }
 
-#main-container {
-    margin: 0 auto;
-    max-width: 1200px;
-}
+#main-container { margin: 0 auto; max-width: 1200px; }
 
-h1.title, h2.title {
-    text-align: center;
-}
+h1.title, h2.title { text-align: center; }
 
-/************* decks ************/
+.player-turn { color: red; }
 
-#deck-container {
-    width: 100%;
-    padding-bottom: 0.5em;
-    border-bottom: 1px solid black;
-    margin-bottom: .4em;
+.card { font-size: 0.9em; }
 
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-around;
-}
+.current-phase { color: red; }
 
-.deck img {
-    width: 80px;
-}
+#btn-container .btn { font-size: 1em; }
 
-.deck-num-cards {
-    margin-top: .25em;
-    font-size: 1.2em;
-    margin-left: 30px;
-}
+.position-fixed { position: fixed; }
 
-/************* decks ************/
+.dropdown-menu-item { cursor: pointer; font-weight: normal; }
 
-/************* player ***********/
-#player-container {
-    width: 100%;
+li.dropdown-menu-item { background-color: white; color: black; }
 
-    padding-bottom: 0.45em;
-    border-bottom: 1px solid black;
-    margin-bottom: .45em;
-    
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-}
+li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 
-.player .progress-bar {
-    background-color: #FCC96A;
-    color: black;
-    font-weight: bold;
-}
+.worker-card { background-color: #8EC787; }
 
-.player {
-    /* some text is very wide: mistress of ceremonies, czar and carpenter */
-    min-width: 210px;
-    font-size: .9em;
-    vertical-align: top;
-}
+.building-card { background-color: #7FBEF5; }
 
-.player .name {
-    font-size: 1.3em;
-    font-weight: bold;
-    margin-bottom: 0.25em;
-}
+.aristocrat-card { background-color: #FCC96A; }
 
-.num-aristocrats-progress-name {
-    color: #666;
-    font-size: .8em;
-}
+.upgrade-card { background-color: #C786F0; }
 
-.progress.num-aristocrats-progress {
-    /* default is 20px. */
-    margin-bottom: .9em;
-}
+.player .player-subtitle { font-weight: bold; font-size: 1.05em; }
 
-/************ player stats **********/
-.player-stats {
-    margin-bottom: .3em;
-}
+#deck-container { width: 100%; padding-bottom: 0.5em; border-bottom: 1px solid black; margin-bottom: .4em; display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-around; }
 
-.player-stats .player-money-container,
-.player-stats .player-points-container {
-    text-align: center;
-    position: relative;
-    width: 40px;
-    display: inline-block;
-}
+.deck img { width: 80px; }
 
-.player-stats .player-token-container {
-    display: inline-block;
-}
+.deck-num-cards { margin-top: .25em; font-size: 1.2em; margin-left: 30px; }
 
-.player-stats .money-icon,
-.player-stats .points-icon,
-.player-stats .token-icon {
-    width: 40px;
-}
+#player-container { width: 100%; padding-bottom: 0.45em; border-bottom: 1px solid black; margin-bottom: .45em; display: flex; flex-direction: row; justify-content: space-around; }
+#player-container .player { /* some text is very wide: mistress of ceremonies, czar and carpenter */ min-width: 210px; font-size: .9em; vertical-align: top; }
+#player-container .player .name { font-size: 1.3em; font-weight: bold; margin-bottom: 0.25em; }
+#player-container .player .num-aristocrats-progress-name { color: #666; font-size: .8em; }
+#player-container .player .progress.num-aristocrats-progress { /* default is 20px. */ margin-bottom: .9em; }
+#player-container .player .progress-bar { background-color: #FCC96A; color: black; font-weight: bold; }
+#player-container .player-stats { margin-bottom: .3em; }
+#player-container .player-stats .player-money-container, #player-container .player-stats .player-points-container { text-align: center; position: relative; width: 40px; display: inline-block; }
+#player-container .player-stats .player-token-container { display: inline-block; }
+#player-container .player-stats .money-icon, #player-container .player-stats .points-icon, #player-container .player-stats .token-icon { width: 40px; }
+#player-container .player-stats .player-money, #player-container .player-stats .player-points { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; }
 
-.player-stats .player-money,
-.player-stats .player-points {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.bought-cards-container { width: 100%; /* when/if you buy a lot of unique cards (like aristocrats) this can get really long */ max-height: 500px; overflow: scroll; }
+.bought-cards-container .card.bought-card { width: 100%; margin-bottom: .25em; font-size: 1em; vertical-align: bottom; }
+.bought-cards-container .card.bought-card .card-name { /* manually set to the largest value for this field that I've seen */ min-width: 151px; display: inline-block; }
+.bought-cards-container .card.bought-card .card-coin-yield-container, .bought-cards-container .card.bought-card .card-point-yield-container { text-align: center; position: relative; width: 20px; display: inline-block; }
+.bought-cards-container .card.bought-card .money-icon, .bought-cards-container .card.bought-card .points-icon { width: 20px; }
+.bought-cards-container .card.bought-card .card-type-rect { width: 20px; height: 20px; display: inline-block; vertical-align: bottom; border: 1px solid black; }
+.bought-cards-container .card.bought-card .card-coin-yield, .bought-cards-container .card.bought-card .card-point-yield { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; }
+.bought-cards-container .card.bought-card.playable-card .card-name { color: blue; font-weight: bold; cursor: pointer; }
 
-    font-weight: bold;
-}
-/************ player stats **********/
-
-/************ bought cards **********/
-.bought-cards-container  {
-    width: 100%;
-    /* when/if you buy a lot of unique cards (like aristocrats) this can get really long */
-    max-height: 500px;
-    overflow: scroll;
-}
-
-.card.bought-card {
-    width: 100%;
-    margin-bottom: .25em;
-    font-size: 1em;
-    vertical-align: bottom;
-}
-
-.bought-card .card-name {
-    /* manually set to the largest value for this field that I've seen */
-    min-width: 151px;
-    display: inline-block;
-}
-
-.bought-card .card-coin-yield-container,
-.bought-card .card-point-yield-container {
-    text-align: center;
-    position: relative;
-    width: 20px;
-    display: inline-block;
-}
-
-.bought-card .money-icon,
-.bought-card .points-icon {
-    width: 20px;
-}
-
-.bought-card .card-type-rect {
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    vertical-align: bottom;
-    border: 1px solid black;
-}
-
-.bought-card .card-coin-yield,
-.bought-card .card-point-yield {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    font-weight: bold;
-}
-
-.bought-card.playable-card .card-name {
-    color: blue;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/************ bought cards **********/
-
-.player-turn {
-    color: red;
-}
-
-.card {
-    font-size: 0.9em;
-}
-
-.current-phase {
-    color: red;
-}
-
-/************* player ***********/
-
-/************ board *************/
-
-#board-container {
-    position: fixed;
-    bottom: 20px;
-    display: block;
-    border: 1px solid black;
-    margin: 0 auto;
-}
-
-#upper-board, #lower-board {
-    display: block;
-    border: 1px dashed black;
-    margin: 0 auto;
-    min-width: 800px;
-}
-
-.buyable-card:hover {
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.position-fixed {
-    position: fixed;
-}
-
-.dropdown-menu-item {
-    cursor: pointer;
-    font-weight: normal;
-}
-
-li.dropdown-menu-item {
-    background-color: white;
-    color: black;
-}
-
-li.dropdown-menu-item:hover {
-    background-color: #ccc;
-    color: white;
-}
-
-.worker-card {
-    background-color: #8EC787;
-}
-
-.building-card {
-    background-color: #7FBEF5;
-}
-
-.aristocrat-card {
-    background-color: #FCC96A;
-}
-
-.upgrade-card {
-    background-color: #C786F0;
-}
-
-.player .player-subtitle {
-    font-weight: bold;
-    font-size: 1.05em;
-}
-
-/************ board *************/
-
-#btn-container .btn {
-    font-size: 1em;
-}
+#board-container { position: fixed; bottom: 20px; display: block; border: 1px solid black; margin: 0 auto; }
+#board-container #upper-board, #board-container #lower-board { display: block; border: 1px dashed black; margin: 0 auto; min-width: 800px; }
+#board-container .buyable-card:hover { color: white; font-weight: bold; cursor: pointer; }

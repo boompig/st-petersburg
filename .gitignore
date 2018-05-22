@@ -8,4 +8,8 @@ node_modules
 .vimrc
 *.sublime-*
 
+# mac garbage
 .DS_Store
+
+# sass
+.sass-cache

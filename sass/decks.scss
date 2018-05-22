@@ -1,0 +1,21 @@
+#deck-container {
+    width: 100%;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid black;
+    margin-bottom: .4em;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+.deck img {
+    width: 80px;
+}
+
+.deck-num-cards {
+    margin-top: .25em;
+    font-size: 1.2em;
+    margin-left: 30px;
+}

@@ -1,0 +1,72 @@
+#player-container {
+    width: 100%;
+
+    padding-bottom: 0.45em;
+    border-bottom: 1px solid black;
+    margin-bottom: .45em;
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    .player {
+        /* some text is very wide: mistress of ceremonies, czar and carpenter */
+        min-width: 210px;
+        font-size: .9em;
+        vertical-align: top;
+
+        .name {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 0.25em;
+        }
+    
+        .num-aristocrats-progress-name {
+            color: #666;
+            font-size: .8em;
+        }
+    
+        .progress.num-aristocrats-progress {
+            /* default is 20px. */
+            margin-bottom: .9em;
+        }
+
+        .progress-bar {
+            background-color: #FCC96A;
+            color: black;
+            font-weight: bold;
+        }
+    }
+
+    .player-stats {
+        margin-bottom: .3em;
+    
+        .player-money-container,
+        .player-points-container {
+            text-align: center;
+            position: relative;
+            width: 40px;
+            display: inline-block;
+        }
+        
+        .player-token-container {
+            display: inline-block;
+        }
+        
+        .money-icon,
+        .points-icon,
+        .token-icon {
+            width: 40px;
+        }
+        
+        .player-money,
+        .player-points {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        
+            font-weight: bold;
+        }
+    }
+}

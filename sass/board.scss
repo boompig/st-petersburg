@@ -1,0 +1,22 @@
+#board-container {
+    position: fixed;
+    bottom: 20px;
+    display: block;
+    border: 1px solid black;
+    margin: 0 auto;
+
+    #upper-board, #lower-board {
+        display: block;
+        border: 1px dashed black;
+        margin: 0 auto;
+        min-width: 800px;
+    }
+    
+    .buyable-card:hover {
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+}
+
+

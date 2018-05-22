@@ -4,8 +4,14 @@ Simulation of the St Petersburg board game
 
 ## Setup
 
-To run:
+To build:
 
-* `bower install`
+Build CSS from sass
+
+* `sass sass/style.scss > css/style.css --style=compact`
+
+To run, just serve using a simple HTTP server. For example:
+
+* `npm install -g http-server`
 * `http-server`
-* navigate to root
+* navigate to root of resulting server
