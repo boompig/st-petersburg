@@ -1,6 +1,6 @@
 <div class="card bought-card"            
     ng-class="{ 'playable-card': $ctrl.card.isPlayable }"
-    ng-click="$ctrl.playBoughtCard(card)">
+    ng-click="$ctrl.card.isPlayable && $ctrl.playBoughtCard(card)">
     <span class="card-qty">&times;{{ $ctrl.quantity }}</span>
     <span class="card-name">{{ $ctrl.card.name }}</span>
     <span class="yield-container">
