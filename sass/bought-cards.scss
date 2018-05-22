@@ -1,10 +1,11 @@
-$max-container-height: 500px;
+$max-container-height: 400px;
 
 .bought-cards-container  {
     width: 100%;
     /* when/if you buy a lot of unique cards (like aristocrats) this can get really long */
     max-height: $max-container-height;
     overflow-y: auto;
+    margin-bottom: .8em;
 
     .card.bought-card {
         width: 100%;
