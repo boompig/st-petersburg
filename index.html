@@ -15,53 +15,56 @@
     </head>
     <body ng-app="stPeter">
         <div id="main-container" ng-controller="PeterCtrl as game">
-            <div id="deck-container">
-                <spb-deck ng-repeat="phase in game.phases"
-                    phase-name="game.getPhaseName(phase)"
-                    num-cards="game.decks[phase].length"
-                    is-current-phase="game.isCurrentPhase(phase)">
-                </spb-deck>
-            </div>
+            <div ng-if="game.humanPlayerName">
+                <div id="deck-container">
+                    <spb-deck ng-repeat="phase in game.phases"
+                        phase-name="game.getPhaseName(phase)"
+                        num-cards="game.decks[phase].length"
+                        is-current-phase="game.isCurrentPhase(phase)">
+                    </spb-deck>
+                </div>
 
-            <div id="player-container">
-                <spb-player ng-repeat="player in game.players"
-                    player="player"
-                    is-turn="game.isPlayerTurn(player)"
-                    on-play-card="game.playCard(card, player, collection)"
-                    on-play-card-from-hand="game.playCardFromHand(card, player)">
-                </spb-player>
-            </div>
+                <div id="player-container">
+                    <spb-player ng-repeat="player in game.players"
+                        player="player"
+                        is-turn="game.isPlayerTurn(player)"
+                        on-play-card="game.playCard(card, player, collection)"
+                        on-play-card-from-hand="game.playCardFromHand(card, player)">
+                    </spb-player>
+                </div>
 
-            <div id="board-container">
-                <div class="inner-board-container">
-                    <spb-board
-                        cards="game.upperBoard"
-                        current-player-is-human="game.getCurrentPlayer().isHuman"
-                        on-buy-card="game.buyCard(card, collection)"
-                        on-put-card-in-hand="game.putCardInHand(card, collection)"
-                        name="'upper'">
-                    </spb-board>
+                <div id="board-container">
+                    <div class="inner-board-container">
+                        <spb-board
+                            cards="game.upperBoard"
+                            current-player-is-human="game.getCurrentPlayer().isHuman"
+                            on-buy-card="game.buyCard(card, collection)"
+                            on-put-card-in-hand="game.putCardInHand(card, collection)"
+                            name="'upper'">
+                        </spb-board>
 
-                    <spb-board
-                        cards="game.lowerBoard"
-                        current-player-is-human="game.getCurrentPlayer().isHuman"
-                        on-buy-card="game.buyCard(card, collection)"
-                        on-put-card-in-hand="game.putCardInHand(card, collection)"
-                        name="'lower'">
-                    </spb-board>
+                        <spb-board
+                            cards="game.lowerBoard"
+                            current-player-is-human="game.getCurrentPlayer().isHuman"
+                            on-buy-card="game.buyCard(card, collection)"
+                            on-put-card-in-hand="game.putCardInHand(card, collection)"
+                            name="'lower'">
+                        </spb-board>
+                    </div>
+                </div>
+
+                <div id="btn-container">
+                    <button type="button" class="btn btn-success"
+                        ng-click="game.passTurn()"
+                        ng-disabled="!game.getCurrentPlayer().isHuman">Next Turn (Pass)</button>
+                    <button type="button" class="btn btn-primary"
+                        ng-click="game.doRobotAction()"
+                        ng-disabled="game.getCurrentPlayer().isHuman || game.aiIsWorking">
+                        {{ game.aiIsWorking ? "Thinking..." : "AI Turn" }}
+                    </button>
                 </div>
             </div>
-
-            <div id="btn-container">
-                <button type="button" class="btn btn-success"
-                    ng-click="game.passTurn()"
-                    ng-disabled="!game.getCurrentPlayer().isHuman">Next Turn (Pass)</button>
-                <button type="button" class="btn btn-primary"
-                    ng-click="game.doRobotAction()"
-                    ng-disabled="game.getCurrentPlayer().isHuman || game.aiIsWorking">
-                    {{ game.aiIsWorking ? "Thinking..." : "AI Turn" }}
-                </button>
-            </div>
+            <div ng-if="!game.humanPlayerName">Waiting for human player name...</div>
 
             <footer>
                 <p>Simulation of the St Petersburg board game developed by <a href="https://boompig.herokuapp.com/">Daniel Kats</a> in 2018. The rules can be found <a href="http://riograndegames.com/uploads/Game/Game_178_gameRules.pdf">here [PDF].</a>

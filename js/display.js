@@ -9,11 +9,15 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
 
     /****** STATIC DATA *******/
     this.phases = StaticGameData.Phases;
+
+    // these are the possible names
     this.playerNames = [
         "Sergei",
         "Ross",
         "Daniel",
-        "Will"
+        "Will",
+        "Alexey",
+        "Elia",
     ];
     this.cardMap = {};
     this.cardMap[Card.types.WORKER] = {
@@ -79,8 +83,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     /* number of rounds *completed* so far */
     this.numRounds = 0;
 
-    // TODO query this somehow
-    this.humanPlayerName = "Daniel";
+    this.humanPlayerIndex = 0;
 
     /****** UI DATA **************/
     this.aiIsWorking = false;
@@ -130,16 +133,16 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
      * Open the observatory modal, and pick the deck that you want to peek at
      */
     $scope.openObservatoryModal = function (game, card) {
-        var validPhases = [];
-        var name;
-        for (var i = 0; i < game.phases.length; i++) {
+        const validPhases = [];
+        let name;
+        for (let i = 0; i < game.phases.length; i++) {
             if (game.decks[game.phases[i]].length > 0) {
                 name = game.getPhaseName( game.phases[i] );
                 validPhases.push( name );
             }
         }
 
-        var modalInstance = $modal.open({
+        let modalInstance = $modal.open({
             templateUrl: "observatoryModal.html",
             controller: "ObservatoryModalInstanceCtrl",
             resolve: {
@@ -154,10 +157,24 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
                 // set the card to used here
                 card.played = true;
             }
-            var selection = Card.types[selectedDeck.toUpperCase()];
+            let selection = Card.types[selectedDeck.toUpperCase()];
             $scope.openPeekingModal(game, selection);
         }, function () {
             console.log("Did not select a deck, so quitting");
+        });
+    };
+
+    /**
+     * Return a promise that resolves into the player name 
+     */
+    $scope.openPlayerNameModal = function(game) {
+        console.log("Asking for the player's name...");
+        let modalInstance = $modal.open({
+            templateUrl: "js/angular-templates/player-name-modal.html",
+            controller: "PlayerNameInstanceCtrl",
+        });
+        return modalInstance.result.then(function(playerName) {
+            return playerName;
         });
     };
 
@@ -356,29 +373,61 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         return dateString + "-" + randomNonce;
     };
 
-    this.init = function () {
-        // NOTE randomSeed is used only in token allocation and not for
-        // shuffling the deck
-        this.gameId = this.getRandomGameId();
-        Math.seedrandom(this.gameId);
+    /**
+     * Return a shuffled array of tokens that will be assigned to the players in the same order
+     */
+    this.getTokenOrder = function() {
+        let tokens = [Card.types.ARISTOCRAT, Card.types.BUILDING, Card.types.WORKER, Card.types.UPGRADE];
+        let shuffledTokens = _.shuffle(tokens);
+        return shuffledTokens;
+    }
 
-        // assign tokens to players
-        var tokens = [Card.types.ARISTOCRAT, Card.types.BUILDING, Card.types.WORKER, Card.types.UPGRADE];
-        this.players = [];
-        while (tokens.length > 0) {
-            var idx = Math.floor(Math.random() * tokens.length);
-            var token = tokens[idx];
-            tokens.splice(idx, 1);
-            var name = this.playerNames.pop();
-            this.players.push(new Player(name, token, name === this.humanPlayerName));
-        }
+    this.init = function() {
+        $scope.openPlayerNameModal().then((playerName) => {
+            console.log("Got name " + playerName);
+            this.humanPlayerName = playerName;
+            // running game init in another thread so modal can close
+            console.log("// running game init in another thread so modal can close");
+            $timeout(() => { 
+                this.gameInit();
+            }, 0);
+        });
+    };
 
-        let humanPlayerIndex = -1;
-        for(let i = 0; i < this.players.length; i++) {
-            if(this.players[i].isHuman) {
-                humanPlayerIndex = i;
+    /**
+     * Return the 3 AI names to use
+     * Make sure none of them is the same as the humanPlayerName
+     */
+    this.getAiNames = function() {
+        // shuffle so that the result is different each time
+        let playerNames = _.shuffle(this.playerNames);
+        for(let i = 0; i < playerNames.length; i++) {
+            if(playerNames[i] === this.humanPlayerName) {
+                playerNames.splice(i, 1);
                 break;
             }
+        }
+        return playerNames.slice(0, 3);
+    };
+
+    /**
+     * Assume this.humanPlayerName is already set
+     */
+    this.gameInit = function () {
+        // NOTE randomSeed is not currently used for anything
+        this.gameId = this.getRandomGameId();
+
+        // assign tokens to players
+        let tokens = this.getTokenOrder();
+        // reset players        
+        this.players = [];
+        let playerNames = this.getAiNames();
+        // insert the human player's name into the list of player names (at the beginning)
+        playerNames.splice(0, 0, this.humanPlayerName);
+        for(let i = 0; i < playerNames.length; i++) {
+            let name = playerNames[i];
+            let token = tokens[i];
+            this.players.push(new Player(name, token, i === this.humanPlayerIndex));
         }
 
         // create each deck
@@ -402,13 +451,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         }
 
         const initialState = {
-            "humanPlayerIndex": humanPlayerIndex,
+            "humanPlayerIndex": this.humanPlayerIndex,
             "playerTokenAllocation": this.players.map((player) => {
                 return this.getPhaseName(player.token);
             }),
             "decks": conciseDecks,
-            // also acts as the randomSeed
-            "randomSeed": this.gameId,
         };
         this.sendInitialGameState(this.gameId, initialState);
     };
@@ -927,6 +974,14 @@ StPeter.controller("ModalInstanceCtrl", function ($scope, $modalInstance, baseCa
     $scope.getCardString = function (card) {
         return card.name + " (" + $scope.getCost(card) + ")";
     };
+});
+
+StPeter.controller("PlayerNameInstanceCtrl", function($scope, $modalInstance) {
+    $scope.name = "";
+
+    $scope.ok = function() {
+        $modalInstance.close($scope.name);
+    }
 });
 
 /**

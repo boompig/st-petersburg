@@ -1,0 +1,17 @@
+<div id="player-name-modal">
+    <div class="modal-header">
+        <h3 class="modal-title">What is your name?</h3>
+    </div>
+    <div class="modal-body">
+        <form role="form">
+            <label for="name">What is your name?</label>
+            <input class="form-control" type="input"
+                ng-model="name"
+                placeholder="name"
+                required="true" />
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+    </div>
+</div>
