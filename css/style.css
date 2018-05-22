@@ -39,6 +39,7 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 
 #player-container { width: 100%; padding-bottom: 0.45rem; border-bottom: 1px solid black; margin-bottom: .45rem; display: flex; flex-direction: row; justify-content: space-around; }
 #player-container .player { /* some text is very wide: mistress of ceremonies, czar and carpenter */ min-width: 210px; font-size: .9rem; vertical-align: top; }
+@media screen and (min-width: 1200px) { #player-container .player { min-width: 250px; } }
 #player-container .player .name { font-size: 1.3rem; font-weight: bold; margin-bottom: 0.25rem; }
 #player-container .player .num-aristocrats-progress-name { color: #666; font-size: .8rem; }
 #player-container .player .progress.num-aristocrats-progress { /* default is 20px. */ margin-bottom: .9rem; }
@@ -51,10 +52,10 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 
 /* there is one card that has a longer name than this */
 /* this is the longest card name */
-.bought-cards-container { width: 100%; /* when/if you buy a lot of unique cards (like aristocrats) this can get really long */ max-height: 350px; overflow-y: auto; margin-bottom: .5rem; }
+.bought-cards-container { width: 100%; /* when/if you buy a lot of unique cards (like aristocrats) this can get really long */ max-height: 22em; overflow-y: auto; margin-bottom: .5rem; }
 .bought-cards-container .card.bought-card { width: 100%; margin-bottom: .25rem; font-size: 1rem; vertical-align: bottom; }
 .bought-cards-container .card.bought-card .card-name { /* manually set to the largest value for this field that I've seen */ min-width: 151px; display: inline-block; }
-@media screen and (min-width: 1400px) { .bought-cards-container .card.bought-card .card-name { min-width: 171px; } }
+@media screen and (min-width: 1300px) { .bought-cards-container .card.bought-card .card-name { min-width: 171px; } }
 .bought-cards-container .card.bought-card .card-coin-yield-container, .bought-cards-container .card.bought-card .card-point-yield-container { text-align: center; position: relative; width: 20px; display: inline-block; }
 .bought-cards-container .card.bought-card .money-icon, .bought-cards-container .card.bought-card .points-icon { width: 20px; }
 .bought-cards-container .card.bought-card .card-type-rect { width: 20px; height: 20px; display: inline-block; vertical-align: bottom; border: 1px solid black; }
@@ -62,12 +63,12 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 .bought-cards-container .card.bought-card.playable-card .card-name { color: blue; font-weight: bold; cursor: pointer; }
 
 /** The upper and lower board are situated at the bottom Right now they are statically positioned with respect to the bottom of the screen */
-#board-container { position: fixed; bottom: 2.8rem; display: block; margin: 0; padding: 0; width: 100%; }
+#board-container { position: fixed; bottom: 2.1rem; display: block; margin: 0; padding: 0; width: 100%; }
 #board-container .inner-board-container { min-width: 800px; border: 1px solid black; display: block; padding-left: 1rem; padding-right: 1rem; padding-bottom: 0; margin-top: .4rem; margin-bottom: 0; margin-left: auto; margin-right: auto; }
 @media screen and (min-width: 1000px) { #board-container .inner-board-container { width: 900px; } }
 @media screen and (min-width: 1100px) { #board-container .inner-board-container { width: 1000px; } }
 #board-container .board { margin: 0 auto; }
-#board-container .card-container { display: flex; flex-direction: column; flex-wrap: wrap; padding: 0; margin: 0; width: 100%; height: 6rem; }
+#board-container .card-container { display: flex; flex-direction: column; flex-wrap: wrap; padding: 0; margin: 0; width: 100%; height: 5.8rem; }
 @media screen and (min-height: 1200px) { #board-container .card-container { height: 8rem; } }
 #board-container .card { font-size: 1rem; width: 50%; margin-right: .5rem; }
 
@@ -75,7 +76,7 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 .buyable-card:hover { color: white; font-weight: bold; cursor: pointer; }
 
 footer { position: fixed; bottom: 1rem; color: #aaa; font-size: 0.9rem; text-align: center; width: 100%; }
-@media screen and (max-height: 768px) { footer { font-size: .85rem; bottom: .9rem; } }
+@media screen and (max-height: 768px) { footer { font-size: .85rem; bottom: .5rem; } }
 
 footer p { margin: 0 auto; text-align: center; }
 

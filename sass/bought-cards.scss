@@ -1,4 +1,5 @@
-$max-container-height: 350px;
+// supports ~12 cards before scrollbar appears
+$max-container-height: 22em;
 
 /* there is one card that has a longer name than this */
 $max-card-name-width: 151px;
@@ -23,7 +24,7 @@ $max-card-name-width-longest: 171px;
             min-width: $max-card-name-width;
             display: inline-block;
 
-            @media screen and (min-width: 1400px) {
+            @media screen and (min-width: 1300px) {
                 min-width: $max-card-name-width-longest;
             }
         }

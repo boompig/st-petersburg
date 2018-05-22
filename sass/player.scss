@@ -1,3 +1,6 @@
+$min-player-width: 210px;
+$min-player-width-wide-screen: 250px;
+
 #player-container {
     width: 100%;
 
@@ -11,9 +14,13 @@
 
     .player {
         /* some text is very wide: mistress of ceremonies, czar and carpenter */
-        min-width: 210px;
+        min-width: $min-player-width;
         font-size: .9rem;
         vertical-align: top;
+
+        @media screen and (min-width: 1200px) {
+            min-width: $min-player-width-wide-screen;
+        }
 
         .name {
             font-size: 1.3rem;

@@ -3,7 +3,7 @@
  * Right now they are statically positioned with respect to the bottom of the screen
  */
 
-$bottom-offset: 2.8rem;
+$bottom-offset: 2.1rem;
 
 #board-container {
     position: fixed;
@@ -47,7 +47,7 @@ $bottom-offset: 2.8rem;
         padding: 0;
         margin: 0;
         width: 100%;
-        height: 6rem;
+        height: 5.8rem;
 
         // quite large screens
         @media screen and (min-height: 1200px) {
