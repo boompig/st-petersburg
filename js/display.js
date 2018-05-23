@@ -89,6 +89,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     this.aiIsWorking = false;
     /****** UI DATA **************/
 
+    /******* GAME TRACE DATA *****/
+    // a list of actions taken by all players, in the order that they were taken
+    this.actions = [];
+    /******* GAME TRACE DATA *****/
+
     /****** UI FUNCTIONS ********/
 
     /**
@@ -297,6 +302,15 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
             return false;
         }
 
+        // record this action
+        let locationName = this.getLocationFromCollection(collection);
+        this.actions.push(new Move(
+            Move.actions.UPGRADE,
+            locationName,
+            baseCard,
+            upgradeCard,
+        ));
+
         // pay for the card
         player.money -= cost;
         if (player.money < 0) {
@@ -419,8 +433,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
 
         // assign tokens to players
         let tokens = this.getTokenOrder();
-        // reset players        
-        this.players = [];
+        // figure out which AIs are going to play
         let playerNames = this.getAiNames();
         // insert the human player's name into the list of player names (at the beginning)
         playerNames.splice(0, 0, this.humanPlayerName);
@@ -502,6 +515,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
             baseUrl = "https://boompig.herokuapp.com"
         }        
         const url = baseUrl + "/api/st-petersburg/final-game-state";
+        finalState.actions = this.actions;
         // console.log(finalState);
         this.corsPostJSON(url, {
             gameId: gameId,
@@ -542,7 +556,9 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         this.turn = (this.turn + 1) % this.players.length;
     };
 
-    this.passTurn = function () {
+    this.passTurn = function (isRobotAction) {
+        // record this action to historical data
+        this.actions.push(new Move(Move.actions.PASS));
         this.consecutivePasses++;
         this.nextTurn();
 
@@ -702,8 +718,18 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         var player = this.getCurrentPlayer();
 
         if (player.hand.length === player.getMaxHandSize()) {
+            console.log("Hand is full!");
+            alert("Hand is full!");
             return false;
         }
+        
+        // record the action
+        let locationName = this.getLocationFromCollection(collection);
+        this.actions.push(new Move(
+            Move.actions.PUT_IN_HAND,
+            locationName,
+            card,
+        ));
 
         // remove from collection
         if (collection) {
@@ -793,10 +819,29 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     };
 
     /**
+     * Only works properly if turn rollover hasn't happened yet
+     */
+    this.getLocationFromCollection = function(collection) {
+        const player = this.getCurrentPlayer();
+        if(collection === player.hand) {
+            return Card.locations.HAND;
+        } else if(collection === this.lowerBoard) {
+            return Card.locations.LOWER_BOARD;
+        } else if(collection === this.upperBoard) {
+            return Card.locations.UPPER_BOARD;
+        } else {
+            throw new Error("Unknown collection: " + collection.toString());
+        }
+    };
+
+    /**
      * Current player wants to buy selected card
+     * @param {Card} card Card object
+     * @param {Array} collection Collection to draw from
      */
     this.buyCard = function (card, collection) {
         const player = this.getCurrentPlayer();
+
         const cost = this.getCardCost(card, collection);
 
         if (card.type === Card.types.UPGRADE) {
@@ -829,6 +874,14 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
                 return false;
             }
         }
+
+        // record this action
+        let locationName = this.getLocationFromCollection(collection);        
+        this.actions.push(new Move(
+            Move.actions.BUY,
+            locationName,
+            card,
+        ));
 
         // pay for the card
         player.money -= cost;
@@ -906,7 +959,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
                 // create the state out of current game state
                 var state = new State(deckSizes, this.upperBoard, this.lowerBoard,
                         this.phase, player);
-                var obj = AI.analyze(state);
+                let obj = AI.analyze(state);
                 console.log("Plan for " + player.name + ":");
                 for (var i = 0; i < obj.moveList.length; i++)
                     console.log(obj.moveList[i].toString());
