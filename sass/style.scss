@@ -78,9 +78,19 @@ li.dropdown-menu-item:hover {
     color: #666666;
 }
 
+#player-name-modal {
+    input, .btn {
+        font-size: 1rem;
+    }
+
+    .btn {
+        margin-top: .5rem;
+    }
+}
+
 // specific stuff
 @import "decks";
 @import "player";
 @import "bought-cards";
-@import "board";
+@import "boards";
 @import "footer";
