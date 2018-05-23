@@ -7,6 +7,15 @@ StaticGameData.Phases = [
     Card.types.UPGRADE
 ];
 
+/**
+ * 
+ * @param {number} numAristocrats Number of aristocrats this player owns
+ */
+StaticGameData.scoreAristocrats = function(numAristocrats) {
+    numAristocrats = Math.min(numAristocrats, 10);
+    return StaticGameData.aristocratScoringChart[numAristocrats];
+};
+
 StaticGameData.getPhaseName = function(phase) {
     phase = Number(phase);
     switch (phase) {
@@ -22,3 +31,4 @@ StaticGameData.getPhaseName = function(phase) {
             throw new Error("Unknown phase: " + phase);
     }
 };
+

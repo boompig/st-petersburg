@@ -397,15 +397,31 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     }
 
     this.init = function() {
-        $scope.openPlayerNameModal().then((playerName) => {
-            console.log("Got name " + playerName);
-            this.humanPlayerName = playerName;
-            // running game init in another thread so modal can close
-            console.log("// running game init in another thread so modal can close");
-            $timeout(() => { 
-                this.gameInit();
-            }, 0);
-        });
+        if(window.sessionStorage) {
+            this.humanPlayerName = window.sessionStorage.getItem("humanPlayerName");
+        }
+
+        if(this.humanPlayerName) {
+            console.log("Read human player's name from session storage: " + this.humanPlayerName);
+            this.gameInit();
+        } else {
+            $scope.openPlayerNameModal().then((playerName) => {
+                console.log("Got name " + playerName);
+                this.humanPlayerName = playerName;
+
+                if(window.sessionStorage) {
+                    console.log("Saving human player's name to session storage");
+                    // save the human player's name to session storage
+                    window.sessionStorage.setItem("humanPlayerName", this.humanPlayerName);
+                }
+
+                // running game init in another thread so modal can close
+                console.log("// running game init in another thread so modal can close");
+                $timeout(() => { 
+                    this.gameInit();
+                }, 0);
+            });
+        }
     };
 
     /**
@@ -556,7 +572,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         this.turn = (this.turn + 1) % this.players.length;
     };
 
-    this.passTurn = function (isRobotAction) {
+    this.passTurn = function () {
         // record this action to historical data
         this.actions.push(new Move(Move.actions.PASS));
         this.consecutivePasses++;
@@ -637,7 +653,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
             let player = this.players[p];
             console.log("Player " + player.name + " ended the game with " + player.points + " points");
             let numAristocrats = player.numUniqueAristocrats();
-            let aristocratPoints = this.aristocratScoringChart[Math.min(numAristocrats, 10)];
+            let aristocratPoints = StaticGameData.scoreAristocrats(numAristocrats);
             console.log("Player " + player.name + " earned " + aristocratPoints + " points from " + numAristocrats + " aristocrats");
             player.points += aristocratPoints;
 
@@ -857,13 +873,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
                 $scope.openUpgradeModal(card, collection, this);
                 return;
             } else {
-                var baseCard = AI.pickUpgradeCard(player, this, card, collection);
-                if (baseCard === null) {
-                    console.log("Aborting upgrade");
-                    return false;
-                } else {
-                    return this.upgradeCard(baseCard, card, collection);
-                }
+                throw new Error("AI should never pick an upgrade card to buy. AI should return UPGRADE code with upgrade card instead");
             }
         } else {
             if (cost > player.money) {
@@ -950,20 +960,20 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         this.aiIsWorking = true;
 
         const inner = () => {
-            var player = this.getCurrentPlayer();
+            let player = this.getCurrentPlayer();
             if (! player.isHuman) {
-                var deckSizes = [];
-                for (var i = 0; i < this.phases.length; i++) {
+                const deckSizes = [];
+                for (let i = 0; i < this.phases.length; i++) {
                     deckSizes.push( this.decks[this.phases[i]].length );
                 }
                 // create the state out of current game state
-                var state = new State(deckSizes, this.upperBoard, this.lowerBoard,
+                const state = new State(deckSizes, this.upperBoard, this.lowerBoard,
                         this.phase, player);
-                let obj = AI.analyze(state);
+                let obj = AI.analyze(state, player.name);
                 console.log("Plan for " + player.name + ":");
                 for (var i = 0; i < obj.moveList.length; i++)
                     console.log(obj.moveList[i].toString());
-                var locationMap = {};
+                const locationMap = {};
                 locationMap[Card.locations.UPPER_BOARD] = this.upperBoard;
                 locationMap[Card.locations.LOWER_BOARD] = this.lowerBoard;
                 locationMap[Card.locations.HAND] = player.hand;
@@ -987,6 +997,8 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
                     console.log("nothing to be done");
                     this.passTurn();
                 }
+            } else {
+                console.warn("Cannot call doRobotAction on a human player");
             }
             this.aiIsWorking = false;
         };
