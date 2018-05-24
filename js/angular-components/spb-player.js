@@ -29,7 +29,7 @@ const spbPlayerCtrl = function() {
 };
 
 StPeter.component("spbPlayer", {
-    templateUrl: "js/angular-templates/spb-player.html",
+    templateUrl: "js/angular-templates/player.html",
     bindings: {
         player: '<',
         isTurn: '<',

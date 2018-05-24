@@ -1,14 +1,14 @@
 // supports ~12 cards before scrollbar appears
 $max-container-height: 22em;
 
-/* there is one card that has a longer name than this */
+// there is one card that has a longer name than this
 $max-card-name-width: 151px;
-/* this is the longest card name */
+// this is the longest card name
 $max-card-name-width-longest: 171px;
 
 .bought-cards-container  {
     width: 100%;
-    /* when/if you buy a lot of unique cards (like aristocrats) this can get really long */
+    // when/if you buy a lot of unique cards (like aristocrats) this can get really long
     max-height: $max-container-height;
     overflow-y: auto;
     margin-bottom: .3rem;
@@ -20,15 +20,19 @@ $max-card-name-width-longest: 171px;
         vertical-align: bottom;
 
         .card-name {
-            /* manually set to the largest value for this field that I've seen */
-            min-width: $max-card-name-width;
+            // manually set to the largest value for this field that I've seen
             display: inline-block;
+
+            // desktop
+            @media screen and (min-width: 768px) {
+                min-width: $max-card-name-width;
+            }
 
             @media screen and (min-width: 1300px) {
                 min-width: $max-card-name-width-longest;
             }
         }
-        
+
         .card-coin-yield-container,
         .card-point-yield-container {
             text-align: center;
@@ -36,12 +40,12 @@ $max-card-name-width-longest: 171px;
             width: 20px;
             display: inline-block;
         }
-        
+
         .money-icon,
         .points-icon {
             width: 20px;
         }
-        
+
         .card-type-rect {
             width: 20px;
             height: 20px;
@@ -49,17 +53,17 @@ $max-card-name-width-longest: 171px;
             vertical-align: bottom;
             border: 1px solid black;
         }
-        
+
         .card-coin-yield,
         .card-point-yield {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-        
+
             font-weight: bold;
         }
-        
+
         &.playable-card .card-name {
             color: blue;
             font-weight: bold;

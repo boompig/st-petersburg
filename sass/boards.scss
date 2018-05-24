@@ -15,7 +15,7 @@ $bottom-offset: 2.1rem;
     width: 100%;
 
     .inner-board-container {
-        min-width: 800px;
+        // min-width: 800px;
         display: block;
         padding-left: 1rem;
         padding-right: 1rem;
@@ -24,6 +24,16 @@ $bottom-offset: 2.1rem;
         margin-bottom: 0;
         margin-left: auto;
         margin-right: auto;
+
+        // small laptop screen
+        @media screen and (min-width: 768px) {
+            min-width: 768px;
+        }
+
+        // slightly larger than that but still sizable
+        @media screen and (min-width: 800px) {
+            width: 800px;
+        }
 
         // wide screen
         @media screen and (min-width: 1000px) {

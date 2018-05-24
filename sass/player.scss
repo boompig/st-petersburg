@@ -1,19 +1,21 @@
 $min-player-width: 210px;
 $min-player-width-wide-screen: 250px;
 
+$mobile-screen-width: 400px;
+
 #player-container {
     width: 100%;
 
     padding-bottom: 0.45rem;
     border-bottom: 1px solid black;
     margin-bottom: .45rem;
-    
+
     display: flex;
     flex-direction: row;
     justify-content: space-around;
 
     .player {
-        /* some text is very wide: mistress of ceremonies, czar and carpenter */
+        // some text is very wide: mistress of ceremonies, czar and carpenter, church of the resurection
         min-width: $min-player-width;
         font-size: .9rem;
         vertical-align: top;
@@ -27,14 +29,14 @@ $min-player-width-wide-screen: 250px;
             font-weight: bold;
             margin-bottom: 0.25rem;
         }
-    
+
         .num-aristocrats-progress-name {
             color: #666;
             font-size: .8rem;
         }
-    
+
         .progress.num-aristocrats-progress {
-            /* default is 20px. */
+            // default is 20px
             margin-bottom: .9rem;
         }
 
@@ -47,7 +49,7 @@ $min-player-width-wide-screen: 250px;
 
     .player-stats {
         margin-bottom: .3rem;
-    
+
         .player-money-container,
         .player-points-container {
             text-align: center;
@@ -55,24 +57,24 @@ $min-player-width-wide-screen: 250px;
             width: 40px;
             display: inline-block;
         }
-        
+
         .player-token-container {
             display: inline-block;
         }
-        
+
         .money-icon,
         .points-icon,
         .token-icon {
             width: 40px;
         }
-        
+
         .player-money,
         .player-points {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-        
+
             font-weight: bold;
         }
     }

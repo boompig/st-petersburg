@@ -2,6 +2,10 @@
   "dependencies": {
     "seedrandom": "^2.4.3"
   },
+  "scripts": {
+    "build:sass": "sass --style=compact sass/style.scss:css/style.css",
+    "build:sass:watch": "sass --style=compact --watch sass/style.scss:css/style.css"
+  },
   "license": "MIT",
   "private": true,
   "devDependencies": {
