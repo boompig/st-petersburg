@@ -1,6 +1,20 @@
 /**
  * Upgrade type means ARISTOCRAT, WORKER, BUILDING
  * upgrade class is only relevant for workers
+ *
+ * @param {String} name
+ * @param {number} cost
+ * @param {Card.types} type
+ * @param {number} coin_yield
+ * @param {number} point_yield
+ * @param {number} index
+ * @param {any} kwargs Keyword arguments. Possible values:
+ *      - workerUpgradeClass (string)
+ *      - upgradeCost (number)
+ *      - bonusYieldClass (Card.types)
+ *      - bonusYieldType ("money", "points")
+ *      - discountClass (Card.types)
+ *      - isPlayable (boolean)
  */
 function Card (name, cost, type, coin_yield, point_yield, index, kwargs) {
     this.name = name;
@@ -42,6 +56,11 @@ Card.locations = {
     HAND: 1,
     UPPER_BOARD: 2,
     LOWER_BOARD: 3,
+    // for the Observatory card
+    DECK_WORKER: 4,
+    DECK_BUILDING: 5,
+    DECK_ARISTOCRAT: 6,
+    DECK_UPGRADE: 7,
 };
 
 Card.prototype.hash = function () {

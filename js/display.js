@@ -98,6 +98,8 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
 
     /**
      * Open the upgrade modal, and pick the card which to upgrade into the selected card
+     * @param {Card} card
+     * @param {Array<Card>} collection
      */
     $scope.openUpgradeModal = function (card, collection, game) {
         var player = game.getCurrentPlayer();
@@ -136,6 +138,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
 
     /**
      * Open the observatory modal, and pick the deck that you want to peek at
+     * @param {Card} card
      */
     $scope.openObservatoryModal = function (game, card) {
         const validPhases = [];
@@ -170,7 +173,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     };
 
     /**
-     * Return a promise that resolves into the player name 
+     * Return a promise that resolves into the player name
      */
     $scope.openPlayerNameModal = function(game) {
         console.log("Asking for the player's name...");
@@ -186,15 +189,16 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     /**
      * The second part of the observatory flow.
      * Assume that the chosen deck is non-empty.
+     * @param {Card.types} deckType
      */
     $scope.openPeekingModal = function (game, deckType) {
-        var player = game.getCurrentPlayer();
-        var peekDeck = game.decks[deckType];
+        const player = game.getCurrentPlayer();
+        const peekDeck = game.decks[deckType];
         // card removed here, no need to remove later
-        var peekCard = peekDeck.pop();
-        var cardCost = game.getCardCost(peekCard, null);
+        const peekCard = peekDeck.pop();
+        const cardCost = game.getCardCost(peekCard, null);
 
-        var options = ["Buy", "Put in hand", "Discard"];
+        const options = ["Buy", "Put in hand", "Discard"];
 
         // make sure player can afford card, if the card is not an upgrade
         if (peekCard.type !== Card.types.UPGRADE && cardCost > player.money) {
@@ -205,7 +209,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
             options.splice(options.indexOf("Put in hand"), 1);
         }
 
-        var modalInstance = $modal.open({
+        const modalInstance = $modal.open({
             templateUrl: "peekingModal.html",
             controller: "PeekingModalInstanceCtrl",
             resolve: {
@@ -222,9 +226,9 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         });
         modalInstance.result.then(function (selectedOption) {
             if (selectedOption === "Buy") {
-                game.buyCard(peekCard, null);
+                game.buyCard(peekCard, peekDeck);
             } else if (selectedOption === "Put in hand") {
-                game.putCardInHand(peekCard, null);
+                game.putCardInHand(peekCard, peekDeck);
             } else {
                 // discard, do nothing
             }
@@ -235,6 +239,12 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
 
     /******* GAME FUNCTIONS ********/
 
+    /**
+     * @param {Card} baseCard
+     * @param {Card} upgradeCard
+     * @param {Array<Card>} collection
+     * @returns {number}
+     */
     this.getUpgradeCost = function (baseCard, upgradeCard, collection) {
         var upgradeCardCost = this.getCardCost(upgradeCard, collection);
         return Math.max(1, upgradeCardCost - baseCard.upgradeCost);
@@ -242,6 +252,9 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
 
     /**
      * Return list of cards which can be upgraded (by given player) from given card
+     * @param {Card} card
+     * @param {Player} player
+     * @returns {Array<Card>}
      */
     this.getUpgradableCards = function (card, player) {
         return player.cards.filter(function (baseCard) {
@@ -285,6 +298,10 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
      *     - lowerBoard
      *     - player hand
      * (passed by reference)
+     * @param {Card} baseCard
+     * @param {Card} upgradeCard
+     * @param {Array<Card>} collection
+     * @returns {boolean}
      */
     this.upgradeCard = function (baseCard, upgradeCard, collection) {
         if (! baseCard.canUpgradeTo(upgradeCard)) {
@@ -341,6 +358,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
      * Actually use upgradeType, it's more correct
      *
      * This is not a stable sort.
+     * @param {Player} player
      */
     this.sortPlayerCards = function (player) {
         // worker -> building -> aristocrat
@@ -358,22 +376,23 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     /**
      * Create the deck made of the given type of card.
      * Shuffle the deck.
+     * @param {Card.types} type
      */
     this.createDeckOfType = function (type) {
-        var numCards, card, cardName;
-        var cardMap  = this.cardMap[type];
+        let numCards, card, cardName;
+        const cardMap  = this.cardMap[type];
         this.decks[type] = [];
 
-        var cards = allCards.filter(function (card) {
+        const cards = allCards.filter(function (card) {
             return card.type === type;
         });
-        for (var c = 0; c < cards.length; c++) {
+        for (let c = 0; c < cards.length; c++) {
             cardName = cards[c].name.replace("'", "").replace(/ /g, "_").toUpperCase();
             numCards = cardMap[cardName] || cardMap["DEFAULT"] || 0;
             if (numCards === 0) {
                 console.error("Error: missed " + cardName);
             }
-            for (var i = 0; i < numCards; i++) {
+            for (let i = 0; i < numCards; i++) {
                 card = _.clone(cards[c]);
                 this.decks[type].push(card);
             }
@@ -381,6 +400,9 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         this.decks[type] = _.shuffle(this.decks[type]);
     };
 
+    /**
+     * @returns {String}
+     */
     this.getRandomGameId = function () {
         const dateString = (new Date()).toISOString().split('T')[0];
         const randomNonce = Math.floor(Math.random() * 1e8);
@@ -389,6 +411,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
 
     /**
      * Return a shuffled array of tokens that will be assigned to the players in the same order
+     * @returns {Array<Card.types>}
      */
     this.getTokenOrder = function() {
         let tokens = [Card.types.ARISTOCRAT, Card.types.BUILDING, Card.types.WORKER, Card.types.UPGRADE];
@@ -417,7 +440,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
 
                 // running game init in another thread so modal can close
                 console.log("// running game init in another thread so modal can close");
-                $timeout(() => { 
+                $timeout(() => {
                     this.gameInit();
                 }, 0);
             });
@@ -427,6 +450,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     /**
      * Return the 3 AI names to use
      * Make sure none of them is the same as the humanPlayerName
+     * @returns {Array<String>}
      */
     this.getAiNames = function() {
         // shuffle so that the result is different each time
@@ -489,6 +513,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         this.sendInitialGameState(this.gameId, initialState);
     };
 
+    /**
+     *
+     * @param {String} url
+     * @param {any} data
+     */
     this.corsPostJSON = function(url, data) {
         return window.fetch(url, {
             body: JSON.stringify(data),
@@ -501,6 +530,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         });
     };
 
+    /**
+     *
+     * @param {String} gameId
+     * @param {any} initialState
+     */
     this.sendInitialGameState = function(gameId, initialState) {
         let baseUrl;
         if(window.location.href.startsWith("http://localhost")) {
@@ -523,13 +557,18 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         }).catch((err) => console.error(err));
     };
 
+    /**
+     *
+     * @param {String} gameId
+     * @param {any} finalState
+     */
     this.sendFinalGameState = function(gameId, finalState) {
         let baseUrl;
         if(window.location.href.startsWith("http://localhost")) {
             baseUrl = "http://localhost:9897"
         } else {
             baseUrl = "https://boompig.herokuapp.com"
-        }        
+        }
         const url = baseUrl + "/api/st-petersburg/final-game-state";
         finalState.actions = this.actions;
         // console.log(finalState);
@@ -563,6 +602,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         this.dealCards();
     };
 
+    /**
+     *
+     * @param {Player} player
+     * @returns {boolean}
+     */
     this.isPlayerTurn = function (player) {
         var i = this.players.indexOf(player);
         return i === this.turn;
@@ -590,9 +634,9 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
      */
     this.evaluatePhase = function () {
         if (this.phase !== Card.types.UPGRADE) {
-            var player, card;
+            let player, card;
 
-            for (var p = 0; p < this.players.length; p++) {
+            for (let p = 0; p < this.players.length; p++) {
                 player = this.players[p];
 
                 var game = this;
@@ -601,7 +645,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
                         (card.type === Card.types.UPGRADE && card.upgradeType === game.phase);
                 });
 
-                for (var c = 0; c < relevantCards.length; c++) {
+                for (let c = 0; c < relevantCards.length; c++) {
                     card = relevantCards[c];
                     if (card.isPlayable && card.played) {
                         // reset whether card has been played this phase
@@ -724,23 +768,28 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     };
 
     this.nextPhase = function () {
-        var i = this.phases.indexOf(this.phase);
+        let i = this.phases.indexOf(this.phase);
         this.phase = this.phases[(i + 1) % this.phases.length];
         console.log("Phase is now " + this.getPhaseName());
         this.preparePhase();
     };
 
+    /**
+     *
+     * @param {Card} card
+     * @param {Array<Card>} collection
+     */
     this.putCardInHand = function (card, collection) {
-        var player = this.getCurrentPlayer();
+        const player = this.getCurrentPlayer();
 
         if (player.hand.length === player.getMaxHandSize()) {
             console.log("Hand is full!");
             alert("Hand is full!");
             return false;
         }
-        
+
         // record the action
-        let locationName = this.getLocationFromCollection(collection);
+        const locationName = this.getLocationFromCollection(collection);
         this.actions.push(new Move(
             Move.actions.PUT_IN_HAND,
             locationName,
@@ -749,7 +798,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
 
         // remove from collection
         if (collection) {
-            var idx = collection.indexOf(card);
+            let idx = collection.indexOf(card);
             collection.splice(idx, 1);
         }
         // put in hand
@@ -763,13 +812,12 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     /**
      * Play the given card (i.e. use its special ability)
      *
-     * @param  {[type]} card       [description]
-     * @param  {[type]} player     [description]
-     * @param  {[type]} collection [description]
-     * @return {[type]}            [description]
+     * @param  {Card} card
+     * @param  {Player} player
+     * @param  {Array<Card>} collection
      */
     this.playCard = function (card, player, collection) {
-        var currentPlayer = this.players[this.turn];
+        const currentPlayer = this.players[this.turn];
         if(currentPlayer !== player) {
             console.log("Cannot play another player's card");
             alert("Cannot play another player's card");
@@ -817,6 +865,10 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     /**
      * Return true iff the player can afford the given card
      * For upgrade cards, return true iff player has at least 1 card which can be upgraded
+     * @param {Card} card
+     * @param {Player} player
+     * @param {Array<Card>} collection
+     * @returns {boolean}
      */
     this.playerCanAffordCard = function (card, player, collection) {
         var cost = this.getCardCost(card, collection);
@@ -830,12 +882,16 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         }
     }
 
+    /**
+     * @returns {Player}
+     */
     this.getCurrentPlayer = function () {
         return this.players[this.turn];
     };
 
     /**
      * Only works properly if turn rollover hasn't happened yet
+     * @param {Array<Card>} collection
      */
     this.getLocationFromCollection = function(collection) {
         const player = this.getCurrentPlayer();
@@ -846,6 +902,23 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         } else if(collection === this.upperBoard) {
             return Card.locations.UPPER_BOARD;
         } else {
+            // go through the decks because this might be Observatory card
+            for(let i = 0; i < StaticGameData.Phases.length; i++) {
+                let phase = StaticGameData.Phases[i];
+                let deck = this.decks[phase];
+                if(collection === deck) {
+                    switch(phase) {
+                        case Card.types.WORKER:
+                            return Card.locations.DECK_WORKER;
+                        case Card.types.BUILDING:
+                            return Card.locations.DECK_BUILDING;
+                        case Card.types.ARISTOCRAT:
+                            return Card.locations.DECK_ARISTOCRAT;
+                        case Card.types.UPGRADE:
+                            return Card.locations.DECK_UPGRADE;
+                    }
+                }
+            }
             throw new Error("Unknown collection: " + collection.toString());
         }
     };
@@ -854,6 +927,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
      * Current player wants to buy selected card
      * @param {Card} card Card object
      * @param {Array} collection Collection to draw from
+     * @returns {boolean}
      */
     this.buyCard = function (card, collection) {
         const player = this.getCurrentPlayer();
@@ -886,7 +960,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         }
 
         // record this action
-        let locationName = this.getLocationFromCollection(collection);        
+        let locationName = this.getLocationFromCollection(collection);
         this.actions.push(new Move(
             Move.actions.BUY,
             locationName,
@@ -919,6 +993,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         return true;
     };
 
+    /**
+     *
+     * @param {Card} card
+     * @param {Player} player
+     */
     this.playCardFromHand = function (card, player) {
         if (player !== this.players[this.turn]) {
             console.log("Can only play cards on your turn");
@@ -950,6 +1029,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         }
     };
 
+    /**
+     *
+     * @param {Card.types | null} phase
+     * @returns {String}
+     */
     this.getPhaseName = function (phase) {
         phase = Number(phase) || this.phase;
         return StaticGameData.getPhaseName(phase);
@@ -1005,6 +1089,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         $timeout(inner, 0);
     };
 
+    /**
+     *
+     * @param {Card.types} phase
+     * @returns {boolean}
+     */
     this.isCurrentPhase = function (phase) {
         return phase === this.phase;
     };

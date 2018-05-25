@@ -6,7 +6,12 @@ const spbPlayerCtrl = function() {
         return `img/tokens/${phaseName}.png`;
     };
 
+    /**
+     *
+     * @param {Card} card
+     */
     this.playBoughtCard = function(card) {
+        console.log("Playing card " + card.name + "...");
         return this.onPlayCard({
             card: card,
             player: this.player,
@@ -14,6 +19,10 @@ const spbPlayerCtrl = function() {
         });
     };
 
+    /**
+     *
+     * @param {Card} card
+     */
     this.buyCardFromHand = function(card) {
         return this.onPlayCardFromHand({
             card: card,
@@ -21,6 +30,10 @@ const spbPlayerCtrl = function() {
         });
     };
 
+    /**
+     *
+     * @param {String} cardName
+     */
     this.getCardQuantity = function(cardName) {
         return this.player.cards.filter((card) => {
             return card.name === cardName;
