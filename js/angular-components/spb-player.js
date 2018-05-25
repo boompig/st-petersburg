@@ -1,6 +1,9 @@
 const spbPlayerCtrl = function() {
 
-    // not sure why I have to do this but this is just a passthrough function
+    /**
+     * not sure why I have to do this but this is just a passthrough function
+     * @returns {String};
+     */
     this.getTokenImageUrl = function() {
         const phaseName = StaticGameData.getPhaseName(this.player.token).toLowerCase();
         return `img/tokens/${phaseName}.png`;

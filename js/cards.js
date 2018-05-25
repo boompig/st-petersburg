@@ -1,3 +1,5 @@
+let exports = exports || {};
+
 /**
  * Upgrade type means ARISTOCRAT, WORKER, BUILDING
  * upgrade class is only relevant for workers
@@ -63,6 +65,9 @@ Card.locations = {
     DECK_UPGRADE: 7,
 };
 
+/**
+ * @returns {number}
+ */
 Card.prototype.hash = function () {
     return this.type * 100 + this.index;
 };
@@ -71,7 +76,7 @@ Card.prototype.hash = function () {
  * Return the cost of the card, before factoring in other cards of same type,
  * as well as discount cards
  * @param {Card.locations} location
- * @returns {Number}
+ * @returns {number}
  */
 Card.prototype.getCost = function (location) {
     if (location === Card.locations.LOWER_BOARD) {
@@ -81,12 +86,18 @@ Card.prototype.getCost = function (location) {
     }
 };
 
+/**
+ * @param {Card.types} phase
+ * @returns {boolean}
+ */
 Card.prototype.canEvalNow = function (phase) {
     return this.upgradeType === phase;
 };
 
 /**
  * Return true iff can upgrade current card to the target card.
+ * @param {Card} upgradeCard
+ * @returns {boolean}
  */
 Card.prototype.canUpgradeTo = function (upgradeCard) {
     if (this.type === Card.types.WORKER) {
@@ -188,3 +199,5 @@ var allCards = [
     new Card("Czar", 24, Card.types.UPGRADE, 0, 6, 25,
         {"upgradeType": Card.types.ARISTOCRAT}),
 ];
+
+exports.Card = Card;

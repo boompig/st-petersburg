@@ -1,4 +1,7 @@
 const BoardCtrl = function() {
+    /**
+     * @param {Card} card
+     */
     this.buyCard = function(card) {
         return this.onBuyCard({
             card: card,
@@ -6,6 +9,9 @@ const BoardCtrl = function() {
         });
     };
 
+    /**
+     * @param {Card} card
+     */
     this.putCardInHand = function(card) {
         return this.onPutCardInHand({
             card: card,
@@ -13,10 +19,16 @@ const BoardCtrl = function() {
         });
     };
 
+    /**
+     * @returns {String}
+     */
     this.prettyName = function() {
         return this.name[0].toUpperCase() + this.name.substr(1);
     };
 
+    /**
+     * @returns {Card.locations}
+     */
     this.getBoardType = function() {
         if(this.name === "lower") {
             return Card.locations.LOWER_BOARD;
