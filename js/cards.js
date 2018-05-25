@@ -1,5 +1,3 @@
-let exports = exports || {};
-
 /**
  * Upgrade type means ARISTOCRAT, WORKER, BUILDING
  * upgrade class is only relevant for workers
@@ -199,5 +197,3 @@ var allCards = [
     new Card("Czar", 24, Card.types.UPGRADE, 0, 6, 25,
         {"upgradeType": Card.types.ARISTOCRAT}),
 ];
-
-exports.Card = Card;
