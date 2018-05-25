@@ -1,0 +1,8 @@
+<div ng-class="{ 'aristocrat-card': $ctrl.card.upgradeType === 3, 'worker-card': $ctrl.card.upgradeType === 1, 'building-card': $ctrl.card.upgradeType === 2 }"
+    tooltip-placement="bottom" uib-tooltip="{{ $ctrl.getBuyTooltipText() }}">
+	<span ng-if="$ctrl.card.type === 4">[U, {{ $ctrl.card.cost }}]</span>
+	<span ng-if="$ctrl.card.type !== 4">[{{ $ctrl.card.cost }}]</span>
+    <span class="card-name">{{ $ctrl.card.name }}</span>:
+    <span class="card-coin-yield">{{ $ctrl.card.coinYield }} Coins</span>,
+    <span class="card-point-yield">{{ $ctrl.card.pointYield }} Points</span>
+</div>

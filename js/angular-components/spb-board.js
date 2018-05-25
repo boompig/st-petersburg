@@ -16,6 +16,14 @@ const BoardCtrl = function() {
     this.prettyName = function() {
         return this.name[0].toUpperCase() + this.name.substr(1);
     };
+
+    this.getBoardType = function() {
+        if(this.name === "lower") {
+            return Card.locations.LOWER_BOARD;
+        } else {
+            return Card.locations.UPPER_BOARD;
+        }
+    }
 };
 
 StPeter.component("spbBoard", {
@@ -27,6 +35,8 @@ StPeter.component("spbBoard", {
         currentPlayerIsHuman: '<',
         // the string "upper" or "lower"
         name: '<',
+        // Player
+        humanPlayer: '<',
         // callbacks
         onPutCardInHand: '&',
         onBuyCard: '&',

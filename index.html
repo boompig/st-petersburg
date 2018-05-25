@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="stPeter">
     <head>
         <meta charset="utf-8" />
 		<!-- local -->
@@ -13,8 +13,8 @@
         <link rel="stylesheet" href="css/style.css" />
         <title>St. Petersburg Board Game</title>
     </head>
-    <body ng-app="stPeter">
-        <div id="main-container" ng-controller="PeterCtrl as game">
+    <body ng-controller="PeterCtrl as game">
+        <div id="main-container">
             <div ng-if="game.humanPlayerName">
                 <div id="deck-container">
                     <spb-deck ng-repeat="phase in game.phases"
@@ -40,7 +40,8 @@
                             current-player-is-human="game.getCurrentPlayer().isHuman"
                             on-buy-card="game.buyCard(card, collection)"
                             on-put-card-in-hand="game.putCardInHand(card, collection)"
-                            name="'upper'">
+                            name="'upper'"
+                            human-player="game.getHumanPlayer()">
                         </spb-board>
 
                         <spb-board
@@ -48,7 +49,8 @@
                             current-player-is-human="game.getCurrentPlayer().isHuman"
                             on-buy-card="game.buyCard(card, collection)"
                             on-put-card-in-hand="game.putCardInHand(card, collection)"
-                            name="'lower'">
+                            name="'lower'"
+                            human-player="game.getHumanPlayer()">
                         </spb-board>
                     </div>
                 </div>
@@ -126,8 +128,13 @@
         <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>-->
         <!-- Angular 1 for debugging -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/ng-context-menu/1.0.2/ng-context-menu.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-context-menu/1.0.2/ng-context-menu.min.js"></script>
+
+        <!-- dependency for angular-bootstrap -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-animate.min.js" integrity="sha256-1XBp/KwjxhvrtZiQ+ecAScAyLPe4OStn2lMX0vxTq9U="
+            crossorigin="anonymous"></script>
+        <!-- this is currently used for tooltips -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
 
 		<!-- local libraries (helpful for offline development) -->
         <!-- <script src="node_modules/lodash/lodash.min.js"></script>
@@ -143,10 +150,12 @@
         <script src="my_node_modules/ai.js"></script>
         <script src="js/display.js"></script>
         <script src="js/angular-components/spb-deck.js"></script>
+        <!-- legacy directive -->
         <script src="js/angular-directives/spb-card.js"></script>
         <script src="js/angular-components/spb-player.js"></script>
         <script src="js/angular-components/spb-board.js"></script>
-        <script src="js/angular-components/spb-player-card.js"></script>
-        
+        <!-- new: component to replace legacy directive -->
+        <script src="js/angular-components/spb-card.js"></script>
+
     </body>
 </html>

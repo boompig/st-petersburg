@@ -68,9 +68,10 @@ Card.prototype.hash = function () {
 };
 
 /**
- * TODO do not use this
  * Return the cost of the card, before factoring in other cards of same type,
  * as well as discount cards
+ * @param {Card.locations} location
+ * @returns {Number}
  */
 Card.prototype.getCost = function (location) {
     if (location === Card.locations.LOWER_BOARD) {

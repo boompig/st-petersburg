@@ -7,7 +7,11 @@
             context-menu class="panel panel-default"
             data-target="{{ $ctrl.name }}-menu-{{ $index }}"
             ng-class="{ 'highlight': highlight, 'expanded': expanded, 'buyable-card': $ctrl.currentPlayerIsHuman }">
-            <div spb-card></div>
+            <spb-board-card
+                card="card"
+                location="$ctrl.getBoardType()"
+                human-player="$ctrl.humanPlayer">
+            </spb-board-card>
 
             <div class="dropdown position-fixed" id="{{ $ctrl.name }}-menu-{{ $index }}">
                 <ul class="dropdown-menu" role="menu">

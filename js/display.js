@@ -1,10 +1,11 @@
 // create Angular app
 var StPeter = angular.module("stPeter", [
+    "ngAnimate",
     "ng-context-menu",
     "ui.bootstrap"]);
 
 // create Angular controller
-StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
+StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     "use strict";
 
     /****** STATIC DATA *******/
@@ -113,7 +114,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
             costMap[baseCard.name] = upgradeCost;
         }
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: "upgradeModal.html",
             controller: "ModalInstanceCtrl",
             resolve: {
@@ -150,7 +151,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
             }
         }
 
-        let modalInstance = $modal.open({
+        let modalInstance = $uibModal.open({
             templateUrl: "observatoryModal.html",
             controller: "ObservatoryModalInstanceCtrl",
             resolve: {
@@ -177,7 +178,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
      */
     $scope.openPlayerNameModal = function(game) {
         console.log("Asking for the player's name...");
-        let modalInstance = $modal.open({
+        let modalInstance = $uibModal.open({
             templateUrl: "js/angular-templates/player-name-modal.html",
             controller: "PlayerNameInstanceCtrl",
         });
@@ -198,7 +199,10 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
         const peekCard = peekDeck.pop();
         const cardCost = game.getCardCost(peekCard, null);
 
-        const options = ["Buy", "Put in hand", "Discard"];
+        const options = [
+            `Buy (${cardCost})`,
+            "Put in hand",
+            "Discard"];
 
         // make sure player can afford card, if the card is not an upgrade
         if (peekCard.type !== Card.types.UPGRADE && cardCost > player.money) {
@@ -209,7 +213,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
             options.splice(options.indexOf("Put in hand"), 1);
         }
 
-        const modalInstance = $modal.open({
+        const modalInstance = $uibModal.open({
             templateUrl: "peekingModal.html",
             controller: "PeekingModalInstanceCtrl",
             resolve: {
@@ -269,15 +273,15 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
      * @return {Number} Final cost of the card
      */
     this.getCardCost = function (card, collection) {
-        var player = this.getCurrentPlayer();
-        var cost = card.cost;
+        const player = this.getCurrentPlayer();
+        let cost = card.cost;
         // console.log("Calculating cost for card " + card.name);
         // console.log("Base cost is " + cost);
         if (collection === this.lowerBoard) {
             // console.log("Reduce cost by 1 as card is from lower board");
             cost--;
         }
-        var similarCards = player.cards.filter(function (otherCard) {
+        const similarCards = player.cards.filter(function (otherCard) {
             return otherCard.name === card.name;
         });
         // console.log("Reduce cost by " + similarCards.length + " as player has that many instances of the card already");
@@ -890,6 +894,13 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
     };
 
     /**
+     * @returns {Player}
+     */
+    this.getHumanPlayer = function() {
+        return this.players[this.humanPlayerIndex];
+    };
+
+    /**
      * Only works properly if turn rollover hasn't happened yet
      * @param {Array<Card>} collection
      */
@@ -1104,7 +1115,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $modal) {
 /**
  * Controls the modal which opens on card upgrade
  */
-StPeter.controller("ModalInstanceCtrl", function ($scope, $modalInstance, baseCards, upgradeCard, costMap) {
+StPeter.controller("ModalInstanceCtrl", function ($scope, $uibModalInstance, baseCards, upgradeCard, costMap) {
     "use strict";
     $scope.upgradableCards = baseCards;
     $scope.upgradeCard = upgradeCard;
@@ -1114,11 +1125,11 @@ StPeter.controller("ModalInstanceCtrl", function ($scope, $modalInstance, baseCa
     };
 
     $scope.ok = function () {
-        $modalInstance.close($scope.selected.card);
+        $uibModalInstance.close($scope.selected.card);
     };
 
     $scope.cancel = function () {
-        $modalInstance.dismiss("cancel");
+        $uibModalInstance.dismiss("cancel");
     };
 
     $scope.getCost = function (card) {
@@ -1130,36 +1141,36 @@ StPeter.controller("ModalInstanceCtrl", function ($scope, $modalInstance, baseCa
     };
 });
 
-StPeter.controller("PlayerNameInstanceCtrl", function($scope, $modalInstance) {
+StPeter.controller("PlayerNameInstanceCtrl", function($scope, $uibModalInstance) {
     $scope.name = "";
 
     $scope.ok = function() {
-        $modalInstance.close($scope.name);
+        $uibModalInstance.close($scope.name);
     }
 });
 
 /**
  * Controls the modal which opens on observatory play
  */
-StPeter.controller("ObservatoryModalInstanceCtrl", function ($scope, $modalInstance, phases) {
+StPeter.controller("ObservatoryModalInstanceCtrl", function ($scope, $uibModalInstance, phases) {
     $scope.phases = phases;
     $scope.selected = {
         deck: $scope.phases[0]
     };
 
     $scope.ok = function () {
-        $modalInstance.close($scope.selected.deck);
+        $uibModalInstance.close($scope.selected.deck);
     };
 
     $scope.cancel = function () {
-        $modalInstance.dismiss("cancel");
+        $uibModalInstance.dismiss("cancel");
     };
 });
 
 /**
  * Controls the modal which opens as the second stage of observatory play
  */
-StPeter.controller("PeekingModalInstanceCtrl", function ($scope, $modalInstance, peekCard, cardCost, options) {
+StPeter.controller("PeekingModalInstanceCtrl", function ($scope, $uibModalInstance, peekCard, cardCost, options) {
     $scope.options = options;
     $scope.peekCard = peekCard;
     $scope.cardCost = cardCost;
@@ -1168,6 +1179,6 @@ StPeter.controller("PeekingModalInstanceCtrl", function ($scope, $modalInstance,
     };
 
     $scope.ok = function () {
-        $modalInstance.close($scope.selected.option);
+        $uibModalInstance.close($scope.selected.option);
     };
 });
