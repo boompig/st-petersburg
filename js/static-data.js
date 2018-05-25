@@ -22,7 +22,7 @@ StaticGameData.aristocratScoringChart = {
 };
 
 /**
- * 
+ *
  * @param {number} numAristocrats Number of aristocrats this player owns
  * @returns {number}
  */
@@ -32,7 +32,7 @@ StaticGameData.scoreAristocrats = function(numAristocrats) {
 };
 
 /**
- * 
+ *
  * @param {number} phase
  * @returns {String}
  */
