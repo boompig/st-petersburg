@@ -781,6 +781,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      *
      * @param {Card} card
      * @param {Array<Card>} collection
+     * @returns {boolean}
      */
     this.putCardInHand = function (card, collection) {
         const player = this.getCurrentPlayer();
