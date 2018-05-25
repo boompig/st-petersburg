@@ -10,8 +10,6 @@ h1.title, h2.title { text-align: center; }
 
 .current-phase { color: red; }
 
-#btn-container .btn { font-size: 1rem; }
-
 .position-fixed { position: fixed; }
 
 .dropdown-menu-item { cursor: pointer; font-weight: normal; }
@@ -35,25 +33,31 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 #player-name-modal input, #player-name-modal .btn { font-size: 1rem; }
 #player-name-modal .btn { margin-top: .5rem; }
 
-#deck-container { width: 100%; padding-bottom: .2%; border-bottom: 1px solid black; margin-bottom: .9%; display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-around; }
+#deck-container { width: 100%; padding-bottom: .3%; display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-around; }
+@media screen and (max-height: 1024px) { #deck-container { width: 25%; min-width: 250px; border: none; } }
 #deck-container spb-deck, #deck-container .deck { margin: 0; padding: 0; }
 #deck-container .deck img { width: 80px; }
+@media screen and (max-height: 1024px) { #deck-container .deck img { width: 60px; } }
 #deck-container .deck-num-cards { margin-top: .25rem; font-size: 1.2rem; margin-left: 30px; }
+@media screen and (max-height: 1024px) { #deck-container .deck-num-cards { margin-left: 30%; } }
 
-#player-container { width: 100%; padding-bottom: 0.45rem; border-bottom: 1px solid black; margin-bottom: .45rem; display: flex; flex-direction: row; justify-content: space-around; }
+#player-container { width: 100%; padding-bottom: 0.45rem; padding-top: 0.45rem; border-bottom: 1px solid black; border-top: 1px solid black; margin-bottom: .45rem; display: flex; flex-direction: row; justify-content: space-around; }
 #player-container .player { min-width: 210px; font-size: .9rem; vertical-align: top; }
 @media screen and (min-width: 1200px) { #player-container .player { min-width: 250px; } }
-#player-container .player .name { font-size: 1.3rem; font-weight: bold; margin-bottom: 0.25rem; }
+#player-container .player .name { font-size: 1.2rem; font-weight: bold; margin-bottom: 0.25rem; display: block; }
+@media screen and (max-height: 1024px) { #player-container .player .name { display: inline-block; margin-right: .5rem; font-size: 1.4em; margin-bottom: 0; } }
 #player-container .player .num-aristocrats-progress-name { color: #666; font-size: .8rem; }
-#player-container .player .progress.num-aristocrats-progress { margin-bottom: .9rem; }
+#player-container .player .progress.num-aristocrats { margin-bottom: .9rem; }
+@media screen and (max-height: 1024px) { #player-container .player .progress.num-aristocrats { margin-bottom: .5rem; } }
 #player-container .player .progress-bar { background-color: #FCC96A; color: black; font-weight: bold; }
-#player-container .player-stats { margin-bottom: .3rem; }
+#player-container .player-stats { margin-bottom: .3rem; display: inline-block; }
 #player-container .player-stats .player-money-container, #player-container .player-stats .player-points-container { text-align: center; position: relative; width: 40px; display: inline-block; }
 #player-container .player-stats .player-token-container { display: inline-block; }
 #player-container .player-stats .money-icon, #player-container .player-stats .points-icon, #player-container .player-stats .token-icon { width: 40px; }
 #player-container .player-stats .player-money, #player-container .player-stats .player-points { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; }
 
 .bought-cards-container { width: 100%; max-height: 22em; overflow-y: auto; margin-bottom: .3rem; }
+@media screen and (max-height: 1024px) { .bought-cards-container { max-height: 18em; } }
 .bought-cards-container .card.bought-card { width: 100%; margin-bottom: .25rem; font-size: 1rem; vertical-align: bottom; }
 .bought-cards-container .card.bought-card .card-name { display: inline-block; }
 @media screen and (min-width: 768px) { .bought-cards-container .card.bought-card .card-name { min-width: 151px; } }
@@ -64,23 +68,32 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 .bought-cards-container .card.bought-card .card-coin-yield, .bought-cards-container .card.bought-card .card-point-yield { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; }
 .bought-cards-container .card.bought-card.playable-card .card-name { color: blue; font-weight: bold; cursor: pointer; }
 
+@media screen and (max-height: 1024px) { #btn-container { position: absolute; top: 1rem; right: 1rem; } }
+#btn-container .btn { font-size: 1rem; }
+@media screen and (max-height: 1024px) { #btn-container .btn { font-size: 1.1em; } }
+
 /** The upper and lower board are situated at the bottom Right now they are statically positioned with respect to the bottom of the screen */
 #board-container { position: fixed; bottom: 2.1rem; left: 0; display: block; margin: 0; padding: 0; width: 100%; }
+@media screen and (max-height: 1024px) { #board-container { bottom: 1.5rem; } }
 #board-container .inner-board-container { display: block; padding-left: 1rem; padding-right: 1rem; padding-bottom: 0; margin-top: .4rem; margin-bottom: 0; margin-left: auto; margin-right: auto; }
-@media screen and (min-width: 768px) { #board-container .inner-board-container { min-width: 768px; } }
+@media screen and (max-height: 1024px) { #board-container .inner-board-container { width: 100%; } }
+@media screen and (min-width: 768px) and (min-height: 1025px) { #board-container .inner-board-container { min-width: 768px; } }
 @media screen and (min-width: 800px) { #board-container .inner-board-container { width: 800px; } }
 @media screen and (min-width: 1000px) { #board-container .inner-board-container { width: 900px; } }
 @media screen and (min-width: 1100px) { #board-container .inner-board-container { width: 1000px; } }
 #board-container .board { margin: 0 auto; }
 #board-container .card-container { display: flex; flex-direction: column; flex-wrap: wrap; padding: 0; margin: 0; width: 100%; height: 5.8rem; }
+@media screen and (max-height: 1024px) { #board-container .card-container { height: 4.5rem; } }
 @media screen and (min-height: 1200px) { #board-container .card-container { height: 8rem; } }
-#board-container .card { font-size: 1rem; width: 50%; margin-right: .5rem; }
+#board-container .card { font-size: 1rem; width: 50%; margin-right: .5rem; margin-bottom: 0; margin-top: 0; padding-bottom: 0; padding-top: 0; }
+@media screen and (max-height: 1024px) { #board-container .card { font-size: 1rem; width: 33%; } }
 
 /* both for board and for cards in hand */
 .buyable-card:hover { color: white; font-weight: bold; cursor: pointer; }
 
-footer { position: fixed; bottom: 1rem; color: #aaa; font-size: 0.9rem; text-align: center; width: 100%; }
+footer { position: fixed; bottom: 1rem; color: #aaa; font-size: 0.9rem; text-align: center; width: 100%; z-index: -1; }
 @media screen and (max-height: 768px) { footer { font-size: .85rem; bottom: .5rem; } }
+@media screen and (max-height: 1024px) { footer { bottom: .5rem; font-size: .8rem; } }
 
 footer p { margin: 0 auto; text-align: center; }
 

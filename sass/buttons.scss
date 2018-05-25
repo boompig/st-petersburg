@@ -1,0 +1,18 @@
+$tablet-height: 1024px;
+
+#btn-container  {
+    // on tablets, move the controls to the top right
+    @media screen and (max-height: $tablet-height) {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+
+    .btn {
+        font-size: 1rem;
+
+        @media screen and (max-height: $tablet-height) {
+            font-size: 1.1em;
+        }
+    }
+}

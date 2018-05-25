@@ -4,6 +4,12 @@
  */
 
 $bottom-offset: 2.1rem;
+$tablet-max-height: 1024px;
+$tablet-card-height: 1rem;
+// actually should be enough to hold 3 cards
+$tablet-card-container-height: 4.5 * $tablet-card-height;
+$tablet-card-width: 33%;
+$tablet-bottom-offset: 1.5rem;
 
 #board-container {
     position: fixed;
@@ -14,8 +20,12 @@ $bottom-offset: 2.1rem;
     padding: 0;
     width: 100%;
 
+    // tablet screen
+    @media screen and (max-height: $tablet-max-height) {
+        bottom: $tablet-bottom-offset;
+    }
+
     .inner-board-container {
-        // min-width: 800px;
         display: block;
         padding-left: 1rem;
         padding-right: 1rem;
@@ -25,8 +35,13 @@ $bottom-offset: 2.1rem;
         margin-left: auto;
         margin-right: auto;
 
+        // tablet screen
+        @media screen and (max-height: $tablet-max-height) {
+            width: 100%;
+        }
+
         // small laptop screen
-        @media screen and (min-width: 768px) {
+        @media screen and (min-width: 768px) and (min-height: $tablet-max-height + 1) {
             min-width: 768px;
         }
 
@@ -59,6 +74,11 @@ $bottom-offset: 2.1rem;
         width: 100%;
         height: 5.8rem;
 
+        // small screens
+        @media screen and (max-height: $tablet-max-height) {
+            height: $tablet-card-container-height;
+        }
+
         // quite large screens
         @media screen and (min-height: 1200px) {
             height: 8rem;
@@ -70,6 +90,16 @@ $bottom-offset: 2.1rem;
         width: 50%;
         // some spatial division if we have multiple rows
         margin-right: .5rem;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-bottom: 0;
+        padding-top: 0;
+
+        @media screen and (max-height: $tablet-max-height) {
+            // padding: 1em;
+            font-size: $tablet-card-height;
+            width: $tablet-card-width;
+        }
     }
 }
 

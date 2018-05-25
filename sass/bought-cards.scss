@@ -1,5 +1,7 @@
 // supports ~12 cards before scrollbar appears
 $max-container-height: 22em;
+$tablet-max-card-container-height: 18em;
+$tablet-max-height: 1024px;
 
 // there is one card that has a longer name than this
 $max-card-name-width: 151px;
@@ -12,6 +14,10 @@ $max-card-name-width-longest: 171px;
     max-height: $max-container-height;
     overflow-y: auto;
     margin-bottom: .3rem;
+
+    @media screen and (max-height: $tablet-max-height) {
+        max-height: $tablet-max-card-container-height;
+    }
 
     .card.bought-card {
         width: 100%;

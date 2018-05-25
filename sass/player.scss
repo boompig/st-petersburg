@@ -1,13 +1,17 @@
 $min-player-width: 210px;
 $min-player-width-wide-screen: 250px;
-
 $mobile-screen-width: 400px;
+
+$tablet-height: 1024px;
+$tablet-player-name-font-size: 1.4em;
 
 #player-container {
     width: 100%;
 
     padding-bottom: 0.45rem;
+    padding-top: 0.45rem;
     border-bottom: 1px solid black;
+    border-top: 1px solid black;
     margin-bottom: .45rem;
 
     display: flex;
@@ -25,9 +29,17 @@ $mobile-screen-width: 400px;
         }
 
         .name {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             margin-bottom: 0.25rem;
+            display: block;
+
+            @media screen and (max-height: $tablet-height) {
+                display: inline-block;
+                margin-right: .5rem;
+                font-size: $tablet-player-name-font-size;
+                margin-bottom: 0;
+            }
         }
 
         .num-aristocrats-progress-name {
@@ -35,9 +47,13 @@ $mobile-screen-width: 400px;
             font-size: .8rem;
         }
 
-        .progress.num-aristocrats-progress {
+        .progress.num-aristocrats {
             // default is 20px
             margin-bottom: .9rem;
+
+            @media screen and (max-height: $tablet-height) {
+                margin-bottom: .5rem;
+            }
         }
 
         .progress-bar {
@@ -49,6 +65,7 @@ $mobile-screen-width: 400px;
 
     .player-stats {
         margin-bottom: .3rem;
+        display: inline-block;
 
         .player-money-container,
         .player-points-container {

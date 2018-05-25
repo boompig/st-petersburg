@@ -29,10 +29,6 @@ h1.title, h2.title {
     color: red;
 }
 
-#btn-container .btn {
-    font-size: 1rem;
-}
-
 .position-fixed {
     position: fixed;
 }
@@ -92,5 +88,6 @@ li.dropdown-menu-item:hover {
 @import "decks";
 @import "player";
 @import "bought-cards";
+@import "buttons";
 @import "boards";
 @import "footer";

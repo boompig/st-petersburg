@@ -199,19 +199,18 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         const peekCard = peekDeck.pop();
         const cardCost = game.getCardCost(peekCard, null);
 
-        const options = [
-            `Buy (${cardCost})`,
-            "Put in hand",
-            "Discard"];
+        const options = [];
 
         // make sure player can afford card, if the card is not an upgrade
-        if (peekCard.type !== Card.types.UPGRADE && cardCost > player.money) {
-            options.splice(options.indexOf("Buy"), 1);
+        if (peekCard.type === Card.types.UPGRADE || cardCost <= player.money) {
+            options.push(`Buy (${cardCost})`);
         }
         // make sure player has space for the card in the hand
-        if (player.getMaxHandSize() === player.hand.length) {
-            options.splice(options.indexOf("Put in hand"), 1);
+        if (player.getMaxHandSize() > player.hand.length) {
+            options.push("Put in hand");
         }
+
+        options.push("Discard");
 
         const modalInstance = $uibModal.open({
             templateUrl: "peekingModal.html",
@@ -229,7 +228,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             }
         });
         modalInstance.result.then(function (selectedOption) {
-            if (selectedOption === "Buy") {
+            if (selectedOption.startsWith("Buy")) {
                 game.buyCard(peekCard, peekDeck);
             } else if (selectedOption === "Put in hand") {
                 game.putCardInHand(peekCard, peekDeck);
