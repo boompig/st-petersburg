@@ -1,10 +1,3 @@
-var require = require || null;
-var exports = exports || {};
-if (require) {
-    // node.js imports
-    var Card = require("./cards.js").Card;
-}
-
 /**
  * A player, as represented in a normal St. Petersburg game
  * No custom modifications have been made to distinguish between AI and human
@@ -243,5 +236,3 @@ Player.prototype.playCardFromHand = function (card) {
         return false;
     }
 };
-
-exports.Player = Player;
