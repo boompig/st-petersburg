@@ -14,6 +14,13 @@
         <title>St. Petersburg Board Game</title>
     </head>
     <body ng-controller="PeterCtrl as game">
+        <div id="rotate-container">
+            <p>Please rotate your device into landscape mode</p>
+            <div>
+                <span class="glyphicon glyphicon-phone grey-phone"></span>
+                <span class="glyphicon glyphicon-phone rotated-phone"></span>
+            </div>
+        </div>
         <div id="main-container">
             <div ng-if="game.humanPlayerName">
                 <div id="deck-container">
@@ -22,6 +29,13 @@
                         num-cards="game.decks[phase].length"
                         is-current-phase="game.isCurrentPhase(phase)">
                     </spb-deck>
+                </div>
+
+                <div id="scroll-down-notice">
+                    <div uib-alert class="alert alert-info">
+                        <strong>Heads Up!</strong>
+                        <p>You'll have to scroll down to see everything on this device</p>
+                    </div>
                 </div>
 
                 <div id="player-container">

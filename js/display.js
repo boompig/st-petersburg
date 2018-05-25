@@ -11,7 +11,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     /****** STATIC DATA *******/
     this.phases = StaticGameData.Phases;
 
-    // these are the possible names
+    // these are the possible names for the AI
     this.playerNames = [
         "Sergei",
         "Ross",

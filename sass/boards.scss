@@ -2,9 +2,11 @@
  * The upper and lower board are situated at the bottom
  * Right now they are statically positioned with respect to the bottom of the screen
  */
+$tablet-max-height: 1024px;
+// same as the tablet height
+$tablet-max-width-landscape: 1024px;
 
 $bottom-offset: 2.1rem;
-$tablet-max-height: 1024px;
 $tablet-card-height: 1rem;
 // actually should be enough to hold 3 cards
 $tablet-card-container-height: 4.5 * $tablet-card-height;
@@ -12,18 +14,11 @@ $tablet-card-width: 33%;
 $tablet-bottom-offset: 1.5rem;
 
 #board-container {
-    position: fixed;
-    bottom: $bottom-offset;
     left: 0;
     display: block;
     margin: 0;
     padding: 0;
     width: 100%;
-
-    // tablet screen
-    @media screen and (max-height: $tablet-max-height) {
-        bottom: $tablet-bottom-offset;
-    }
 
     .inner-board-container {
         display: block;
@@ -40,24 +35,9 @@ $tablet-bottom-offset: 1.5rem;
             width: 100%;
         }
 
-        // small laptop screen
-        @media screen and (min-width: 768px) and (min-height: $tablet-max-height + 1) {
-            min-width: 768px;
-        }
-
-        // slightly larger than that but still sizable
-        @media screen and (min-width: 800px) {
-            width: 800px;
-        }
-
-        // wide screen
-        @media screen and (min-width: 1000px) {
-            width: 900px;
-        }
-
-        // very wide screen
-        @media screen and (min-width: 1100px) {
-            width: 1000px;
+        // very wide screen (almost 1440p)
+        @media screen and (min-width: 1400px) {
+            width: 1200px;
         }
     }
 
@@ -74,8 +54,8 @@ $tablet-bottom-offset: 1.5rem;
         width: 100%;
         height: 5.8rem;
 
-        // small screens
-        @media screen and (max-height: $tablet-max-height) {
+        // small desktop screens or tablet screens
+        @media screen and (min-width: $tablet-max-width-landscape) and (max-height: $tablet-max-height) {
             height: $tablet-card-container-height;
         }
 

@@ -1,7 +1,6 @@
 <div class="player"
     ng-class="{'human-player': $ctrl.player.isHuman }">
     <div class="name" ng-class="{ 'player-turn': $ctrl.isTurn }">
-        <span ng-if="$ctrl.player.isHuman">[Human]</span>
         <span ng-if="!$ctrl.player.isHuman">[AI]</span>
         <span>{{ $ctrl.player.name }}</span>
     </div>

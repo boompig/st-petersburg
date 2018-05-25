@@ -3,6 +3,8 @@ $max-container-height: 22em;
 $tablet-max-card-container-height: 18em;
 $tablet-max-height: 1024px;
 
+// quite conservative: this is ~90%
+$max-card-name-width-mobile: 120px;
 // there is one card that has a longer name than this
 $max-card-name-width: 151px;
 // this is the longest card name
@@ -28,13 +30,15 @@ $max-card-name-width-longest: 171px;
         .card-name {
             // manually set to the largest value for this field that I've seen
             display: inline-block;
+            min-width: $max-card-name-width-mobile;
 
-            // desktop
-            @media screen and (min-width: 768px) {
+            // desktop (1080p+)
+            @media screen and (min-width: 1080px) {
                 min-width: $max-card-name-width;
             }
 
-            @media screen and (min-width: 1300px) {
+            // wide-screen desktop (1440p+)
+            @media screen and (min-width: 1440px) {
                 min-width: $max-card-name-width-longest;
             }
         }

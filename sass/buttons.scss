@@ -1,4 +1,5 @@
 $tablet-height: 1024px;
+$phone-landscape-height: 400px;
 
 #btn-container  {
     // on tablets, move the controls to the top right
@@ -6,6 +7,11 @@ $tablet-height: 1024px;
         position: absolute;
         top: 1rem;
         right: 1rem;
+    }
+
+    // leave some room for notices on top-right on really small screens
+    @media screen and (max-height: $phone-landscape-height) {
+        top: 5.5rem;
     }
 
     .btn {

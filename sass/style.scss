@@ -1,5 +1,7 @@
 // general stuff
 
+$mobile-landscape-height: 400px;
+
 html, body {
     font-family: Helvetica;
     font-size: 1rem;
@@ -81,6 +83,51 @@ li.dropdown-menu-item:hover {
 
     .btn {
         margin-top: .5rem;
+    }
+}
+
+// ask the user to rotate their screen
+#rotate-container {
+    display: none;
+
+    .glyphicon-phone {
+        font-size: 6rem;
+    }
+
+    .glyphicon-phone.rotated-phone {
+        transform: rotate(90deg);
+    }
+
+    .glyphicon-phone.grey-phone {
+        color: #777;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    #main-container {
+        display: none;
+    }
+
+    #rotate-container {
+        display: block;
+        font-size: 4rem;
+        text-align: center;
+        margin: 1rem auto;
+    }
+}
+
+#scroll-down-notice {
+    display: none;
+
+    @media screen and (max-height: $mobile-landscape-height) {
+        display: block;
+        position: absolute;
+        top: .5rem;
+        right: 1rem;
+
+        p, strong {
+            display: inline;
+        }
     }
 }
 

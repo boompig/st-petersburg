@@ -33,6 +33,17 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 #player-name-modal input, #player-name-modal .btn { font-size: 1rem; }
 #player-name-modal .btn { margin-top: .5rem; }
 
+#rotate-container { display: none; }
+#rotate-container .glyphicon-phone { font-size: 6rem; }
+#rotate-container .glyphicon-phone.rotated-phone { transform: rotate(90deg); }
+#rotate-container .glyphicon-phone.grey-phone { color: #777; }
+
+@media screen and (orientation: portrait) { #main-container { display: none; }
+  #rotate-container { display: block; font-size: 4rem; text-align: center; margin: 1rem auto; } }
+#scroll-down-notice { display: none; }
+@media screen and (max-height: 400px) { #scroll-down-notice { display: block; position: absolute; top: .5rem; right: 1rem; }
+  #scroll-down-notice p, #scroll-down-notice strong { display: inline; } }
+
 #deck-container { width: 100%; padding-bottom: .3%; display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-around; }
 @media screen and (max-height: 1024px) { #deck-container { width: 25%; min-width: 250px; border: none; } }
 #deck-container spb-deck, #deck-container .deck { margin: 0; padding: 0; }
@@ -44,8 +55,10 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 #player-container { width: 100%; padding-bottom: 0.45rem; padding-top: 0.45rem; border-bottom: 1px solid black; border-top: 1px solid black; margin-bottom: .45rem; display: flex; flex-direction: row; justify-content: space-around; }
 #player-container .player { min-width: 210px; font-size: .9rem; vertical-align: top; }
 @media screen and (min-width: 1200px) { #player-container .player { min-width: 250px; } }
+@media screen and (max-height: 400px) and (max-width: 1024px) { #player-container .player { min-width: 190px; } }
 #player-container .player .name { font-size: 1.2rem; font-weight: bold; margin-bottom: 0.25rem; display: block; }
-@media screen and (max-height: 1024px) { #player-container .player .name { display: inline-block; margin-right: .5rem; font-size: 1.4em; margin-bottom: 0; } }
+@media screen and (max-height: 1024px) { #player-container .player .name { display: inline-block; margin-right: .5rem; font-size: 1.4rem; margin-bottom: 0; } }
+@media screen and (max-height: 500px) { #player-container .player .name { font-size: 1.3rem; margin-right: 0.3rem; } }
 #player-container .player .num-aristocrats-progress-name { color: #666; font-size: .8rem; }
 #player-container .player .progress.num-aristocrats { margin-bottom: .9rem; }
 @media screen and (max-height: 1024px) { #player-container .player .progress.num-aristocrats { margin-bottom: .5rem; } }
@@ -59,9 +72,9 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 .bought-cards-container { width: 100%; max-height: 22em; overflow-y: auto; margin-bottom: .3rem; }
 @media screen and (max-height: 1024px) { .bought-cards-container { max-height: 18em; } }
 .bought-cards-container .card.bought-card { width: 100%; margin-bottom: .25rem; font-size: 1rem; vertical-align: bottom; }
-.bought-cards-container .card.bought-card .card-name { display: inline-block; }
-@media screen and (min-width: 768px) { .bought-cards-container .card.bought-card .card-name { min-width: 151px; } }
-@media screen and (min-width: 1300px) { .bought-cards-container .card.bought-card .card-name { min-width: 171px; } }
+.bought-cards-container .card.bought-card .card-name { display: inline-block; min-width: 120px; }
+@media screen and (min-width: 1080px) { .bought-cards-container .card.bought-card .card-name { min-width: 151px; } }
+@media screen and (min-width: 1440px) { .bought-cards-container .card.bought-card .card-name { min-width: 171px; } }
 .bought-cards-container .card.bought-card .card-coin-yield-container, .bought-cards-container .card.bought-card .card-point-yield-container { text-align: center; position: relative; width: 20px; display: inline-block; }
 .bought-cards-container .card.bought-card .money-icon, .bought-cards-container .card.bought-card .points-icon { width: 20px; }
 .bought-cards-container .card.bought-card .card-type-rect { width: 20px; height: 20px; display: inline-block; vertical-align: bottom; border: 1px solid black; }
@@ -69,21 +82,18 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 .bought-cards-container .card.bought-card.playable-card .card-name { color: blue; font-weight: bold; cursor: pointer; }
 
 @media screen and (max-height: 1024px) { #btn-container { position: absolute; top: 1rem; right: 1rem; } }
+@media screen and (max-height: 400px) { #btn-container { top: 5.5rem; } }
 #btn-container .btn { font-size: 1rem; }
 @media screen and (max-height: 1024px) { #btn-container .btn { font-size: 1.1em; } }
 
 /** The upper and lower board are situated at the bottom Right now they are statically positioned with respect to the bottom of the screen */
-#board-container { position: fixed; bottom: 2.1rem; left: 0; display: block; margin: 0; padding: 0; width: 100%; }
-@media screen and (max-height: 1024px) { #board-container { bottom: 1.5rem; } }
+#board-container { left: 0; display: block; margin: 0; padding: 0; width: 100%; }
 #board-container .inner-board-container { display: block; padding-left: 1rem; padding-right: 1rem; padding-bottom: 0; margin-top: .4rem; margin-bottom: 0; margin-left: auto; margin-right: auto; }
 @media screen and (max-height: 1024px) { #board-container .inner-board-container { width: 100%; } }
-@media screen and (min-width: 768px) and (min-height: 1025px) { #board-container .inner-board-container { min-width: 768px; } }
-@media screen and (min-width: 800px) { #board-container .inner-board-container { width: 800px; } }
-@media screen and (min-width: 1000px) { #board-container .inner-board-container { width: 900px; } }
-@media screen and (min-width: 1100px) { #board-container .inner-board-container { width: 1000px; } }
+@media screen and (min-width: 1400px) { #board-container .inner-board-container { width: 1200px; } }
 #board-container .board { margin: 0 auto; }
 #board-container .card-container { display: flex; flex-direction: column; flex-wrap: wrap; padding: 0; margin: 0; width: 100%; height: 5.8rem; }
-@media screen and (max-height: 1024px) { #board-container .card-container { height: 4.5rem; } }
+@media screen and (min-width: 1024px) and (max-height: 1024px) { #board-container .card-container { height: 4.5rem; } }
 @media screen and (min-height: 1200px) { #board-container .card-container { height: 8rem; } }
 #board-container .card { font-size: 1rem; width: 50%; margin-right: .5rem; margin-bottom: 0; margin-top: 0; padding-bottom: 0; padding-top: 0; }
 @media screen and (max-height: 1024px) { #board-container .card { font-size: 1rem; width: 33%; } }
@@ -91,10 +101,11 @@ li.dropdown-menu-item:hover { background-color: #ccc; color: white; }
 /* both for board and for cards in hand */
 .buyable-card:hover { color: white; font-weight: bold; cursor: pointer; }
 
-footer { position: fixed; bottom: 1rem; color: #aaa; font-size: 0.9rem; text-align: center; width: 100%; z-index: -1; }
-@media screen and (max-height: 768px) { footer { font-size: .85rem; bottom: .5rem; } }
-@media screen and (max-height: 1024px) { footer { bottom: .5rem; font-size: .8rem; } }
+footer { color: #aaa; font-size: 0.9rem; text-align: center; width: 100%; z-index: -1; }
+@media screen and (max-height: 768px) { footer { font-size: .85rem; } }
+@media screen and (max-height: 1024px) { footer { font-size: .8rem; } }
 
 footer p { margin: 0 auto; text-align: center; }
+@media screen and (min-height: 2000px) { footer p { position: absolute; bottom: 1rem; font-size: 1rem; } }
 
 /*# sourceMappingURL=style.css.map */

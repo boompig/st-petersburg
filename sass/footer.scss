@@ -1,8 +1,6 @@
 $tablet-max-height: 1024px;
 
 footer {
-    position: fixed;
-    bottom: 1rem;
     color: #aaa;
     font-size: 0.9rem;
     text-align: center;
@@ -15,12 +13,10 @@ footer {
     // this is for iPads, most 13" laptops
     @media screen and (max-height: 768px) {
         font-size: .85rem;
-        bottom: .5rem;
     }
 
     // on tablets also
     @media screen and (max-height: $tablet-max-height) {
-        bottom: .5rem;
         font-size: .8rem;
     }
 }
@@ -28,5 +24,12 @@ footer {
 footer p {
     margin: 0 auto;
     text-align: center;
+
+    // very large screens
+    @media screen and (min-height: 2000px) {
+        position: absolute;
+        bottom: 1rem;
+        font-size: 1rem;
+    }
 
 }
