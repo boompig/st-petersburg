@@ -1,3 +1,5 @@
+// @flow
+
 import { Card } from "./cards.js";
 
 export const StaticGameData = {};
@@ -35,7 +37,7 @@ StaticGameData.scoreAristocrats = function(numAristocrats) {
 
 /**
  *
- * @param {number} phase
+ * @param {Card.types} phase
  * @returns {String}
  */
 StaticGameData.getPhaseName = function(phase) {

@@ -2,9 +2,7 @@
   "dependencies": {
     "angular": "1.6.5",
     "angular-animate": "1.6.5",
-    "seedrandom": "^2.4.3",
-    "systemjs": "^0.21.3",
-    "underscore": "1.9.0"
+    "lodash": "^4.17.10"
   },
   "scripts": {
     "build:sass": "sass --style=compact sass/style.scss:css/style.css",

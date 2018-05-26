@@ -66,32 +66,23 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         "WHARF": 2,
         "DEFAULT": 1
     };
-    this.aristocratScoringChart = {
-        0: 0,
-        1: 1,
-        2: 3,
-        3: 6,
-        4: 10,
-        5: 15,
-        6: 21,
-        7: 28,
-        8: 36,
-        9: 45,
-        10: 55
-    };
 
     /******* GAME STATE DATA *****/
-    this.players = [];
+    // map of deck type to card array
     this.decks = {};
+    this.players = [];
     this.upperBoard = [];
     this.lowerBoard = [];
     this.phase = Card.types.WORKER;
+    // index of the player whose turn it is
     this.turn = 0;
-    this.lastRound = false;
     this.consecutivePasses = 0;
-    this.gameId = null;
-    /* number of rounds *completed* so far */
-    this.numRounds = 0;
+    /******* END GAME STATE DATA */
+
+    /******* derived game state data ******/
+    // true iff this is the last round
+    this.lastRound = false;
+    /******* derived game state data ******/
 
     this.humanPlayerIndex = 0;
 
@@ -100,8 +91,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     /****** UI DATA **************/
 
     /******* GAME TRACE DATA *****/
+    this.gameId = null;
     // a list of actions taken by all players, in the order that they were taken
     this.actions = [];
+    /* number of rounds *completed* so far */
+    this.numRounds = 0;
     /******* GAME TRACE DATA *****/
 
     /****** UI FUNCTIONS ********/
@@ -787,9 +781,9 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     };
 
     this.nextPhase = function () {
-        let i = this.phases.indexOf(this.phase);
-        this.phase = this.phases[(i + 1) % this.phases.length];
-        Console.log("Phase is now " + this.getPhaseName());
+        let i = StaticGameData.Phases.indexOf(this.phase);
+        this.phase = StaticGameData.Phases[(i + 1) % StaticGameData.Phases.length];
+        Console.log("Phase is now " + StaticGameData.getPhaseName(this.phase));
         this.preparePhase();
     };
 
@@ -1075,8 +1069,8 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      */
     this._getRobotAction = function(currentPlayer) {
         const deckSizes = [];
-        for (let i = 0; i < this.phases.length; i++) {
-            deckSizes.push( this.decks[this.phases[i]].length );
+        for (let i = 0; i < StaticGameData.Phases.length; i++) {
+            deckSizes.push( this.decks[StaticGameData.Phases[i]].length );
         }
         // create the state out of current game state
         const state = new State(deckSizes, this.upperBoard, this.lowerBoard,

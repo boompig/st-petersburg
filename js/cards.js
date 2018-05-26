@@ -49,7 +49,7 @@ Card.types = {
     WORKER: 1,
     BUILDING: 2,
     ARISTOCRAT: 3,
-    UPGRADE: 4
+    UPGRADE: 4,
 };
 
 Card.locations = {
