@@ -16,7 +16,7 @@
  *      - discountClass (Card.types)
  *      - isPlayable (boolean)
  */
-function Card (name, cost, type, coin_yield, point_yield, index, kwargs) {
+export function Card (name, cost, type, coin_yield, point_yield, index, kwargs) {
     this.name = name;
     this.cost = cost;
     this.type = type;
@@ -29,7 +29,7 @@ function Card (name, cost, type, coin_yield, point_yield, index, kwargs) {
     this.workerUpgradeClass = null;
     this.upgradeCost = this.cost;
     this.bonusYieldClass = null;
-	this.bonusYieldType = null;
+    this.bonusYieldType = null;
     this.discountClass = null;
     this.isPlayable = false;
     // true iff this card has been played this round, does not apply to non-playable cards
@@ -110,8 +110,8 @@ Card.prototype.canUpgradeTo = function (upgradeCard) {
 
 /***** cards ****/
 
-// peasants
-var allCards = [
+export const allCards = [
+    // workers
     new Card("Lumberjack", 3, Card.types.WORKER, 3, 0, 1, {"workerUpgradeClass": "LUMBERJACK"}),
     new Card("Gold Miner", 4, Card.types.WORKER, 3, 0, 2, {"workerUpgradeClass": "GOLD_MINER"}),
     new Card("Shepherd", 5, Card.types.WORKER, 3, 0, 3, {"workerUpgradeClass": "SHEPHERD"}),
@@ -119,6 +119,7 @@ var allCards = [
     new Card("Ship Builder", 7, Card.types.WORKER, 3, 0, 5, {"workerUpgradeClass": "SHIP_BUILDER"}),
     new Card("Czar and Carpenter", 8, Card.types.WORKER, 3, 0, 6, {"workerUpgradeClass": "CZAR_AND_CARPENTER"}),
 
+    // buildings
     new Card("Market", 5, Card.types.BUILDING, 0, 1, 1),
     new Card("Customs House", 8, Card.types.BUILDING, 0, 2, 2),
     new Card("Firehouse", 11, Card.types.BUILDING, 0, 3, 3),
@@ -134,6 +135,7 @@ var allCards = [
     // referenced by name in code, beware of changing it
     new Card("Observatory", 6, Card.types.BUILDING, 0, 1, 11, { "isPlayable": true }),
 
+    // aristocrats
     new Card("Author", 4, Card.types.ARISTOCRAT, 1, 0, 1),
     new Card("Administrator", 7, Card.types.ARISTOCRAT, 2, 0, 2),
     new Card("Warehouse Manager", 10, Card.types.ARISTOCRAT, 3, 0, 3),

@@ -1,8 +1,13 @@
-StPeter.component("spbPlayerCard", {
+/* global angular */
+
+import "../display.js";
+import { Card } from "../cards.js";
+
+angular.module("stPeter").component("spbPlayerCard", {
     templateUrl: "js/angular-templates/bought-card.html",
     bindings: {
-        card: '<',
-        quantity: '<',
+        card: "<",
+        quantity: "<",
     },
 });
 
@@ -21,14 +26,14 @@ const spbBoardCardCtrl = function() {
     };
 };
 
-StPeter.component("spbBoardCard", {
+angular.module("stPeter").component("spbBoardCard", {
     templateUrl: "js/angular-templates/board-card.html",
     bindings: {
-        card: '<',
+        card: "<",
         // location is of type Card.locations
-        location: '<',
+        location: "<",
         // pass in human player so we can calculate the real card cost
-        humanPlayer: '<',
+        humanPlayer: "<",
     },
     controller: spbBoardCardCtrl,
 });

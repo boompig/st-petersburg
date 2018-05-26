@@ -1,14 +1,20 @@
 {
   "dependencies": {
-    "seedrandom": "^2.4.3"
+    "angular": "1.6.5",
+    "angular-animate": "1.6.5",
+    "seedrandom": "^2.4.3",
+    "systemjs": "^0.21.3",
+    "underscore": "1.9.0"
   },
   "scripts": {
     "build:sass": "sass --style=compact sass/style.scss:css/style.css",
-    "build:sass:watch": "sass --style=compact --watch sass/style.scss:css/style.css"
+    "build:sass:watch": "sass --style=compact --watch sass/style.scss:css/style.css",
+    "lint:js": "eslint js/*.js my_node_modules/ai.js"
   },
   "license": "MIT",
   "private": true,
   "devDependencies": {
+    "eslint": "^4.19.1",
     "http-server": "^0.11.1"
   }
 }

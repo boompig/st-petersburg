@@ -1,3 +1,8 @@
+/* global angular */
+
+import "../display.js";
+import { StaticGameData } from "../static-data.js";
+
 const spbPlayerCtrl = function() {
 
     /**
@@ -14,7 +19,6 @@ const spbPlayerCtrl = function() {
      * @param {Card} card
      */
     this.playBoughtCard = function(card) {
-        console.log("Playing card " + card.name + "...");
         return this.onPlayCard({
             card: card,
             player: this.player,
@@ -44,14 +48,14 @@ const spbPlayerCtrl = function() {
     };
 };
 
-StPeter.component("spbPlayer", {
+angular.module("stPeter").component("spbPlayer", {
     templateUrl: "js/angular-templates/player.html",
     bindings: {
-        player: '<',
-        isTurn: '<',
+        player: "<",
+        isTurn: "<",
         // callbacks
-        onPlayCard: '&',
-        onPlayCardFromHand: '&',
+        onPlayCard: "&",
+        onPlayCardFromHand: "&",
     },
     controller: spbPlayerCtrl,
 });

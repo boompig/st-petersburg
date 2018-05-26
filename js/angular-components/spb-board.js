@@ -1,3 +1,7 @@
+/* global angular */
+
+import { Card } from "../cards.js";
+
 const BoardCtrl = function() {
     /**
      * @param {Card} card
@@ -35,23 +39,23 @@ const BoardCtrl = function() {
         } else {
             return Card.locations.UPPER_BOARD;
         }
-    }
+    };
 };
 
-StPeter.component("spbBoard", {
+angular.module("stPeter").component("spbBoard", {
     templateUrl: "js/angular-templates/spb-board.html",
     bindings: {
         // array of card objects
-        cards: '<',
+        cards: "<",
         // boolean
-        currentPlayerIsHuman: '<',
+        currentPlayerIsHuman: "<",
         // the string "upper" or "lower"
-        name: '<',
+        name: "<",
         // Player
-        humanPlayer: '<',
+        humanPlayer: "<",
         // callbacks
-        onPutCardInHand: '&',
-        onBuyCard: '&',
+        onPutCardInHand: "&",
+        onBuyCard: "&",
     },
     controller: BoardCtrl,
 });

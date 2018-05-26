@@ -1,4 +1,6 @@
-const StaticGameData = {};
+import { Card } from "./cards.js";
+
+export const StaticGameData = {};
 
 StaticGameData.Phases = [
     Card.types.WORKER,
@@ -51,4 +53,3 @@ StaticGameData.getPhaseName = function(phase) {
         throw new Error("Unknown phase: " + phase);
     }
 };
-

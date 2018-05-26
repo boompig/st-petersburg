@@ -1,5 +1,14 @@
+/* global angular, _ */
+
+import { allCards, Card } from "./cards.js";
+import { StaticGameData } from "./static-data.js";
+import { Player } from "./player.js";
+import { State, Move, AI } from "../my_node_modules/ai.js";
+
+const Console = console;
+
 // create Angular app
-var StPeter = angular.module("stPeter", [
+const StPeter = angular.module("stPeter", [
     "ngAnimate",
     "ng-context-menu",
     "ui.bootstrap"]);
@@ -133,7 +142,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         modalInstance.result.then(function (selectedBaseCard) {
             game.upgradeCard(selectedBaseCard, card, collection);
         }, function () {
-            console.log("Did not select card for upgrade");
+            Console.log("Did not select card for upgrade");
         });
     };
 
@@ -161,7 +170,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             }
         });
         modalInstance.result.then(function (selectedDeck) {
-            console.log("Peeking at deck of type " + selectedDeck);
+            Console.log("Peeking at deck of type " + selectedDeck);
             if (card) {
                 // set the card to used here
                 card.played = true;
@@ -169,15 +178,15 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             let selection = Card.types[selectedDeck.toUpperCase()];
             $scope.openPeekingModal(game, selection);
         }, function () {
-            console.log("Did not select a deck, so quitting");
+            Console.log("Did not select a deck, so quitting");
         });
     };
 
     /**
      * Return a promise that resolves into the player name
      */
-    $scope.openPlayerNameModal = function(game) {
-        console.log("Asking for the player's name...");
+    $scope.openPlayerNameModal = function() {
+        Console.log("Asking for the player's name...");
         let modalInstance = $uibModal.open({
             templateUrl: "js/angular-templates/player-name-modal.html",
             controller: "PlayerNameInstanceCtrl",
@@ -236,7 +245,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                 // discard, do nothing
             }
         }, function () {
-            console.log("Did not select an option, so discarding the card");
+            Console.log("Did not select an option, so discarding the card");
         });
     };
 
@@ -274,21 +283,21 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     this.getCardCost = function (card, collection) {
         const player = this.getCurrentPlayer();
         let cost = card.cost;
-        // console.log("Calculating cost for card " + card.name);
-        // console.log("Base cost is " + cost);
+        // Console.log("Calculating cost for card " + card.name);
+        // Console.log("Base cost is " + cost);
         if (collection === this.lowerBoard) {
-            // console.log("Reduce cost by 1 as card is from lower board");
+            // Console.log("Reduce cost by 1 as card is from lower board");
             cost--;
         }
         const similarCards = player.cards.filter(function (otherCard) {
             return otherCard.name === card.name;
         });
-        // console.log("Reduce cost by " + similarCards.length + " as player has that many instances of the card already");
+        // Console.log("Reduce cost by " + similarCards.length + " as player has that many instances of the card already");
         cost -= similarCards.length;
 
         if (player.hasDiscountForCard(card)) {
             cost--;
-            // console.log("Reduce cost by 1, as player has discount card relevant to this card");
+            // Console.log("Reduce cost by 1, as player has discount card relevant to this card");
         }
 
         return Math.max(cost, 1);
@@ -314,10 +323,10 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         var cost = this.getUpgradeCost(baseCard, upgradeCard, collection);
         var idx;
 
-        console.log("Trying to upgrade " + baseCard.name + " into " + upgradeCard.name + " for " + cost + " coins");
+        Console.log("Trying to upgrade " + baseCard.name + " into " + upgradeCard.name + " for " + cost + " coins");
 
         if (player.money < cost) {
-            console.log("Player " + player.name + " cannot afford!");
+            Console.log("Player " + player.name + " cannot afford!");
             alert("Player " + player.name + " cannot afford to perform this upgrade");
             return false;
         }
@@ -328,13 +337,13 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             Move.actions.UPGRADE,
             locationName,
             baseCard,
-            upgradeCard,
+            upgradeCard
         ));
 
         // pay for the card
         player.money -= cost;
         if (player.money < 0) {
-            console.error("ERROR: Player money for " + player.name + " has gone negative after upgrading " + baseCard.name + " to " + upgradeCard.name + " for " + cost + "coins");
+            Console.error("ERROR: Player money for " + player.name + " has gone negative after upgrading " + baseCard.name + " to " + upgradeCard.name + " for " + cost + "coins");
             alert("ERROR");
         }
 
@@ -393,7 +402,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             cardName = cards[c].name.replace("'", "").replace(/ /g, "_").toUpperCase();
             numCards = cardMap[cardName] || cardMap["DEFAULT"] || 0;
             if (numCards === 0) {
-                console.error("Error: missed " + cardName);
+                Console.error("Error: missed " + cardName);
             }
             for (let i = 0; i < numCards; i++) {
                 card = _.clone(cards[c]);
@@ -407,7 +416,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      * @returns {String}
      */
     this.getRandomGameId = function () {
-        const dateString = (new Date()).toISOString().split('T')[0];
+        const dateString = (new Date()).toISOString().split("T")[0];
         const randomNonce = Math.floor(Math.random() * 1e8);
         return dateString + "-" + randomNonce;
     };
@@ -420,7 +429,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         let tokens = [Card.types.ARISTOCRAT, Card.types.BUILDING, Card.types.WORKER, Card.types.UPGRADE];
         let shuffledTokens = _.shuffle(tokens);
         return shuffledTokens;
-    }
+    };
 
     this.init = function() {
         if(window.sessionStorage) {
@@ -428,21 +437,21 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         }
 
         if(this.humanPlayerName) {
-            console.log("Read human player's name from session storage: " + this.humanPlayerName);
+            Console.log("Read human player's name from session storage: " + this.humanPlayerName);
             this.gameInit();
         } else {
             $scope.openPlayerNameModal().then((playerName) => {
-                console.log("Got name " + playerName);
+                Console.log("Got name " + playerName);
                 this.humanPlayerName = playerName;
 
                 if(window.sessionStorage) {
-                    console.log("Saving human player's name to session storage");
+                    Console.log("Saving human player's name to session storage");
                     // save the human player's name to session storage
                     window.sessionStorage.setItem("humanPlayerName", this.humanPlayerName);
                 }
 
                 // running game init in another thread so modal can close
-                console.log("// running game init in another thread so modal can close");
+                Console.log("// running game init in another thread so modal can close");
                 $timeout(() => {
                     this.gameInit();
                 }, 0);
@@ -541,23 +550,23 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     this.sendInitialGameState = function(gameId, initialState) {
         let baseUrl;
         if(window.location.href.startsWith("http://localhost")) {
-            baseUrl = "http://localhost:9897"
+            baseUrl = "http://localhost:9897";
         } else {
-            baseUrl = "https://boompig.herokuapp.com"
+            baseUrl = "https://boompig.herokuapp.com";
         }
         // const baseUrl = "http://localhost:9897"
         const url = baseUrl + "/api/st-petersburg/initial-game-state";
-        // console.log(initialState);
+        // Console.log(initialState);
         this.corsPostJSON(url, {
             gameId: gameId,
             initialState: initialState,
         }).then((response) => {
             if (response.ok) {
-                response.json().then((obj) => console.log(obj));
+                response.json().then((obj) => Console.log(obj));
             } else {
-                response.text().then((obj) => console.log(obj));
+                response.text().then((obj) => Console.log(obj));
             }
-        }).catch((err) => console.error(err));
+        }).catch((err) => Console.error(err));
     };
 
     /**
@@ -568,25 +577,25 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     this.sendFinalGameState = function(gameId, finalState) {
         let baseUrl;
         if(window.location.href.startsWith("http://localhost")) {
-            baseUrl = "http://localhost:9897"
+            baseUrl = "http://localhost:9897";
         } else {
-            baseUrl = "https://boompig.herokuapp.com"
+            baseUrl = "https://boompig.herokuapp.com";
         }
         const url = baseUrl + "/api/st-petersburg/final-game-state";
         finalState.actions = this.actions;
-        // console.log(finalState);
+        // Console.log(finalState);
         this.corsPostJSON(url, {
             gameId: gameId,
             finalState: finalState,
         }).then((response) => {
             if (response.ok) {
-                response.json().then((obj) => console.log(obj));
+                response.json().then((obj) => Console.log(obj));
             } else {
-                response.text().then((obj) => console.log(obj));
+                response.text().then((obj) => Console.log(obj));
             }
-        }).catch((err) => console.error(err));
+        }).catch((err) => Console.error(err));
     };
-;
+
     /**
      * 1. Set turn to the player with the starter token for this phase
      * 2. Reset consecutive passes
@@ -664,10 +673,10 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                                 (bonusCard.type === Card.types.UPGRADE && bonusCard.upgradeType === card.bonusYieldClass);
                         });
                         if(card.bonusYieldType === "money") {
-                            console.log("Got " + bonusCards.length + " bonus money from card " + card.name);
+                            Console.log("Got " + bonusCards.length + " bonus money from card " + card.name);
                             player.money += bonusCards.length;
                         } else {
-                            console.log("Got " + bonusCards.length + " bonus points from card " + card.name);
+                            Console.log("Got " + bonusCards.length + " bonus points from card " + card.name);
                             player.points += bonusCards.length;
                         }
                     }
@@ -695,25 +704,25 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      * Assign scores to the players
      */
     this.evalGameEnd = function () {
-        console.log("**** Doing game-end calculations... ****");
+        Console.log("**** Doing game-end calculations... ****");
         for (let p = 0; p < this.players.length; p++) {
             let player = this.players[p];
-            console.log("Player " + player.name + " ended the game with " + player.points + " points");
+            Console.log("Player " + player.name + " ended the game with " + player.points + " points");
             let numAristocrats = player.numUniqueAristocrats();
             let aristocratPoints = StaticGameData.scoreAristocrats(numAristocrats);
-            console.log("Player " + player.name + " earned " + aristocratPoints + " points from " + numAristocrats + " aristocrats");
+            Console.log("Player " + player.name + " earned " + aristocratPoints + " points from " + numAristocrats + " aristocrats");
             player.points += aristocratPoints;
 
             // money scoring
             let moneyPoints = Math.floor(player.money / 10);
-            console.log("Player " + player.name + " earned " + moneyPoints + " points from " + player.money + " coins");
+            Console.log("Player " + player.name + " earned " + moneyPoints + " points from " + player.money + " coins");
             player.points += moneyPoints;
 
             // hand penalties
             let handPenalty = player.hand.length * 5;
-            console.log("Player " + player.name + " was penalized " + handPenalty + " points from " + player.hand.length + " cards in hand");
+            Console.log("Player " + player.name + " was penalized " + handPenalty + " points from " + player.hand.length + " cards in hand");
             player.points -= handPenalty;
-            console.log("Final score for player " + player.name + " is " + player.points + " points");
+            Console.log("Final score for player " + player.name + " is " + player.points + " points");
         }
     };
 
@@ -723,12 +732,19 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             oldToken = this.players[p].token;
             if (passedToken) {
                 this.players[p].token = passedToken;
-                console.log("Token for player " + this.players[p].name + " is now " + passedToken);
+                Console.log("Token for player " + this.players[p].name + " is now " + passedToken);
             }
             passedToken = oldToken;
         }
-        console.log("Token for player " + this.players[0].name + " is now " + passedToken);
+        Console.log("Token for player " + this.players[0].name + " is now " + passedToken);
         this.players[0].token = passedToken;
+    };
+
+    /**
+     * @returns {boolean}
+     */
+    this.hasNextRound = function() {
+        return !this.lastRound;
     };
 
     /**
@@ -752,7 +768,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                 }
             }
 
-            console.log("Game Over! The winner is " + winningPlayer.name + " with " + winningPoints + " points");
+            Console.log("Game Over! The winner is " + winningPlayer.name + " with " + winningPoints + " points");
             // TODO display this in a nicer way
             alert("Game Over! The winner is " + winningPlayer.name + " with " + winningPoints + " points");
 
@@ -773,7 +789,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     this.nextPhase = function () {
         let i = this.phases.indexOf(this.phase);
         this.phase = this.phases[(i + 1) % this.phases.length];
-        console.log("Phase is now " + this.getPhaseName());
+        Console.log("Phase is now " + this.getPhaseName());
         this.preparePhase();
     };
 
@@ -787,7 +803,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         const player = this.getCurrentPlayer();
 
         if (player.hand.length === player.getMaxHandSize()) {
-            console.log("Hand is full!");
+            Console.log("Hand is full!");
             alert("Hand is full!");
             return false;
         }
@@ -797,7 +813,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         this.actions.push(new Move(
             Move.actions.PUT_IN_HAND,
             locationName,
-            card,
+            card
         ));
 
         // remove from collection
@@ -823,12 +839,12 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     this.playCard = function (card, player, collection) {
         const currentPlayer = this.players[this.turn];
         if(currentPlayer !== player) {
-            console.log("Cannot play another player's card");
+            Console.log("Cannot play another player's card");
             alert("Cannot play another player's card");
             return false;
         }
         if (!card.isPlayable) {
-            console.log("Card is not playable");
+            Console.log("Card is not playable");
             alert("This card is not playable");
             return false;
         }
@@ -862,7 +878,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                 }
             }
         } else {
-            console.error("Unknown card being played: " + card.name);
+            Console.error("Unknown card being played: " + card.name);
         }
     };
 
@@ -884,7 +900,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         } else {
             return cost <= player.money;
         }
-    }
+    };
 
     /**
      * @returns {Player}
@@ -919,14 +935,14 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                 let deck = this.decks[phase];
                 if(collection === deck) {
                     switch(phase) {
-                        case Card.types.WORKER:
-                            return Card.locations.DECK_WORKER;
-                        case Card.types.BUILDING:
-                            return Card.locations.DECK_BUILDING;
-                        case Card.types.ARISTOCRAT:
-                            return Card.locations.DECK_ARISTOCRAT;
-                        case Card.types.UPGRADE:
-                            return Card.locations.DECK_UPGRADE;
+                    case Card.types.WORKER:
+                        return Card.locations.DECK_WORKER;
+                    case Card.types.BUILDING:
+                        return Card.locations.DECK_BUILDING;
+                    case Card.types.ARISTOCRAT:
+                        return Card.locations.DECK_ARISTOCRAT;
+                    case Card.types.UPGRADE:
+                        return Card.locations.DECK_UPGRADE;
                     }
                 }
             }
@@ -962,7 +978,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             }
         } else {
             if (cost > player.money) {
-                console.log("Player " + player.name + " cannot afford " + card.name + " with calculated cost " + cost);
+                Console.log("Player " + player.name + " cannot afford " + card.name + " with calculated cost " + cost);
                 if(player.isHuman) {
                     alert("Player " + player.name + " cannot afford " + card.name + " with calculated cost " + cost);
                 }
@@ -975,13 +991,13 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         this.actions.push(new Move(
             Move.actions.BUY,
             locationName,
-            card,
+            card
         ));
 
         // pay for the card
         player.money -= cost;
         if (player.money < 0) {
-            console.error("ERROR: money for player " + player.name + " has gone negative after buying card " + card.name + " for " + cost + " coins");
+            Console.error("ERROR: money for player " + player.name + " has gone negative after buying card " + card.name + " for " + cost + " coins");
             alert("ERROR");
         }
 
@@ -993,7 +1009,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             var i = collection.indexOf(card);
             collection.splice(i, 1);
         }
-        console.log("Player " + player.name + " bought " + card.name + " for " + cost);
+        Console.log("Player " + player.name + " bought " + card.name + " for " + cost);
 
         this.sortPlayerCards(player);
         // reset consecutive passes
@@ -1011,7 +1027,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      */
     this.playCardFromHand = function (card, player) {
         if (player !== this.players[this.turn]) {
-            console.log("Can only play cards on your turn");
+            Console.log("Can only play cards on your turn");
             return false;
         }
 
@@ -1034,7 +1050,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         });
 
         if (this.decks[this.phase].length === 0 && !this.lastRound) {
-            console.log("No more cards in deck " + this.getPhaseName() + " which means this is the last round");
+            Console.log("No more cards in deck " + this.getPhaseName() + " which means this is the last round");
             alert("Warning: " + this.getPhaseName() + " deck is exhausted. This is the last round.");
             this.lastRound = true;
         }
@@ -1050,50 +1066,66 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         return StaticGameData.getPhaseName(phase);
     };
 
+    /**
+     * Return the action that the AI should take
+     * @param {Player} currentPlayer
+     * @returns {any} An object with at least the following properties:
+     *      - move: best move to take
+     *      - moveList: the plan for this AI
+     */
+    this._getRobotAction = function(currentPlayer) {
+        const deckSizes = [];
+        for (let i = 0; i < this.phases.length; i++) {
+            deckSizes.push( this.decks[this.phases[i]].length );
+        }
+        // create the state out of current game state
+        const state = new State(deckSizes, this.upperBoard, this.lowerBoard,
+            this.phase, currentPlayer);
+        const obj = AI.analyze(state, currentPlayer.name);
+        // print plan
+        Console.log("Plan for " + currentPlayer.name + ":");
+        for (var i = 0; i < obj.moveList.length; i++) {
+            Console.log(obj.moveList[i].toString());
+        }
+        return obj;
+    };
+
     this.doRobotAction = function () {
         // update UI action
         this.aiIsWorking = true;
 
         const inner = () => {
-            let player = this.getCurrentPlayer();
-            if (! player.isHuman) {
-                const deckSizes = [];
-                for (let i = 0; i < this.phases.length; i++) {
-                    deckSizes.push( this.decks[this.phases[i]].length );
-                }
-                // create the state out of current game state
-                const state = new State(deckSizes, this.upperBoard, this.lowerBoard,
-                        this.phase, player);
-                let obj = AI.analyze(state, player.name);
-                console.log("Plan for " + player.name + ":");
-                for (var i = 0; i < obj.moveList.length; i++)
-                    console.log(obj.moveList[i].toString());
+            const player = this.getCurrentPlayer();
+            if (!player.isHuman) {
                 const locationMap = {};
+                let obj = this._getRobotAction(player);
                 locationMap[Card.locations.UPPER_BOARD] = this.upperBoard;
                 locationMap[Card.locations.LOWER_BOARD] = this.lowerBoard;
                 locationMap[Card.locations.HAND] = player.hand;
                 if (obj.move) {
                     switch (obj.move.action) {
-                        case Move.actions.PASS:
-                            this.passTurn();
-                            break;
-                        case Move.actions.BUY:
-                            this.buyCard(obj.move.card, locationMap[obj.move.location]);
-                            break;
-                        case Move.actions.PUT_IN_HAND:
-                            this.putCardInHand(obj.move.card, locationMap[obj.move.location]);
-                            break;
-                        case Move.actions.UPGRADE:
-                            this.upgradeCard(obj.move.baseCard, obj.move.card,
-                                    locationMap[obj.move.location]);
-                            break;
+                    case Move.actions.PASS:
+                        this.passTurn();
+                        break;
+                    case Move.actions.BUY:
+                        this.buyCard(obj.move.card, locationMap[obj.move.location]);
+                        break;
+                    case Move.actions.PUT_IN_HAND:
+                        this.putCardInHand(obj.move.card, locationMap[obj.move.location]);
+                        break;
+                    case Move.actions.UPGRADE:
+                        this.upgradeCard(obj.move.baseCard, obj.move.card,
+                            locationMap[obj.move.location]);
+                        break;
+                    default:
+                        throw new Error("Unknown move specified by AI: " + obj.move);
                     }
                 } else {
-                    console.log("nothing to be done");
+                    Console.log("nothing to be done");
                     this.passTurn();
                 }
             } else {
-                console.warn("Cannot call doRobotAction on a human player");
+                Console.warn("Cannot call doRobotAction on a human player");
             }
             this.aiIsWorking = false;
         };
@@ -1146,7 +1178,7 @@ StPeter.controller("PlayerNameInstanceCtrl", function($scope, $uibModalInstance)
 
     $scope.ok = function() {
         $uibModalInstance.close($scope.name);
-    }
+    };
 });
 
 /**

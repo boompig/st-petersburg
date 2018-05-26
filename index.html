@@ -136,7 +136,6 @@
         </script>
 
 		<!-- CDN -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.4.3/seedrandom.min.js"></script></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.0/underscore-min.js"></script>
         <!-- Angular 1 for production -->
         <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>-->
@@ -149,27 +148,23 @@
             crossorigin="anonymous"></script>
         <!-- this is currently used for tooltips -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
-
 		<!-- local libraries (helpful for offline development) -->
         <!-- <script src="node_modules/lodash/lodash.min.js"></script>
         <script src="node_modules/angular/angular.js"></script>
-        <script src="node_modules/seedrandom/seedrandom.js"></script>
         <script src="node_modules/whatwg-fetch/fetch.js"></script> -->
         <!--<script src="bower_components/ng-context-menu/dist/ng-context-menu.js"></script>-->
         <!--<script src="bower_components/angular-ui-bootstrap/src/modal/modal.js"></script>-->
 
-        <script src="js/cards.js"></script>
-        <script src="js/static-data.js"></script>
-        <script src="js/player.js"></script>
-        <script src="my_node_modules/ai.js"></script>
-        <script src="js/display.js"></script>
-        <script src="js/angular-components/spb-deck.js"></script>
-        <!-- legacy directive -->
-        <script src="js/angular-directives/spb-card.js"></script>
-        <script src="js/angular-components/spb-player.js"></script>
-        <script src="js/angular-components/spb-board.js"></script>
-        <!-- new: component to replace legacy directive -->
-        <script src="js/angular-components/spb-card.js"></script>
+        <script type="module">
+            import "./js/display.js";
+        </script>
 
+        <script type="module" src="js/angular-components/spb-deck.js"></script>
+        <!-- legacy directive -->
+        <script type="module" src="js/angular-directives/spb-card.js"></script>
+        <script type="module" src="js/angular-components/spb-player.js"></script>
+        <script type="module" src="js/angular-components/spb-board.js"></script>
+        <!-- new: component to replace legacy directive -->
+        <script type="module" src="js/angular-components/spb-card.js"></script>\
     </body>
 </html>

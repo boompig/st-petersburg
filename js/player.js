@@ -1,3 +1,5 @@
+import { Card } from "../js/cards.js";
+
 /**
  * A player, as represented in a normal St. Petersburg game
  * No custom modifications have been made to distinguish between AI and human
@@ -6,7 +8,7 @@
  * @param {number} token One of Card.types
  * @param {boolean} isHuman
  */
-function Player (name, token, isHuman) {
+export function Player (name, token, isHuman) {
     // game state stuff
     this.hand = [];
     this.cards = [];
@@ -33,7 +35,7 @@ Player.prototype.getUniqueCards = function() {
         }
     }
     return uniqueCards;
-}
+};
 
 /**
  * @returns {number}
@@ -41,7 +43,7 @@ Player.prototype.getUniqueCards = function() {
 Player.prototype.numUniqueAristocrats = function() {
     const aristocratNames = this.cards.filter((card) => {
         return (card.type === Card.types.ARISTOCRAT || card.upgradeType === Card.types.ARISTOCRAT);
-    }).map((card) => card.name);;
+    }).map((card) => card.name);
     const uniqueNames = new Set(aristocratNames);
     return uniqueNames.size;
 };
@@ -123,7 +125,7 @@ Player.prototype.canAffordCard = function (card, location) {
         const validCards = this.cards.filter(function (baseCard) {
             return baseCard.canUpgradeTo(card);
         });
-        let diff, i;
+        let diff;
         for (let i = 0; i < validCards.length; i++) {
             diff = Math.max(1, cost - validCards[i].upgradeCost);
             if (diff <= this.money) {
