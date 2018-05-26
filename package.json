@@ -9,7 +9,7 @@
   "scripts": {
     "build:sass": "sass --style=compact sass/style.scss:css/style.css",
     "build:sass:watch": "sass --style=compact --watch sass/style.scss:css/style.css",
-    "lint:js": "eslint js/*.js my_node_modules/ai.js"
+    "lint:js": "eslint js/*.js my_node_modules/ai.js js/angular-components/*.js js/angular-directives/*.js"
   },
   "license": "MIT",
   "private": true,
