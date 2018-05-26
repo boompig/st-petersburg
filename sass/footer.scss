@@ -1,0 +1,35 @@
+$tablet-max-height: 1024px;
+
+footer {
+    color: #aaa;
+    font-size: 0.9rem;
+    text-align: center;
+    width: 100%;
+
+    // context menu should go on top of footer
+    z-index: -1;
+
+    // make sure that there is enough space for everything to fit on small laptop screens
+    // this is for iPads, most 13" laptops
+    @media screen and (max-height: 768px) {
+        font-size: .85rem;
+    }
+
+    // on tablets also
+    @media screen and (max-height: $tablet-max-height) {
+        font-size: .8rem;
+    }
+}
+
+footer p {
+    margin: 0 auto;
+    text-align: center;
+
+    // very large screens
+    @media screen and (min-height: 2000px) {
+        position: absolute;
+        bottom: 1rem;
+        font-size: 1rem;
+    }
+
+}

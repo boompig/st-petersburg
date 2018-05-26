@@ -1,0 +1,55 @@
+<div class="player"
+    ng-class="{'human-player': $ctrl.player.isHuman }">
+    <div class="name" ng-class="{ 'player-turn': $ctrl.isTurn }">
+        <span ng-if="!$ctrl.player.isHuman">[AI]</span>
+        <span>{{ $ctrl.player.name }}</span>
+    </div>
+    <div class="player-stats">
+        <div class="player-money-container">
+            <img class="money-icon" src="img/silver_medal_icon_blank.png" alt="money" />
+            <span class="player-money">{{ $ctrl.player.money }}</span>
+        </div>
+        <div class="player-points-container">
+            <img class="points-icon" src="img/yellow-shield.gif" alt="points" />
+            <span class="player-points">{{ $ctrl.player.points }}</span>
+        </div>
+        <div class="player-token-container">
+            <img class="token-icon"
+                ng-src="{{ $ctrl.getTokenImageUrl() }}" />
+        </div>
+    </div>
+    <div class="num-aristocrats-container">
+        <div class="num-aristocrats-progress-name">Unique Aristocrats</div>
+        <div class="num-aristocrats progress">
+            <div class="progress-bar" role="progressbar"
+                aria-valuenow="{{ $ctrl.player.numUniqueAristocrats() }}"
+                aria-valuemin="0"
+                aria-valuemax="10"
+                ng-style="{ width: $ctrl.player.numUniqueAristocrats() * 10 + '%' }">
+                {{ $ctrl.player.numUniqueAristocrats() }}
+            </div>
+        </div>
+    </div>
+    <div class="player-cards">
+        <div class="player-subtitle">Bought Cards</div>
+        <div class="bought-cards-container">
+            <div ng-if="$ctrl.player.cards.length === 0" class="empty-card-container-msg">No cards</div>
+            <div ng-repeat="card in $ctrl.player.getUniqueCards()"
+                ng-click="card.isPlayable && $ctrl.playBoughtCard(card)">
+                <spb-player-card
+                    card="card"
+                    quantity="$ctrl.getCardQuantity(card.name)">
+                </spb-player-card>
+            </div>
+        </div>
+    </div>
+    <div class="player-hand">
+        <div class="player-subtitle">Cards In Hand</div>
+        <div class="card" ng-repeat="card in $ctrl.player.hand"
+            ng-class="{ 'buyable-card': $ctrl.player.isHuman }"
+            ng-click="$ctrl.player.isHuman && $ctrl.buyCardFromHand(card)">
+            <div spb-card></div>
+        </div>
+        <div ng-if="$ctrl.player.hand.length === 0" class="empty-card-container-msg">Empty hand</div>
+    </div>
+</div>

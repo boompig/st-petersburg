@@ -1,88 +1,119 @@
 /**
  * Upgrade type means ARISTOCRAT, WORKER, BUILDING
  * upgrade class is only relevant for workers
+ *
+ * @param {String} name
+ * @param {number} cost
+ * @param {Card.types} type
+ * @param {number} coin_yield
+ * @param {number} point_yield
+ * @param {number} index
+ * @param {any} kwargs Keyword arguments. Possible values:
+ *      - workerUpgradeClass (string)
+ *      - upgradeCost (number)
+ *      - bonusYieldClass (Card.types)
+ *      - bonusYieldType ("money", "points")
+ *      - discountClass (Card.types)
+ *      - isPlayable (boolean)
  */
-function Card (name, cost, type, coin_yield, point_yield, index, kwargs) {
-    this.name = name;
-    this.cost = cost;
-    this.type = type;
-    this.coinYield = coin_yield;
-    this.pointYield = point_yield;
-    this.upgradeType = type;
-    this.index = index;
+export class Card {
+    constructor(name, cost, type, coin_yield, point_yield, index, kwargs) {
+        this.name = name;
+        this.cost = cost;
+        this.type = type;
+        this.coinYield = coin_yield;
+        this.pointYield = point_yield;
+        this.upgradeType = type;
+        this.index = index;
 
-    // have default settings, can be reset via kwargs
-    this.workerUpgradeClass = null;
-    this.upgradeCost = this.cost;
-    this.bonusYieldClass = null;
-	this.bonusYieldType = null;
-    this.discountClass = null;
-    this.isPlayable = false;
-    // true iff this card has been played this round, does not apply to non-playable cards
-    this.played = false;
+        // have default settings, can be reset via kwargs
+        this.workerUpgradeClass = null;
+        this.upgradeCost = this.cost;
+        this.bonusYieldClass = null;
+        this.bonusYieldType = null;
+        this.discountClass = null;
+        this.isPlayable = false;
+        // true iff this card has been played this round, does not apply to non-playable cards
+        this.played = false;
 
-    if (kwargs) {
-        for (var property in kwargs) {
-            if (this.hasOwnProperty(property)) {
-                // console.log("Set " + property + " to value " + kwargs[property] + " for card " + name);
-                this[property] = kwargs[property];
+        if (kwargs) {
+            for (var property in kwargs) {
+                if (this.hasOwnProperty(property)) {
+                    // console.log("Set " + property + " to value " + kwargs[property] + " for card " + name);
+                    this[property] = kwargs[property];
+                }
             }
+        }
+    }
+
+    /**
+     * @returns {number}
+     */
+    hash() {
+        return this.type * 100 + this.index;
+    }
+
+    /**
+     * Return the cost of the card, before factoring in other cards of same type,
+     * as well as discount cards
+     * @param {Card.locations} location
+     * @returns {number}
+     */
+    getCost(location) {
+        if (location === Card.locations.LOWER_BOARD) {
+            return Math.max(this.cost - 1, 1);
+        } else {
+            return this.cost;
+        }
+    }
+
+    /**
+     * @param {Card.types} phase
+     * @returns {boolean}
+     */
+    canEvalNow(phase) {
+        return this.upgradeType === phase;
+    }
+
+    /**
+     * Return true iff can upgrade current card to the target card.
+     * @param {Card} upgradeCard
+     * @returns {boolean}
+     */
+    canUpgradeTo(upgradeCard) {
+        if (this.type === Card.types.WORKER) {
+            return upgradeCard.type === Card.types.UPGRADE &&
+                this.upgradeType === upgradeCard.upgradeType &&
+                (this.workerUpgradeClass === upgradeCard.workerUpgradeClass ||
+                this.workerUpgradeClass === "CZAR_AND_CARPENTER");
+        } else {
+            return upgradeCard.type === Card.types.UPGRADE && this.type !== Card.types.UPGRADE && this.upgradeType === upgradeCard.upgradeType;
         }
     }
 }
 
-Card.types = {
+Card.types = Object.freeze({
     WORKER: 1,
     BUILDING: 2,
     ARISTOCRAT: 3,
-    UPGRADE: 4
-};
+    UPGRADE: 4,
+});
 
-Card.locations = {
+Card.locations = Object.freeze({
     HAND: 1,
     UPPER_BOARD: 2,
     LOWER_BOARD: 3,
-};
-
-Card.prototype.hash = function () {
-    return this.type * 100 + this.index;
-};
-
-/**
- * TODO do not use this
- * Return the cost of the card, before factoring in other cards of same type,
- * as well as discount cards
- */
-Card.prototype.getCost = function (location) {
-    if (location === Card.locations.LOWER_BOARD) {
-        return Math.max(this.cost - 1, 1);
-    } else {
-        return this.cost;
-    }
-};
-
-Card.prototype.canEvalNow = function (phase) {
-    return this.upgradeType === phase;
-};
-
-/**
- * Return true iff can upgrade current card to the target card.
- */
-Card.prototype.canUpgradeTo = function (upgradeCard) {
-    if (this.type === Card.types.WORKER) {
-        return upgradeCard.type === Card.types.UPGRADE &&
-            this.upgradeType === upgradeCard.upgradeType &&
-            (this.workerUpgradeClass === upgradeCard.workerUpgradeClass ||
-             this.workerUpgradeClass === "CZAR_AND_CARPENTER");
-    } else {
-        return upgradeCard.type === Card.types.UPGRADE && this.type !== Card.types.UPGRADE && this.upgradeType === upgradeCard.upgradeType;
-    }
-};
+    // for the Observatory card
+    DECK_WORKER: 4,
+    DECK_BUILDING: 5,
+    DECK_ARISTOCRAT: 6,
+    DECK_UPGRADE: 7,
+});
 
 /***** cards ****/
 
-// peasants
-var allCards = [
+export const allCards = [
+    // workers
     new Card("Lumberjack", 3, Card.types.WORKER, 3, 0, 1, {"workerUpgradeClass": "LUMBERJACK"}),
     new Card("Gold Miner", 4, Card.types.WORKER, 3, 0, 2, {"workerUpgradeClass": "GOLD_MINER"}),
     new Card("Shepherd", 5, Card.types.WORKER, 3, 0, 3, {"workerUpgradeClass": "SHEPHERD"}),
@@ -90,6 +121,7 @@ var allCards = [
     new Card("Ship Builder", 7, Card.types.WORKER, 3, 0, 5, {"workerUpgradeClass": "SHIP_BUILDER"}),
     new Card("Czar and Carpenter", 8, Card.types.WORKER, 3, 0, 6, {"workerUpgradeClass": "CZAR_AND_CARPENTER"}),
 
+    // buildings
     new Card("Market", 5, Card.types.BUILDING, 0, 1, 1),
     new Card("Customs House", 8, Card.types.BUILDING, 0, 2, 2),
     new Card("Firehouse", 11, Card.types.BUILDING, 0, 3, 3),
@@ -105,6 +137,7 @@ var allCards = [
     // referenced by name in code, beware of changing it
     new Card("Observatory", 6, Card.types.BUILDING, 0, 1, 11, { "isPlayable": true }),
 
+    // aristocrats
     new Card("Author", 4, Card.types.ARISTOCRAT, 1, 0, 1),
     new Card("Administrator", 7, Card.types.ARISTOCRAT, 2, 0, 2),
     new Card("Warehouse Manager", 10, Card.types.ARISTOCRAT, 3, 0, 3),

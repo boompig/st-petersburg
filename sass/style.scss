@@ -1,0 +1,140 @@
+// general stuff
+
+$mobile-landscape-height: 400px;
+
+html, body {
+    font-family: Helvetica;
+    font-size: 1rem;
+}
+
+#main-container {
+    margin-top: 1%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0;
+    max-width: 1200px;
+}
+
+h1.title, h2.title {
+    text-align: center;
+}
+
+.player-turn {
+    color: red;
+}
+
+.card {
+    font-size: 0.9rem;
+}
+
+.current-phase {
+    color: red;
+}
+
+.position-fixed {
+    position: fixed;
+}
+
+.dropdown-menu-item {
+    cursor: pointer;
+    font-weight: normal;
+}
+
+li.dropdown-menu-item {
+    background-color: white;
+    color: black;
+}
+
+li.dropdown-menu-item:hover {
+    background-color: #ccc;
+    color: white;
+}
+
+.worker-card {
+    background-color: #8EC787;
+}
+
+.building-card {
+    background-color: #7FBEF5;
+}
+
+.aristocrat-card {
+    background-color: #FCC96A;
+}
+
+.upgrade-card {
+    background-color: #C786F0;
+}
+
+.player .player-subtitle {
+    font-weight: bold;
+    font-size: 1.05rem;
+}
+
+.empty-card-container-msg {
+    font-size: .85rem;
+    color: #666666;
+}
+
+#player-name-modal {
+    input, .btn {
+        font-size: 1rem;
+    }
+
+    .btn {
+        margin-top: .5rem;
+    }
+}
+
+// ask the user to rotate their screen
+#rotate-container {
+    display: none;
+
+    .glyphicon-phone {
+        font-size: 6rem;
+    }
+
+    .glyphicon-phone.rotated-phone {
+        transform: rotate(90deg);
+    }
+
+    .glyphicon-phone.grey-phone {
+        color: #777;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    #main-container {
+        display: none;
+    }
+
+    #rotate-container {
+        display: block;
+        font-size: 4rem;
+        text-align: center;
+        margin: 1rem auto;
+    }
+}
+
+#scroll-down-notice {
+    display: none;
+
+    @media screen and (max-height: $mobile-landscape-height) {
+        display: block;
+        position: absolute;
+        top: .5rem;
+        right: 1rem;
+
+        p, strong {
+            display: inline;
+        }
+    }
+}
+
+// specific stuff
+@import "decks";
+@import "player";
+@import "bought-cards";
+@import "buttons";
+@import "boards";
+@import "footer";

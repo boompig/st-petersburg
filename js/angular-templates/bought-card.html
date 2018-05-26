@@ -1,0 +1,18 @@
+<div class="card bought-card"
+    ng-class="{ 'playable-card': $ctrl.card.isPlayable }">
+    <span class="card-qty">&times;{{ $ctrl.quantity }}</span>
+    <span class="card-name">{{ $ctrl.card.name }}</span>
+    <span class="yield-container">
+        <span class="card-type-rect"
+            ng-class="{ 'aristocrat-card': $ctrl.card.upgradeType === 3, 'worker-card': $ctrl.card.upgradeType === 1, 'building-card': $ctrl.card.upgradeType === 2 }">
+        </span>
+        <span class="card-coin-yield-container">
+            <img class="money-icon" src="img/silver_medal_icon_blank.png" alt="money" />
+            <span class="card-coin-yield">{{ $ctrl.card.coinYield }}</span>
+        </span>
+        <span class="card-point-yield-container">
+            <img class="points-icon" src="img/yellow-shield.gif" alt="points" />
+            <span class="card-point-yield">{{ $ctrl.card.pointYield }}</span>
+        </span>
+    </span>
+</div>

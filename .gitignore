@@ -8,4 +8,12 @@ node_modules
 .vimrc
 *.sublime-*
 
+# mac garbage
 .DS_Store
+
+# sass
+.sass-cache
+css/*.css.map
+
+# node garbage
+yarn-error.log

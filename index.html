@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="stPeter">
     <head>
         <meta charset="utf-8" />
 		<!-- local -->
@@ -13,83 +13,79 @@
         <link rel="stylesheet" href="css/style.css" />
         <title>St. Petersburg Board Game</title>
     </head>
-    <body ng-app="stPeter">
-        <div id="main-container" ng-controller="PeterCtrl as game">
-            <h2 class="title">St. Petersburg Board Game</h2>
-
-            <div id="deck-container">
-                <spb-deck ng-repeat="phase in game.phases"
-                    phase-name="game.getPhaseName(phase)"
-                    num-cards="game.decks[phase].length"
-                    is-current-phase="game.isCurrentPhase(phase)">
-                </spb-deck>
+    <body ng-controller="PeterCtrl as game">
+        <div id="rotate-container">
+            <p>Please rotate your device into landscape mode</p>
+            <div>
+                <span class="glyphicon glyphicon-phone grey-phone"></span>
+                <span class="glyphicon glyphicon-phone rotated-phone"></span>
             </div>
+        </div>
+        <div id="main-container">
+            <div ng-if="game.humanPlayerName">
+                <div id="deck-container">
+                    <spb-deck ng-repeat="phase in game.phases"
+                        phase-name="game.getPhaseName(phase)"
+                        num-cards="game.decks[phase].length"
+                        is-current-phase="game.isCurrentPhase(phase)">
+                    </spb-deck>
+                </div>
 
-            <div id="player-container">
-                <spb-player ng-repeat="player in game.players"
-                    player="player"
-                    is-turn="game.isPlayerTurn(player)"
-                    play-card="game.playCard(card, player, collection)"
-                    on-play-card-from-hand="game.playCardFromHand(card, player)">
-                </spb-player>
-            </div>
-            
-
-            <div id="board-container">
-                <div id="upper-board" class="board">
-                    <h4>Upper Board</h4>
-                    <div ng-if="game.upperBoard.length === 0">Empty</div>
-                    <div class="card" ng-repeat="card in game.upperBoard"
-                        ng-click="game.getCurrentPlayer().isHuman && game.buyCard(card, game.upperBoard)"
-                        context-menu class="panel panel-default"
-                        data-target="upper-menu-{{ $index }}"
-                        ng-class="{ 'highlight': highlight, 'expanded': expanded, 'buyable-card': game.getCurrentPlayer().isHuman }">
-                        <div spb-card></div>
-
-                        <div class="dropdown position-fixed" id="upper-menu-{{ $index }}">
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="dropdown-menu-item"
-                                    ng-click="game.buyCard(card, game.upperBoard)">Buy</li>
-                                <li class="dropdown-menu-item"
-                                    ng-click="game.putCardInHand(card, game.upperBoard)">Put In Hand</li>
-                            </ul>
-                        </div>
+                <div id="scroll-down-notice">
+                    <div uib-alert class="alert alert-info">
+                        <strong>Heads Up!</strong>
+                        <p>You'll have to scroll down to see everything on this device</p>
                     </div>
                 </div>
-                <div id="lower-board" class="board">
-                    <h4>Lower Board</h4>
-                    <div ng-if="game.lowerBoard.length === 0">Empty</div>
-                    <div class="card" ng-repeat="card in game.lowerBoard"
-                        ng-click="game.buyCard(card, game.lowerBoard)"
-                        context-menu class="panel panel-default"
-                        data-target="lower-menu-{{ $index }}"
-                        ng-class="{ 'highlight': highlight, 'expanded': expanded, 'buyable-card': game.getCurrentPlayer().isHuman }">
-                        <div spb-card></div>
 
-                        <div class="dropdown position-fixed" id="lower-menu-{{ $index }}">
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="dropdown-menu-item"
-                                    ng-click="game.buyCard(card, game.lowerBoard)">Buy</li>
-                                <li class="dropdown-menu-item"
-                                    ng-click="game.putCardInHand(card, game.lowerBoard)">Put In Hand</li>
-                            </ul>
-                        </div>
+                <div id="player-container">
+                    <spb-player ng-repeat="player in game.players"
+                        player="player"
+                        is-turn="game.isPlayerTurn(player)"
+                        on-play-card="game.playCard(card, player, collection)"
+                        on-play-card-from-hand="game.playCardFromHand(card, player)">
+                    </spb-player>
+                </div>
+
+                <div id="board-container">
+                    <div class="inner-board-container">
+                        <spb-board
+                            cards="game.upperBoard"
+                            current-player-is-human="game.getCurrentPlayer().isHuman"
+                            on-buy-card="game.buyCard(card, collection)"
+                            on-put-card-in-hand="game.putCardInHand(card, collection)"
+                            name="'upper'"
+                            human-player="game.getHumanPlayer()">
+                        </spb-board>
+
+                        <spb-board
+                            cards="game.lowerBoard"
+                            current-player-is-human="game.getCurrentPlayer().isHuman"
+                            on-buy-card="game.buyCard(card, collection)"
+                            on-put-card-in-hand="game.putCardInHand(card, collection)"
+                            name="'lower'"
+                            human-player="game.getHumanPlayer()">
+                        </spb-board>
                     </div>
                 </div>
-            </div>
 
-            <div id="btn-container">
-                <!-- <span ng-if="game.getCurrentPlayer().isHuman"> -->
+                <div id="btn-container">
                     <button type="button" class="btn btn-success"
                         ng-click="game.passTurn()"
                         ng-disabled="!game.getCurrentPlayer().isHuman">Next Turn (Pass)</button>
-                <!-- </span> -->
-                <!-- <span ng-if="!game.getCurrentPlayer().isHuman"> -->
                     <button type="button" class="btn btn-primary"
                         ng-click="game.doRobotAction()"
-                        ng-disabled="game.getCurrentPlayer().isHuman || game.aiIsWorking">AI Turn</button>
-                <!-- </span> -->
+                        ng-disabled="game.getCurrentPlayer().isHuman || game.aiIsWorking">
+                        {{ game.aiIsWorking ? "Thinking..." : "AI Turn" }}
+                    </button>
+                </div>
             </div>
+            <div ng-if="!game.humanPlayerName">Waiting for human player name...</div>
+
+            <footer>
+                <p>Simulation of the St Petersburg board game developed by <a href="https://boompig.herokuapp.com/">Daniel Kats</a> in 2018. The rules can be found <a href="http://riograndegames.com/uploads/Game/Game_178_gameRules.pdf">here [PDF].</a>
+                </p>
+            </footer>
         </div>
 
         <script type="text/ng-template" id="upgradeModal.html">
@@ -140,30 +136,37 @@
         </script>
 
 		<!-- CDN -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.4.3/seedrandom.min.js"></script></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.0/underscore-min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js"
+            integrity="sha256-VKITM616rVzV+MI3kZMNUDoY5uTsuSl1ZvEeZhNoJVk="
+            crossorigin="anonymous"></script>
         <!-- Angular 1 for production -->
         <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>-->
         <!-- Angular 1 for debugging -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/ng-context-menu/1.0.2/ng-context-menu.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-context-menu/1.0.2/ng-context-menu.min.js"></script>
 
+        <!-- dependency for angular-bootstrap -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-animate.min.js" integrity="sha256-1XBp/KwjxhvrtZiQ+ecAScAyLPe4OStn2lMX0vxTq9U="
+            crossorigin="anonymous"></script>
+        <!-- this is currently used for tooltips -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
 		<!-- local libraries (helpful for offline development) -->
         <!-- <script src="node_modules/lodash/lodash.min.js"></script>
         <script src="node_modules/angular/angular.js"></script>
-        <script src="node_modules/seedrandom/seedrandom.js"></script>
         <script src="node_modules/whatwg-fetch/fetch.js"></script> -->
         <!--<script src="bower_components/ng-context-menu/dist/ng-context-menu.js"></script>-->
         <!--<script src="bower_components/angular-ui-bootstrap/src/modal/modal.js"></script>-->
 
-        <script src="js/cards.js"></script>
-        <script src="js/static-data.js"></script>
-        <script src="my_node_modules/player.js"></script>
-        <script src="my_node_modules/ai.js"></script>
-        <script src="js/display.js"></script>
-        <script src="js/angular-components/spb-deck.js"></script>
-        <script src="js/angular-components/spb-player.js"></script>
-        <script src="js/angular-directives/spb-card.js"></script>
+        <script type="module">
+            import "./js/display.js";
+        </script>
+
+        <script type="module" src="js/angular-components/spb-deck.js"></script>
+        <!-- legacy directive -->
+        <script type="module" src="js/angular-directives/spb-card.js"></script>
+        <script type="module" src="js/angular-components/spb-player.js"></script>
+        <script type="module" src="js/angular-components/spb-board.js"></script>
+        <!-- new: component to replace legacy directive -->
+        <script type="module" src="js/angular-components/spb-card.js"></script>\
     </body>
 </html>

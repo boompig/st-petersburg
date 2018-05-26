@@ -1,0 +1,26 @@
+<div id="{{ $ctrl.name }}-board" class="board">
+    <h4>{{ $ctrl.prettyName() }} Board</h4>
+    <div class="card-container">
+        <div ng-if="$ctrl.cards.length === 0" class="empty-card-container-msg">Empty</div>
+        <div class="card" ng-repeat="card in $ctrl.cards"
+            ng-click="$ctrl.currentPlayerIsHuman && $ctrl.buyCard(card)"
+            context-menu class="panel panel-default"
+            data-target="{{ $ctrl.name }}-menu-{{ $index }}"
+            ng-class="{ 'highlight': highlight, 'expanded': expanded, 'buyable-card': $ctrl.currentPlayerIsHuman }">
+            <spb-board-card
+                card="card"
+                location="$ctrl.getBoardType()"
+                human-player="$ctrl.humanPlayer">
+            </spb-board-card>
+
+            <div class="dropdown position-fixed" id="{{ $ctrl.name }}-menu-{{ $index }}">
+                <ul class="dropdown-menu" role="menu">
+                    <li class="dropdown-menu-item"
+                        ng-click="$ctrl.buyCard(card)">Buy</li>
+                    <li class="dropdown-menu-item"
+                        ng-click="$ctrl.putCardInHand(card)">Put In Hand</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
