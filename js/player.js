@@ -50,6 +50,8 @@ Player.prototype.numUniqueAristocrats = function() {
 
 /**
  * TODO very inefficient, try something else
+ * @param {String} cardName
+ * @returns {boolean}
  */
 Player.prototype.hasCard = function (cardName) {
     const matchingCards = this.cards.filter(function (card) {
@@ -160,6 +162,7 @@ Player.prototype.canPutCardInHand = function () {
  *
  * @param {Card} card
  * @param {Card.types} location
+ * @returns {boolean}
  */
 Player.prototype.buyCard = function (card, location) {
     if (this.canAffordCard(card, location)) {
@@ -172,6 +175,13 @@ Player.prototype.buyCard = function (card, location) {
     }
 };
 
+/**
+ *
+ * @param {Card} baseCard
+ * @param {Card} upgradeCard
+ * @param {Card.locations} location
+ * @returns {number}
+ */
 Player.prototype.getUpgradeCost = function (baseCard, upgradeCard, location) {
     const cost = this.getCardCost(upgradeCard, location);
     return Math.max(cost - baseCard.upgradeCost, 1);
@@ -193,7 +203,7 @@ Player.prototype.canUpgradeCard = function (baseCard, upgradeCard, location) {
  *
  * @param {Card} baseCard
  * @param {Card} upgradeCard
- * @param {Card.locations*} location
+ * @param {Card.locations} location
  * @returns {boolean}
  */
 Player.prototype.upgradeCard = function (baseCard, upgradeCard, location) {

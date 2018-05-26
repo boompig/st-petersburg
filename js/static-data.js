@@ -4,14 +4,14 @@ import { Card } from "./cards.js";
 
 export const StaticGameData = {};
 
-StaticGameData.Phases = [
+StaticGameData.Phases = Object.freeze([
     Card.types.WORKER,
     Card.types.BUILDING,
     Card.types.ARISTOCRAT,
     Card.types.UPGRADE
-];
+]);
 
-StaticGameData.aristocratScoringChart = {
+StaticGameData.aristocratScoringChart = Object.freeze({
     0: 0,
     1: 1,
     2: 3,
@@ -23,7 +23,7 @@ StaticGameData.aristocratScoringChart = {
     8: 36,
     9: 45,
     10: 55
-};
+});
 
 /**
  *
