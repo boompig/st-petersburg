@@ -96,6 +96,8 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     this.actions = [];
     /* number of rounds *completed* so far */
     this.numRounds = 0;
+    this.humanPlayerName = null;
+    this.humanPlayerNameError = false;
     /******* GAME TRACE DATA *****/
 
     /****** UI FUNCTIONS ********/
@@ -437,6 +439,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             $scope.openPlayerNameModal().then((playerName) => {
                 Console.log("Got name " + playerName);
                 this.humanPlayerName = playerName;
+                if(!this.humanPlayerName) {
+                    Console.log("human player name not set");
+                    this.humanPlayerNameError = true;
+                    return;
+                }
 
                 if(window.sessionStorage) {
                     Console.log("Saving human player's name to session storage");
@@ -449,6 +456,9 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                 $timeout(() => {
                     this.gameInit();
                 }, 0);
+            }).catch(() => {
+                Console.log("human player name not set");
+                this.humanPlayerNameError = true;
             });
         }
     };
