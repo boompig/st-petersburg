@@ -1085,7 +1085,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         }
         // create the state out of current game state
         const state = new State(deckSizes, this.upperBoard, this.lowerBoard,
-            this.phase, currentPlayer);
+            this.phase, this.players, this.turn);
         const obj = AI.analyze(state, currentPlayer.name);
         // print plan
         Console.log("Plan for " + currentPlayer.name + ":");
