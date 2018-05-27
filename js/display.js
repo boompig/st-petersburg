@@ -3,7 +3,8 @@
 import { allCards, Card } from "./cards.js";
 import { StaticGameData } from "./static-data.js";
 import { Player } from "./player.js";
-import { State, Move, AI } from "../my_node_modules/ai.js";
+import { State } from "../my_node_modules/game-state.js";
+import { Move, AI } from "../my_node_modules/ai.js";
 
 const Console = console;
 
