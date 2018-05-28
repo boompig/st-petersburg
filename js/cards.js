@@ -1,6 +1,6 @@
 /**
- * Upgrade type means ARISTOCRAT, WORKER, BUILDING
- * upgrade class is only relevant for workers
+ * Object representing a card in the St. Petersburg board game
+ * Can represent a card in the hand, a card on the board, a card in the deck, or a card that has been bought
  *
  * @param {String} name
  * @param {number} cost
@@ -9,6 +9,7 @@
  * @param {number} point_yield
  * @param {number} index
  * @param {any} kwargs Keyword arguments. Possible values:
+ *      - upgradetype (Cards.types)
  *      - workerUpgradeClass (string)
  *      - upgradeCost (number)
  *      - bonusYieldClass (Card.types)
