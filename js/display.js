@@ -4,7 +4,8 @@ import { allCards, Card } from "./cards.js";
 import { StaticGameData } from "./static-data.js";
 import { Player } from "./player.js";
 import { State } from "../my_node_modules/game-state.js";
-import { Move, AI } from "../my_node_modules/ai.js";
+import { Move } from "../my_node_modules/game-move.js";
+import { AI } from "../my_node_modules/ai.js";
 
 const Console = console;
 
@@ -85,10 +86,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     this.lastRound = false;
     /******* derived game state data ******/
 
-    this.humanPlayerIndex = 0;
-
     /****** UI DATA **************/
     this.aiIsWorking = false;
+    this.humanPlayerIndex = 0;
+    this.humanPlayerName = null;
+    this.humanPlayerNameError = false;
     /****** UI DATA **************/
 
     /******* GAME TRACE DATA *****/
@@ -97,8 +99,6 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     this.actions = [];
     /* number of rounds *completed* so far */
     this.numRounds = 0;
-    this.humanPlayerName = null;
-    this.humanPlayerNameError = false;
     /******* GAME TRACE DATA *****/
 
     /****** UI FUNCTIONS ********/
@@ -1085,7 +1085,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         }
         // create the state out of current game state
         const state = new State(deckSizes, this.upperBoard, this.lowerBoard,
-            this.phase, this.players, this.turn);
+            this.phase, this.players, this.turn, this.consecutivePasses);
         const obj = AI.analyze(state, currentPlayer.name);
         // print plan
         Console.log("Plan for " + currentPlayer.name + ":");
