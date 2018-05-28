@@ -2,7 +2,10 @@
   "dependencies": {
     "angular": "1.6.5",
     "angular-animate": "1.6.5",
-    "lodash": "^4.17.10"
+    "angular-ui-bootstrap": "^2.5.6",
+    "lodash": "^4.17.10",
+    "ng-context-menu": "^0.1.1",
+    "whatwg-fetch": "^2.0.4"
   },
   "scripts": {
     "build:sass": "sass --style=compact sass/style.scss:css/style.css",
