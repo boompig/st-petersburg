@@ -133,8 +133,8 @@ export const allCards = [
     // referenced by name in code, beware of changing it
     new Card("Warehouse", 2, Card.types.BUILDING, 0, 0, 8),
     new Card("Potjomkin's Village", 2, Card.types.BUILDING, 0, 0, 9, {"upgradeCost": 6}),
-    // TODO for now pub does nothing (not implemented)
-    new Card("Pub", 1, Card.types.BUILDING, 0, 0, 10),
+    // referenced by name in code, beware of changing it
+    new Card("Pub", 1, Card.types.BUILDING, 0, 0, 10, { "isPlayable": true }),
     // referenced by name in code, beware of changing it
     new Card("Observatory", 6, Card.types.BUILDING, 0, 1, 11, { "isPlayable": true }),
 
