@@ -6,7 +6,7 @@
         <label for="deck">Pick how much money you want to exchange</label>
         <input type="range"
             min="0"
-            max="{{ player.money }}"
+            max="{{ getMaxMoney() }}"
             step="2"
             ng-model="selectedMoney" />
         <div>Money to exchange: {{ selectedMoney }}</div>
