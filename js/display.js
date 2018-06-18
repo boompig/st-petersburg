@@ -153,7 +153,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     $scope.openPubModal = function(game, card) {
         const humanPlayer = game.getHumanPlayer();
         const modalInstance = $uibModal.open({
-            templateUrl: "/js/angular-templates/pub-modal.html",
+            templateUrl: "js/angular-templates/pub-modal.html",
             controller: "PubModalInstanceCtrl",
             resolve: {
                 player: humanPlayer,
