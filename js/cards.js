@@ -1,6 +1,6 @@
 /**
- * Upgrade type means ARISTOCRAT, WORKER, BUILDING
- * upgrade class is only relevant for workers
+ * Object representing a card in the St. Petersburg board game
+ * Can represent a card in the hand, a card on the board, a card in the deck, or a card that has been bought
  *
  * @param {String} name
  * @param {number} cost
@@ -9,6 +9,7 @@
  * @param {number} point_yield
  * @param {number} index
  * @param {any} kwargs Keyword arguments. Possible values:
+ *      - upgradetype (Cards.types)
  *      - workerUpgradeClass (string)
  *      - upgradeCost (number)
  *      - bonusYieldClass (Card.types)
@@ -132,8 +133,8 @@ export const allCards = [
     // referenced by name in code, beware of changing it
     new Card("Warehouse", 2, Card.types.BUILDING, 0, 0, 8),
     new Card("Potjomkin's Village", 2, Card.types.BUILDING, 0, 0, 9, {"upgradeCost": 6}),
-    // TODO for now pub does nothing (not implemented)
-    new Card("Pub", 1, Card.types.BUILDING, 0, 0, 10),
+    // referenced by name in code, beware of changing it
+    new Card("Pub", 1, Card.types.BUILDING, 0, 0, 10, { "isPlayable": true }),
     // referenced by name in code, beware of changing it
     new Card("Observatory", 6, Card.types.BUILDING, 0, 1, 11, { "isPlayable": true }),
 

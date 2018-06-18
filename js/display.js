@@ -3,7 +3,9 @@
 import { allCards, Card } from "./cards.js";
 import { StaticGameData } from "./static-data.js";
 import { Player } from "./player.js";
-import { State, Move, AI } from "../my_node_modules/ai.js";
+import { State } from "../my_node_modules/game-state.js";
+import { Move } from "../my_node_modules/game-move.js";
+import { AI } from "../my_node_modules/ai.js";
 
 const Console = console;
 
@@ -84,10 +86,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     this.lastRound = false;
     /******* derived game state data ******/
 
-    this.humanPlayerIndex = 0;
-
     /****** UI DATA **************/
     this.aiIsWorking = false;
+    this.humanPlayerIndex = 0;
+    this.humanPlayerName = null;
+    this.humanPlayerNameError = false;
     /****** UI DATA **************/
 
     /******* GAME TRACE DATA *****/
@@ -141,7 +144,45 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     };
 
     /**
-     * Open the observatory modal, and pick the deck that you want to peek at
+     * Use the pub to exchange money for points.
+     * Also sets the card as played.
+     * Async function.
+     * @param {Game} game
+     * @param {Card} card
+     */
+    $scope.openPubModal = function(game, card) {
+        const humanPlayer = game.getHumanPlayer();
+        const modalInstance = $uibModal.open({
+            templateUrl: "/js/angular-templates/pub-modal.html",
+            controller: "PubModalInstanceCtrl",
+            resolve: {
+                player: humanPlayer,
+            },
+        });
+        return modalInstance.result.then(function(coinsToExchange) {
+            Console.log(`Exchanging ${coinsToExchange} coins using pub`);
+            card.played = true;
+            if(isNaN(Number.parseInt(coinsToExchange))) {
+                Console.warn("Some sort of error in pub modal");
+                Console.log(coinsToExchange);
+            } else if(humanPlayer.money >= coinsToExchange) {
+                humanPlayer.money -= coinsToExchange;
+                const points = Math.floor(coinsToExchange / 2);
+                humanPlayer.points += points;
+            } else {
+                Console.log(`Coins to exchange: ${coinsToExchange}`);
+                Console.log(`Player money: ${humanPlayer.money}`);
+                Console.error("Specified too many coins to exchange");
+                alert(`Specified too many coins to exchange (you only have ${humanPlayer.money} coins)`);
+            }
+        });
+    };
+
+    /**
+     * Open the observatory modal, and pick the deck that you want to peek at.
+     * Set the card as played
+     * Async function
+     * @param {Game} game
      * @param {Card} card
      */
     $scope.openObservatoryModal = function (game, card) {
@@ -165,10 +206,8 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         });
         modalInstance.result.then(function (selectedDeck) {
             Console.log("Peeking at deck of type " + selectedDeck);
-            if (card) {
-                // set the card to used here
-                card.played = true;
-            }
+            // set the card to used here
+            card.played = true;
             let selection = Card.types[selectedDeck.toUpperCase()];
             $scope.openPeekingModal(game, selection);
         }, function () {
@@ -437,6 +476,11 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             $scope.openPlayerNameModal().then((playerName) => {
                 Console.log("Got name " + playerName);
                 this.humanPlayerName = playerName;
+                if(!this.humanPlayerName) {
+                    Console.log("human player name not set");
+                    this.humanPlayerNameError = true;
+                    return;
+                }
 
                 if(window.sessionStorage) {
                     Console.log("Saving human player's name to session storage");
@@ -449,6 +493,9 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                 $timeout(() => {
                     this.gameInit();
                 }, 0);
+            }).catch(() => {
+                Console.log("human player name not set");
+                this.humanPlayerNameError = true;
             });
         }
     };
@@ -474,7 +521,6 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      * Assume this.humanPlayerName is already set
      */
     this.gameInit = function () {
-        // NOTE randomSeed is not currently used for anything
         this.gameId = this.getRandomGameId();
 
         // assign tokens to players
@@ -500,6 +546,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         this.phase = Card.types.WORKER;
         this.preparePhase();
 
+        // create consideDecks to write initial state to server *only*
         const conciseDecks = {};
         for(let phaseIndex in this.decks) {
             let cardNames = this.decks[phaseIndex].map((card) => {
@@ -508,7 +555,6 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             let deckName = this.getPhaseName(phaseIndex);
             conciseDecks[deckName] = cardNames;
         }
-
         const initialState = {
             "humanPlayerIndex": this.humanPlayerIndex,
             "playerTokenAllocation": this.players.map((player) => {
@@ -560,7 +606,10 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             } else {
                 response.text().then((obj) => Console.log(obj));
             }
-        }).catch((err) => Console.error(err));
+        }).catch((err) => {
+            Console.error("Failed to write initial game state to server:");
+            Console.error(err);
+        });
     };
 
     /**
@@ -871,8 +920,36 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                     }
                 }
             }
+        } else if (card.name === "Pub") {
+            // prereq # 1 - player must have money
+            // prereq # 2 - card must not have been played during this phase
+            // prereq # 3 - it must be the building phase
+            if(currentPlayer.money === 0) {
+                Console.error("Current player has no money");
+                return false;
+            }
+            if(card.played) {
+                if(player.isHuman) {
+                    alert("Card has already been played this round.");
+                }
+                Console.error("Card has been played");
+                return false;
+            }
+            if(this.phase !== Card.types.BUILDING) {
+                Console.error("Must be building phase to play this card");
+                return false;
+            }
+
+            if(player.isHuman) {
+                // card set to played inside this function
+                $scope.openPubModal(this, card);
+            } else {
+                Console.error("ERROR: Pub not yet implemented for AI");
+                return false;
+            }
         } else {
             Console.error("Unknown card being played: " + card.name);
+            return false;
         }
     };
 
@@ -1074,7 +1151,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         }
         // create the state out of current game state
         const state = new State(deckSizes, this.upperBoard, this.lowerBoard,
-            this.phase, currentPlayer);
+            this.phase, this.players, this.turn, this.consecutivePasses);
         const obj = AI.analyze(state, currentPlayer.name);
         // print plan
         Console.log("Plan for " + currentPlayer.name + ":");
@@ -1206,5 +1283,33 @@ StPeter.controller("PeekingModalInstanceCtrl", function ($scope, $uibModalInstan
 
     $scope.ok = function () {
         $uibModalInstance.close($scope.selected.option);
+    };
+});
+
+/**
+ * @param {Player} player
+ */
+StPeter.controller("PubModalInstanceCtrl", function($scope, $uibModalInstance, player) {
+    // @type {Player}
+    $scope.player = player;
+    // @type {Number}
+    $scope.selectedMoney = 0;
+
+    /**
+     * @returns {Number}
+     */
+    $scope.getConversionPoints = function() {
+        return Math.floor($scope.selectedMoney / 2);
+    };
+
+    /**
+     * Returns the number of coins to trade
+     */
+    $scope.ok = function() {
+        $uibModalInstance.close($scope.selectedMoney);
+    };
+
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss("cancel");
     };
 });

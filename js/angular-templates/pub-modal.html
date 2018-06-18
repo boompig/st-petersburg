@@ -1,0 +1,19 @@
+<div>
+    <div class="modal-header">
+        <h3 class="modal-title">Pick how much money you want to exchange</h3>
+    </div>
+    <div class="modal-body">
+        <label for="deck">Pick how much money you want to exchange</label>
+        <input type="range"
+            min="0"
+            max="{{ player.money }}"
+            step="2"
+            ng-model="selectedMoney" />
+        <div>Money to exchange: {{ selectedMoney }}</div>
+        <div>Points conversion: {{ getConversionPoints() }}</div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+    </div>
+</div>

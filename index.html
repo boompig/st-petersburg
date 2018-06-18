@@ -12,6 +12,13 @@
 
         <link rel="stylesheet" href="css/style.css" />
         <title>St. Petersburg Board Game</title>
+
+        <style>
+            /* until angular and all CSS is loaded */
+            [data-ng-cloak] {
+                display: none;
+            }
+        </style>
     </head>
     <body ng-controller="PeterCtrl as game">
         <div id="rotate-container">
@@ -21,7 +28,7 @@
                 <span class="glyphicon glyphicon-phone rotated-phone"></span>
             </div>
         </div>
-        <div id="main-container">
+        <div id="main-container" data-ng-cloak>
             <div ng-if="game.humanPlayerName">
                 <div id="deck-container">
                     <spb-deck ng-repeat="phase in game.phases"
@@ -80,7 +87,12 @@
                     </button>
                 </div>
             </div>
-            <div ng-if="!game.humanPlayerName">Waiting for human player name...</div>
+            <div ng-if="!game.humanPlayerName && !game.humanPlayerNameError">
+                Waiting for human player name...
+            </div>
+            <div ng-if="game.humanPlayerNameError" class="alert alert-danger">
+                <strong>Error!</strong>&nbsp;You must enter a name. Reload the page.
+            </div>
 
             <footer>
                 <p>Simulation of the St Petersburg board game developed by <a href="https://boompig.herokuapp.com/">Daniel Kats</a> in 2018. The rules can be found <a href="http://riograndegames.com/uploads/Game/Game_178_gameRules.pdf">here [PDF].</a>
@@ -167,6 +179,6 @@
         <script type="module" src="js/angular-components/spb-player.js"></script>
         <script type="module" src="js/angular-components/spb-board.js"></script>
         <!-- new: component to replace legacy directive -->
-        <script type="module" src="js/angular-components/spb-card.js"></script>\
+        <script type="module" src="js/angular-components/spb-card.js"></script>
     </body>
 </html>
