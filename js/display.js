@@ -1153,12 +1153,22 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         const state = new State(deckSizes, this.upperBoard, this.lowerBoard,
             this.phase, this.players, this.turn, this.consecutivePasses);
         const obj = AI.analyze(state, currentPlayer.name);
+        this._printRobotPlan(currentPlayer, obj);
+        return obj;
+    };
+
+    /**
+     * Print the AI's plan to the console
+     * @param {Player} currentPlayer
+     * @param {any} obj             The output of AI.analyze
+     */
+    this._printRobotPlan = function(currentPlayer, obj) {
         // print plan
         Console.log("Plan for " + currentPlayer.name + ":");
-        for (var i = 0; i < obj.moveList.length; i++) {
-            Console.log(obj.moveList[i].toString());
+        for (let i = 0; i < obj.moveList.length; i++) {
+            Console.log(`${i + 1}. ${obj.moveList[i].toString()}`);
         }
-        return obj;
+        Console.log(`${currentPlayer.name} estimates this plan to result in a final score of ${obj.score} points`);
     };
 
     this.doRobotAction = function () {
