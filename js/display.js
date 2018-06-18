@@ -691,6 +691,8 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     };
 
     /**
+     * In this method, this.phase refers to the **OLD PHASE**
+     *
      * 1. Evaluate money and points based on cards in current phase (if not UPGRADE)
      * 2. Move cards in upper layer to lower layer, and discard lower layer
      * 3. If this is the end of the round, call nextRound(), if not, call nextPhase()
@@ -731,6 +733,16 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                             player.points += bonusCards.length;
                         }
                     }
+                }
+            }
+
+            // allow players who have the pub card to use it
+            if(this.phase === Card.types.BUILDING) {
+                // TODO for now pub not implemented for each player, only human player
+                const humanPlayer = this.getHumanPlayer();
+                const pubCards = humanPlayer.getCardsWithName("Pub");
+                if(pubCards.length > 0 && humanPlayer.money > 0) {
+                    $scope.openPubModal(this, pubCards[0]);
                 }
             }
         }
@@ -928,33 +940,6 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                         // do nothing, card garbage collected
                     }
                 }
-            }
-        } else if (card.name === "Pub") {
-            // prereq # 1 - player must have money
-            // prereq # 2 - card must not have been played during this phase
-            // prereq # 3 - it must be the building phase
-            if(currentPlayer.money === 0) {
-                Console.error("Current player has no money");
-                return false;
-            }
-            if(card.played) {
-                if(player.isHuman) {
-                    alert("Card has already been played this round.");
-                }
-                Console.error("Card has been played");
-                return false;
-            }
-            if(this.phase !== Card.types.BUILDING) {
-                Console.error("Must be building phase to play this card");
-                return false;
-            }
-
-            if(player.isHuman) {
-                // card set to played inside this function
-                $scope.openPubModal(this, card);
-            } else {
-                Console.error("ERROR: Pub not yet implemented for AI");
-                return false;
             }
         } else {
             Console.error("Unknown card being played: " + card.name);
@@ -1334,6 +1319,6 @@ StPeter.controller("PubModalInstanceCtrl", function($scope, $uibModalInstance, p
     };
 
     $scope.cancel = function() {
-        $uibModalInstance.dismiss("cancel");
+        $uibModalInstance.close(0);
     };
 });
