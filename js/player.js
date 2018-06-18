@@ -62,6 +62,17 @@ export class Player {
     }
 
     /**
+     * NOTE: very inefficient
+     * @param {String} cardName
+     * @returns {Card[]}
+     */
+    getCardsWithName(cardName) {
+        return this.cards.filter(function(card) {
+            return card.name === cardName;
+        });
+    }
+
+    /**
      * Return true iff this player has a card which makes the given card cheaper to buy
      * By this it means special worker cards
      * @param {Card} card
