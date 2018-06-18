@@ -1314,6 +1314,11 @@ StPeter.controller("PubModalInstanceCtrl", function($scope, $uibModalInstance, p
     // @type {Number}
     $scope.selectedMoney = 0;
 
+    $scope.getMaxMoney = function() {
+        // according to the rules, not allowed to spend more than 10 rubles (get 5 points) per invocation
+        return Math.min(player.money, 10);
+    };
+
     /**
      * @returns {Number}
      */
