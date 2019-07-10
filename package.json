@@ -5,11 +5,12 @@
     "angular-ui-bootstrap": "^2.5.6",
     "lodash": "^4.17.10",
     "ng-context-menu": "^0.1.1",
+    "sass": "^1.22.3",
     "whatwg-fetch": "^2.0.4"
   },
   "scripts": {
-    "build:sass": "sass --style=compact sass/style.scss:css/style.css",
-    "build:sass:watch": "sass --style=compact --watch sass/style.scss:css/style.css",
+    "build:sass": "sass --style compressed sass/style.scss >css/style.css",
+    "build:sass:watch": "sass --style=compressed --watch sass/style.scss:css/style.css",
     "lint:js": "eslint js/*.js my_node_modules/ai.js js/angular-components/*.js js/angular-directives/*.js"
   },
   "license": "MIT",
