@@ -7,6 +7,7 @@ node_modules
 # editors
 .vimrc
 *.sublime-*
+*.code-workspace
 
 # mac garbage
 .DS_Store

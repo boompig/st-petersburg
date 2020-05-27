@@ -38,7 +38,8 @@ export class Card {
         this.played = false;
 
         if (kwargs) {
-            for (var property in kwargs) {
+            for (let property in kwargs) {
+                // eslint-disable-next-line
                 if (this.hasOwnProperty(property)) {
                     // console.log("Set " + property + " to value " + kwargs[property] + " for card " + name);
                     this[property] = kwargs[property];
