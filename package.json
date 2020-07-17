@@ -3,7 +3,7 @@
     "angular": "1.8.0",
     "angular-animate": "1.6.5",
     "angular-ui-bootstrap": "^2.5.6",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.19",
     "ng-context-menu": "^0.1.1",
     "sass": "^1.22.3",
     "whatwg-fetch": "^3"
