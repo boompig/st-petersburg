@@ -54,7 +54,7 @@
                     </spb-player>
                 </div>
 
-                <div id="board-container">
+                <div id="board-container" ng-if="!game.isGameOver">
                     <div class="inner-board-container">
                         <spb-board
                             cards="game.upperBoard"
@@ -77,14 +77,20 @@
                 </div>
 
                 <div id="btn-container">
-                    <button type="button" class="btn btn-success"
-                        ng-click="game.passTurn()"
-                        ng-disabled="!game.getCurrentPlayer().isHuman">Next Turn (Pass)</button>
-                    <button type="button" class="btn btn-primary"
-                        ng-click="game.doRobotAction()"
-                        ng-disabled="game.getCurrentPlayer().isHuman || game.aiIsWorking">
-                        {{ game.aiIsWorking ? "Thinking..." : "AI Turn" }}
-                    </button>
+                    <div ng-if="!game.isGameOver">
+                        <button type="button" class="btn btn-success"
+                            ng-click="game.passTurn()"
+                            ng-disabled="!game.getCurrentPlayer().isHuman">Next Turn (Pass)</button>
+                        <button type="button" class="btn btn-primary"
+                            ng-click="game.doRobotAction()"
+                            ng-disabled="game.getCurrentPlayer().isHuman || game.aiIsWorking">
+                            {{ game.aiIsWorking ? "Thinking..." : "AI Turn" }}
+                        </button>
+                    </div>
+                    <div ng-if="game.isGameOver">
+                        <button type="button" class="btn btn-success"
+                            ng-click="game.newGame()">New Game</button>
+                    </div>
                 </div>
             </div>
             <div ng-if="!game.humanPlayerName && !game.humanPlayerNameError">

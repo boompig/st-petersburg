@@ -84,6 +84,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     /******* derived game state data ******/
     // true iff this is the last round
     this.lastRound = false;
+    this.isGameOver = false;
     /******* derived game state data ******/
 
     /****** UI DATA **************/
@@ -283,6 +284,13 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     };
 
     /******* GAME FUNCTIONS ********/
+
+    /**
+     * Easier to reload the page than to reset the state
+     */
+    this.newGame = function () {
+        window.location.reload();
+    };
 
     /**
      * @param {Card} baseCard
@@ -823,6 +831,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                 "numRounds": this.numRounds,
             };
             this.sendFinalGameState(this.gameId, finalGameState);
+            this.isGameOver = true;
         } else {
             this.rotateTokens();
             this.nextPhase();
