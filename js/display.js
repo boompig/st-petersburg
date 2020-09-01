@@ -84,6 +84,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     /******* derived game state data ******/
     // true iff this is the last round
     this.lastRound = false;
+    this.isGameOver = false;
     /******* derived game state data ******/
 
     /****** UI DATA **************/
@@ -109,18 +110,18 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      * @param {Array<Card>} collection
      */
     $scope.openUpgradeModal = function (card, collection, game) {
-        var player = game.getCurrentPlayer();
-        var upgradableCards = game.getUpgradableCards(card, player);
+        const player = game.getCurrentPlayer();
+        const upgradableCards = game.getUpgradableCards(card, player);
 
         // compute how much it would cost to upgrade each card
-        var costMap = {};
-        for (var i = 0; i < upgradableCards.length; i++) {
-            var baseCard = upgradableCards[i];
-            var upgradeCost = game.getUpgradeCost(baseCard, card, collection);
+        const costMap = {};
+        for (let i = 0; i < upgradableCards.length; i++) {
+            const baseCard = upgradableCards[i];
+            const upgradeCost = game.getUpgradeCost(baseCard, card, collection);
             costMap[baseCard.name] = upgradeCost;
         }
 
-        var modalInstance = $uibModal.open({
+        const modalInstance = $uibModal.open({
             templateUrl: "upgradeModal.html",
             controller: "ModalInstanceCtrl",
             resolve: {
@@ -285,13 +286,20 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     /******* GAME FUNCTIONS ********/
 
     /**
+     * Easier to reload the page than to reset the state
+     */
+    this.newGame = function () {
+        window.location.reload();
+    };
+
+    /**
      * @param {Card} baseCard
      * @param {Card} upgradeCard
      * @param {Array<Card>} collection
      * @returns {number}
      */
     this.getUpgradeCost = function (baseCard, upgradeCard, collection) {
-        var upgradeCardCost = this.getCardCost(upgradeCard, collection);
+        const upgradeCardCost = this.getCardCost(upgradeCard, collection);
         return Math.max(1, upgradeCardCost - baseCard.upgradeCost);
     };
 
@@ -352,9 +360,9 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         if (! baseCard.canUpgradeTo(upgradeCard)) {
             return false;
         }
-        var player = this.getCurrentPlayer();
-        var cost = this.getUpgradeCost(baseCard, upgradeCard, collection);
-        var idx;
+        const player = this.getCurrentPlayer();
+        const cost = this.getUpgradeCost(baseCard, upgradeCard, collection);
+        let idx;
 
         Console.log("Trying to upgrade " + baseCard.name + " into " + upgradeCard.name + " for " + cost + " coins");
 
@@ -645,7 +653,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      * 3. Deal cards to top row (assume past cards moved to bottom row)
      */
     this.preparePhase = function () {
-        for (var t = 0; t < this.players.length; t++) {
+        for (let t = 0; t < this.players.length; t++) {
             if (this.players[t].token === this.phase) {
                 this.turn = t;
                 break;
@@ -663,7 +671,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      * @returns {boolean}
      */
     this.isPlayerTurn = function (player) {
-        var i = this.players.indexOf(player);
+        const i = this.players.indexOf(player);
         return i === this.turn;
     };
 
@@ -696,8 +704,8 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             for (let p = 0; p < this.players.length; p++) {
                 player = this.players[p];
 
-                var game = this;
-                var relevantCards = player.cards.filter(function (card) {
+                const game = this;
+                const relevantCards = player.cards.filter(function (card) {
                     return card.type === game.phase ||
                         (card.type === Card.types.UPGRADE && card.upgradeType === game.phase);
                 });
@@ -713,7 +721,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                     player.points += card.pointYield;
 
                     if (card.bonusYieldClass !== null) {
-                        var bonusCards = player.cards.filter(function (bonusCard) {
+                        const bonusCards = player.cards.filter(function (bonusCard) {
                             return bonusCard.type === card.bonusYieldClass ||
                                 (bonusCard.type === Card.types.UPGRADE && bonusCard.upgradeType === card.bonusYieldClass);
                         });
@@ -782,8 +790,8 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
     };
 
     this.rotateTokens = function () {
-        var oldToken, passedToken = null;
-        for (var p = 0; p < this.players.length; p++) {
+        let oldToken, passedToken = null;
+        for (let p = 0; p < this.players.length; p++) {
             oldToken = this.players[p].token;
             if (passedToken) {
                 this.players[p].token = passedToken;
@@ -835,6 +843,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
                 "numRounds": this.numRounds,
             };
             this.sendFinalGameState(this.gameId, finalGameState);
+            this.isGameOver = true;
         } else {
             this.rotateTokens();
             this.nextPhase();
@@ -916,10 +925,10 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             if (player.isHuman) {
                 $scope.openObservatoryModal(this, card);
             } else {
-                var pile = AI.pickObservationDeck(player, this);
+                const pile = AI.pickObservationDeck(player, this);
                 if (pile && this.decks[pile] && this.decks[pile].length > 0) {
-                    var peekCard = this.decks[pile].pop();
-                    var result = AI.pickObservationAction(player, this, peekCard);
+                    const peekCard = this.decks[pile].pop();
+                    const result = AI.pickObservationAction(player, this, peekCard);
 
                     card.played = true;
 
@@ -947,9 +956,9 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      * @returns {boolean}
      */
     this.playerCanAffordCard = function (card, player, collection) {
-        var cost = this.getCardCost(card, collection);
+        const cost = this.getCardCost(card, collection);
         if (card.type === Card.types.UPGRADE) {
-            var cardsToUpgrade = player.cards.filter(function (baseCard) {
+            const cardsToUpgrade = player.cards.filter(function (baseCard) {
                 return baseCard.canUpgradeTo(card);
             });
             return cardsToUpgrade.length > 0;
@@ -1018,7 +1027,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         const cost = this.getCardCost(card, collection);
 
         if (card.type === Card.types.UPGRADE) {
-            var cardsToUpgrade = player.cards.filter(function (baseCard) {
+            const cardsToUpgrade = player.cards.filter(function (baseCard) {
                 return baseCard.canUpgradeTo(card);
             });
             if (cardsToUpgrade.length === 0) {
@@ -1062,7 +1071,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
 
         // remove card from previous collection
         if (collection) {
-            var i = collection.indexOf(card);
+            const i = collection.indexOf(card);
             collection.splice(i, 1);
         }
         Console.log("Player " + player.name + " bought " + card.name + " for " + cost);
@@ -1094,8 +1103,8 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
      * Assume upper cards from last round moved to lower row
      */
     this.dealCards = function () {
-        var card, numCards = (2 * this.players.length) - this.lowerBoard.length;
-        for (var i = 0; i < numCards && this.decks[this.phase].length > 0; i++) {
+        let card, numCards = (2 * this.players.length) - this.lowerBoard.length;
+        for (let i = 0; i < numCards && this.decks[this.phase].length > 0; i++) {
             card = this.decks[this.phase].pop();
             this.upperBoard.push(card);
         }
