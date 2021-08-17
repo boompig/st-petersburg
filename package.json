@@ -4,9 +4,10 @@
     "angular-animate": "1.6.5",
     "angular-ui-bootstrap": "^2.5.6",
     "lodash": "^4.17.21",
+    "lodash.shuffle": "^4.2.0",
     "ng-context-menu": "^0.1.1",
     "sass": "^1.22.3",
-    "whatwg-fetch": "^3"
+    "whatwg-fetch": "^3.6.2"
   },
   "scripts": {
     "build:sass": "sass --style compressed sass/style.scss >css/style.css",
@@ -20,7 +21,7 @@
   "devDependencies": {
     "eslint": "^7",
     "http-server": "^13.0.0",
-    "husky": "^4.2.5",
+    "husky": "^7.0.1",
     "jest": "^26.0.1"
   },
   "husky": {
