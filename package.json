@@ -3,11 +3,10 @@
     "angular": "1.8.0",
     "angular-animate": "1.6.5",
     "angular-ui-bootstrap": "^2.5.6",
-    "lodash": "^4.17.21",
-    "lodash.shuffle": "^4.2.0",
+    "lodash": "^4.17.10",
     "ng-context-menu": "^0.1.1",
     "sass": "^1.22.3",
-    "whatwg-fetch": "^3.6.2"
+    "whatwg-fetch": "^3"
   },
   "scripts": {
     "build:sass": "sass --style compressed sass/style.scss >css/style.css",
@@ -20,8 +19,8 @@
   "private": true,
   "devDependencies": {
     "eslint": "^7",
-    "http-server": "^13.0.0",
-    "husky": "^7.0.1",
+    "http-server": "^0.11.1",
+    "husky": "^4.2.5",
     "jest": "^26.0.1"
   },
   "husky": {
