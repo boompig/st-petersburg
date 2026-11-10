@@ -603,7 +603,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
             baseUrl = "https://kats.coffee";
         }
         // const baseUrl = "http://localhost:9897"
-        const url = baseUrl + "/api/st-petersburg/initial-game-state";
+        const url = baseUrl + "/apps/st-petersburg/api/initial-game-state";
         // Console.log(initialState);
         this.corsPostJSON(url, {
             gameId: gameId,
@@ -632,7 +632,7 @@ StPeter.controller("PeterCtrl", function ($scope, $timeout, $uibModal) {
         } else {
             baseUrl = "https://kats.coffee";
         }
-        const url = baseUrl + "/api/st-petersburg/final-game-state";
+        const url = baseUrl + "/apps/st-petersburg/api/final-game-state";
         finalState.actions = this.actions;
         // Console.log(finalState);
         this.corsPostJSON(url, {
